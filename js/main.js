@@ -5,7 +5,9 @@ require.config({
         'jquery-ui' : "lib/jquery-ui",
         'scrollable-tabs' : "lib/jquery.scrollabletab",
         backbone : "lib/backbone-min",
-        marionette : "lib/backbone.marionette"
+        marionette : "lib/backbone.marionette",
+		github : 'lib/github',
+		base64 : 'lib/base64'
     },
     shim : {
         jquery : {
@@ -14,13 +16,17 @@ require.config({
         underscore : {
             exports : '_'
         },
+		github : {
+		    deps : ['underscore', 'base64'],
+		    exports : 'Github'
+		},
         'jquery-ui' : {
             deps : ['jquery'],
             exports : 'jQuery.ui'
         },
-//        'scrollable-tabs': {
-//            deps : ['jquery', 'jquery-ui']
-//        },
+       'scrollable-tabs': {
+            deps : ['jquery', 'jquery-ui']
+        },
         backbone : {
             deps : ['jquery', 'underscore'],
             exports : 'Backbone'

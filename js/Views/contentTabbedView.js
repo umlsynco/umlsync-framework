@@ -24,16 +24,19 @@ define(
                             contentManager.collection.triggerTabShow(id);
                         }
                     });
+				this.collection.on('change', function(data, something) {
+				  //alert("Something changed.");
+				});
             },
             onBeforeAddChild: function (childViewInstance) {
-                if (!childViewInstance.model.get('tabname')) {
-                    var tabname = this.tabPrefix + childViewInstance.model.get('id');
+                if (!childViewInstance.model.get('parentSelector')) {
+                    var parentSelector = this.tabPrefix + childViewInstance.model.cid;
 // alert("ADD " + childViewInstance.model.get('id')); UNDEFINED !!!
-                    this.$el.tabs("add", '#' + tabname, childViewInstance.model.get('title'));
-                    this.$el.append('<div id="' + tabname + '"></div>');
+                    this.$el.tabs("add", '#' + parentSelector, childViewInstance.model.get('title'));
+                    this.$el.append('<div id="' + parentSelector + '"></div>');
 
                     ++this.counter;
-                    childViewInstance.model.set('tabname', tabname);
+                    childViewInstance.model.set('parentSelector', parentSelector);
                 }
             }
         });
