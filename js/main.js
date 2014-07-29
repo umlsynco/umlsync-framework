@@ -7,7 +7,8 @@ require.config({
         backbone : "lib/backbone-min",
         marionette : "lib/backbone.marionette",
 		github : 'lib/github',
-		base64 : 'lib/base64'
+		base64 : 'lib/base64',
+        textjs : 'lib/text'
     },
     shim : {
         jquery : {
@@ -41,8 +42,10 @@ require.config({
 require(
     ['Views/framework',
      'Controllers/contentController',
-     'Views/Files/sourcecodeView'],
-function(Framework, Controller, scview) {
+     'Views/Files/sourcecodeView',
+     'Module/Github/Views/githubLayoutView'
+    ],
+function(Framework, Controller, scview, ghView) {
     // Start the framework
     Framework.start();
 

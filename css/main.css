@@ -335,8 +335,12 @@ span.cfolder span.dynatree-icon {
     margin: 2px;
 }
 
-#us-toolbox ul li.us-left {
+#us-toolbox ul li.us-right {
     float: right;
+}
+
+#us-toolbox ul li.us-left {
+    float: left;
 }
 
 #us-toolbox ul li:hover {

@@ -1,4 +1,4 @@
-define(['Views/framework', 'backbone'], function (Framework, Backbone) {
+define(['backbone'], function (Backbone) {
     var ContentModel = Backbone.Model.extend({
         defaults: {
             title: '', // Content title
@@ -9,7 +9,7 @@ define(['Views/framework', 'backbone'], function (Framework, Backbone) {
             view: null, // view identifier - GitHub or something else
             contentType: null, // content type uid
             modifiedContent: null, // modified content
-            originalContent: null, // original content
+            cachedContentCid: null, // cid of content data in the loadedContentCache model
             isModified: false, // modified indicator
             isOwner: false, // Indicates if it is possible to modify content
             isEditable: false, // Indicates if if framework has corresponding handler
@@ -21,14 +21,6 @@ define(['Views/framework', 'backbone'], function (Framework, Backbone) {
             if (this.isNew()) {
                 this.set('created', Date.now());
             }
-        },
-
-        toggle: function () {
-            return this.set('isModified', !this.isModified());
-        },
-
-        isModified: function () {
-            return this.get('isModified');
         }
     });
     return ContentModel;

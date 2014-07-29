@@ -5,12 +5,12 @@ define(
     function (Backbone, Framework, ContentModel) {
         var sourcecodeView = Backbone.Marionette.ItemView.extend({
             render: function () {
-                var tabname = this.model.get('tabname');
-                $('#' + tabname).append("HELLO TABS !!!");
+                var parentSelector = this.model.get('parentSelector');
+                $(parentSelector).append("HELLO TABS !!! " + parentSelector);
             }
         });
 
-        Framework.addContentTypeView('sourcecode', sourcecodeView);
+        Framework.registerContentTypeView('sourcecode', sourcecodeView);
 
         return sourcecodeView;
     });

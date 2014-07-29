@@ -136,8 +136,28 @@
     <script src="./dm/ms/ds/common.js"></script>
     <script src="./dm/ms/ctx/class.js"></script-->
 
+    <script type="text/javascript" src="js/lib/jquery.min.js"></script>
+    <script type="text/javascript" src="js/lib/underscore-min.js"></script>
+    <script type="text/javascript" src="js/lib/backbone-min.js"></script>
+    <script type="text/javascript" src="js/lib/backbone.marionette.js"></script>
     <script type="text/javascript" src="js/lib/require.js" data-main="js/main.js"></script>
 
+    <script id="content-left-layout" type="text/template">
+        <div id="switcher" style="background-color:gray;">
+            <div id="us-viewmanager" class="ui-state-default"></div>
+            <div id="us-views"></div>
+        </div>
+    </script>
+
+    <script id="github-content-layout" type="text/template">
+        <div id="us-repo-select"></div>
+        <div id="us-toolbox"></div>
+        <div id="us-treetabs" style="height: 370px;"></div>
+    </script>
+
+    <script id="us-toolbox-template" type="text/template">
+        <ul id="us-github-list" style="list-style:none;"></ul>
+    </script>
 </head>
 <body>
 <div id="body">
@@ -156,12 +176,6 @@
     </div>
     <div id="content">
         <div id="content-left" style="width:200px;height:100%;padding:0;margin:0;position:absolute;">
-            <div id="switcher" style="background-color:gray;">
-                <div id="us-viewmanager" class="ui-state-default"></div>
-                <div id="us-repo-select"></div>
-                <div id="us-toolbox"></div>
-                <div id="us-treetabs"></div>
-            </div>
         </div>
         <div id="content-left-right-resize"
              style="width:6px;left:200px;height:100%;position:absolute;padding:0;margin:0;border:0px solid gray;background-color:gray;cursor: col-resize;"></div>

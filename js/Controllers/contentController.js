@@ -1,6 +1,10 @@
-define(
-    ['marionette', 'Views/Files/contentTabbedView', 'Collections/contentCollection', 'Views/framework', 'Controllers/router'],
-    function(Marionette, CollectionView, ContentCollection, Framework, FrameworkRouter) {
+define(['marionette',
+        'Views/Files/contentTabbedView',
+        'Views/Tree/dataProviderSwitcherView',
+        'Collections/contentCollection',
+        'Views/framework',
+        'Controllers/router'],
+    function(Marionette, CollectionView, DataProviderView, ContentCollection, Framework, FrameworkRouter) {
         var ContentController = {
             'initializeFramework': function () {
                 Framework.addInitializer(function (options) {
@@ -12,8 +16,12 @@ define(
 
                     // Attach an existing view, because it has own div#tabs
                     this.RightRegion.attachView(this.ContentView);
-                    // Render region to initiate $.tab widget
-                    this.ContentView.render();
+
+                    // The data provider selection is on the left region
+                    this.DataProviderSwitcher = new DataProviderView();
+                    this.LeftRegion.show(this.DataProviderSwitcher);
+                    this.DataProviderSwitcher.on("toolbox:click", function() {alert("clicled")});
+                    this.DataProviderSwitcher.on("switcher:toolbox:click", function() {alert("clicled")});
                 });
             }
         };// controller
