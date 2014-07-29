@@ -1,5 +1,5 @@
 define(
-    ['marionette', 'Views/contentTabbedView', 'Collections/contentCollection', 'Views/framework', 'Controllers/router'],
+    ['marionette', 'Views/Files/contentTabbedView', 'Collections/contentCollection', 'Views/framework', 'Controllers/router'],
     function(Marionette, CollectionView, ContentCollection, Framework, FrameworkRouter) {
         var ContentController = {
             'initializeFramework': function () {

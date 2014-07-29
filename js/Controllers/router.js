@@ -1,6 +1,6 @@
 define(
-    ['marionette', '../Views/contentTabbedView', 'Collections/contentCollection', 'Views/framework', 'Controllers/contentController'],
-function(Marionette, CollectionView, ContentCollection, Framework) {
+    ['marionette', 'Views/framework'],
+function(Marionette, Framework) {
     var FrameworkRouter = new Marionette.AppRouter({
         appRoutes: {
         },

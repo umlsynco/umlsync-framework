@@ -41,7 +41,7 @@ require.config({
 require(
     ['Views/framework',
      'Controllers/contentController',
-     'Views/sourcecodeView'],
+     'Views/Files/sourcecodeView'],
 function(Framework, Controller, scview) {
     // Start the framework
     Framework.start();
