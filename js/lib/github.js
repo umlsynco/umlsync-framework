@@ -341,14 +341,21 @@
       // Retrieve the tree a commit points to
       // -------
 
-      this.getTree = function(tree, cb) {
-        _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
-          if (err) return cb(err);
-          cb(null, res.tree);
-        });
-      };
+        this.getTree = function(tree, cb) {
+            _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
+                if (err) return cb(err);
+                cb(null, res.tree);
+            });
+        };
 
-      // Post a new blob object, getting a blob SHA back
+        this.getTreeRecursive = function(tree, cb) {
+            _request("GET", repoPath + "/git/trees/"+tree+"?recursive=true", null, function(err, res) {
+                if (err) return cb(err);
+                cb(null, res.tree);
+            });
+        };
+
+        // Post a new blob object, getting a blob SHA back
       // -------
 
       this.postBlob = function(content, cb) {

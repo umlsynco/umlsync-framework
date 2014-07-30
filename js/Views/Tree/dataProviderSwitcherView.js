@@ -48,8 +48,7 @@ define(['jquery',
                 else {
                     var dpv = Framework.getDataProvider(name);
                     if (dpv) {
-                        this.dataProvidersViews[name] = new dpv({});
-
+                        this.dataProvidersViews[name] = new dpv();
                         this.views.show(this.dataProvidersViews[name]);
                     }
                     else {

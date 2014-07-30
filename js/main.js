@@ -8,7 +8,9 @@ require.config({
         marionette : "lib/backbone.marionette",
 		github : 'lib/github',
 		base64 : 'lib/base64',
-        textjs : 'lib/text'
+        textjs : 'lib/text',
+        dynatree : 'lib/jquery.dynatree',
+        jcookie : 'lib/jquery.cookie'
     },
     shim : {
         jquery : {
@@ -18,9 +20,16 @@ require.config({
             exports : '_'
         },
 		github : {
-		    deps : ['underscore', 'base64'],
+            deps : ['underscore', 'base64'],
 		    exports : 'Github'
 		},
+        jcookie: {
+          deps : ['jquery']
+        },
+        dynatree : {
+            deps : ['jquery', 'jcookie'],
+            exports : '$.fn.dynatree'
+        },
         'jquery-ui' : {
             deps : ['jquery'],
             exports : 'jQuery.ui'

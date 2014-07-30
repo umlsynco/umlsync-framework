@@ -1,11 +1,14 @@
 define(['jquery',
         'marionette',
+        'github',
         'Collections/toolboxIconsCollection',
+        'Module/Github/Collections/rawTree',
         'Views/Controls/toolboxView',
         'Views/framework',
-        'Module/Github/Model/treeModel'
+        'Module/Github/Model/treeItemModel',
+        'Views/Controls/treeView'
     ],
-    function ($, Marionette, ToolboxCollection, ToolboxView, Framework, Tm) {
+    function ($, Marionette, Github, ToolboxCollection, RawTree, ToolboxView, Framework, TreeModel, TreeView) {
         var githubLayout = Marionette.LayoutView.extend({
             template: "#github-content-layout",
             regions: {
@@ -15,11 +18,8 @@ define(['jquery',
                 tree: "#us-treetabs" // Tree region
             },
             initialize: function() {
-
-            },
-            onRender: function (options) {
-                var collection = new ToolboxCollection();
-                collection.add([
+                this.ToolboxCollection = new ToolboxCollection();
+                this.ToolboxCollection.add([
                     {   name: 'github-new',
                         title: 'New content',
                         icon: 'images/newdoc.png',
@@ -41,20 +41,57 @@ define(['jquery',
                         icon: 'images/reload.png',
                         cssClass: 'right'}
                 ]);
+            },
+            // Layered view was rendered
+            onRender: function (options) {
+                var that = this;
 
+                // Initialize toolbox view
                 var toolboxView = new ToolboxView({
                     childViewEventPrefix: 'github',
-                    collection: collection
+                    collection: this.ToolboxCollection
                 });
 
                 toolboxView.on("github:toolbox:click", function(){
-                    this.tm = new Tm({repo:"umlsynco/diagrams", branch:"master"});
-                    this.tm.fetch();
+                    alert("Handle gihub toolbox item click !!!");
                 });
 
                 this.toolbox.show(toolboxView);
+
+                this.activateTree({repo:"umlsynco/diagrams", branch:"master"});
+            },
+
+            // There is no reason to create tree model and view
+            // without repo/branch selection
+            activateTree: function(treeOptions) {
+                var extendedTreeCollection = TreeModel.extend(treeOptions);
+                var ert = RawTree.extend(treeOptions);
+
+                this.TreeModel = new ert({
+                    model: extendedTreeCollection
+                });
+
+                this.TreeModel.fetch();
+                this.TreeModel.on("remove", function() {
+
+                });
+
+                this.TreeView = new TreeView({collection: this.TreeModel});
+                this.tree.show(this.TreeView);
+
+                var that = this;
+                this.TreeView.on("file:open", function(data){
+                    that.openContent(data);
+                });
+            },
+            openContent: function(data) {
+                var model = this.TreeModel.get(data.key);
+                model.set({status:"removed"});
             }
         });
+
+        Framework.module('Backend');
+        Framework.Backend.Github = new Github('umlsynco');
 
         Framework.addInitializer(function (options) {
             this.registerDataProvider('GitHub', githubLayout);
