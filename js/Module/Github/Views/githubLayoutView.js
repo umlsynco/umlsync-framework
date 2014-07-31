@@ -85,8 +85,20 @@ define(['jquery',
                 });
             },
             openContent: function(data) {
-                var model = this.TreeModel.get(data.key);
-                model.set({status:"removed"});
+                //var model = this.TreeModel.get(data.key);
+                //model.set({status:"removed"});
+				Framework.vent.trigger("content:open", {
+        title: data.title, // Content title
+        absPath: '/test2', // Absolute path to the content
+        isModified: false, // modified indicator
+        isOwner: true, // Indicates if it is possible to modify content
+        isEditable: true, // Indicates if if framework has corresponding handler
+        sha: null, // Git SHA summ
+        repo: 'umlsynco/umlsync', // GitHub repository name
+        branch: 'master', // Branch name
+        view: 'github', // view identifier - GitHub or something else
+        contentType: 'sourcecode' // content type uid
+    });
             }
         });
 
