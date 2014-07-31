@@ -1,7 +1,7 @@
 define(
     ['jquery',
      'jquery-ui',
-     'scrollable-tabs',
+     'scrolltab',
      'marionette',
      'Views/framework',
      'Collections/contentCollection'],
@@ -22,15 +22,17 @@ define(
             initialize : function () {
                 var contentManager = this;
                 this.$el.tabs(this, {
-                        closable : true,
-                        scrollable: true,
+				        'scrollable': true,
                         'tabTemplate': '<li><a href="#{href}"><span>#{label}</span></a><a class="ui-corner-all"><span class="ui-test ui-icon ui-icon-close"></span></a></li>',
                         'add': function(event, ui) {
+						    if (ui & ui.panel)
                             $(this).tabs('select', '#' + ui.panel.id);
                         },
                         'show': function (event, ui) {
+						   if (ui && ui.panel)  {
                             var id = ui.panel.id.substr(contentManager.tabPrefix.length);
                             contentManager.collection.triggerTabShow(id);
+						  }
                         }
                     });
 				this.collection.on('change:isActive', function(data, something) {

@@ -3,7 +3,7 @@ require.config({
         jquery : "lib/jquery.min",
         underscore : "lib/underscore-min",
         'jquery-ui' : "lib/jquery-ui",
-        'scrollable-tabs' : "lib/jquery.scrollabletab",
+        scrolltab : "lib/jquery.scrollabletab",
         backbone : "lib/backbone-min",
         marionette : "lib/backbone.marionette",
 		github : 'lib/github',
@@ -23,7 +23,7 @@ require.config({
             deps : ['underscore', 'base64'],
 		    exports : 'Github'
 		},
-        'scrollable-tabs': {
+        scrolltab: {
             deps : ['jquery', 'jquery-ui']
         },
         jcookie: {
@@ -36,9 +36,6 @@ require.config({
         'jquery-ui' : {
             deps : ['jquery'],
             exports : 'jQuery.ui'
-        },
-       'scrollable-tabs': {
-            deps : ['jquery', 'jquery-ui']
         },
         backbone : {
             deps : ['jquery', 'underscore'],
