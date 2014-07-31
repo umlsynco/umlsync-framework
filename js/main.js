@@ -23,8 +23,11 @@ require.config({
             deps : ['underscore', 'base64'],
 		    exports : 'Github'
 		},
+        'scrollable-tabs': {
+            deps : ['jquery', 'jquery-ui']
+        },
         jcookie: {
-          deps : ['jquery']
+            deps : ['jquery']
         },
         dynatree : {
             deps : ['jquery', 'jcookie'],

@@ -1,10 +1,11 @@
 define(
     ['jquery',
      'jquery-ui',
+     'scrollable-tabs',
      'marionette',
      'Views/framework',
      'Collections/contentCollection'],
-    function ($, useless,  Marionette, Framework, ContentCollection) {
+    function ($, useless, useless2,  Marionette, Framework, ContentCollection) {
         var contentCollectionView = Marionette.CollectionView.extend({
             // tab prefix + content Id
             tabPrefix: 'diag-',
@@ -21,6 +22,8 @@ define(
             initialize : function () {
                 var contentManager = this;
                 this.$el.tabs(this, {
+                        closable : true,
+                        scrollable: true,
                         'tabTemplate': '<li><a href="#{href}"><span>#{label}</span></a><a class="ui-corner-all"><span class="ui-test ui-icon ui-icon-close"></span></a></li>',
                         'add': function(event, ui) {
                             $(this).tabs('select', '#' + ui.panel.id);
