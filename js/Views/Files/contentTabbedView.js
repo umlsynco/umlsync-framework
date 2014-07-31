@@ -30,8 +30,10 @@ define(
                             contentManager.collection.triggerTabShow(id);
                         }
                     });
-				this.collection.on('change', function(data, something) {
-				  //alert("Something changed.");
+				this.collection.on('change:isActive', function(data, something) {
+				  if (data.get("isActive")) {
+				    contentManager.$el.tabs('select', data.get("parentSelector"));
+			      }
 				});
             },
             //

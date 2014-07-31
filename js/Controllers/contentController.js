@@ -7,6 +7,7 @@ define(['marionette',
     function(Marionette, CollectionView, DataProviderView, ContentCollection, Framework, FrameworkRouter) {
         var ContentController = {
             'initializeFramework': function () {
+			    var controller = this;
                 Framework.addInitializer(function (options) {
                     this.ContentCollection = new ContentCollection();
                     this.ContentView = new CollectionView({
@@ -15,7 +16,7 @@ define(['marionette',
                     });
 				
  				    this.vent.on('content:open', function(data) {
-				        Framework.ContentCollection.add(data);
+				        controller.openContent(data);
 				    });
 
                     // Attach an existing view, because it has own div#tabs
@@ -30,6 +31,16 @@ define(['marionette',
             },
 			// content:open
 			openContent: function(data) {
+			   var models = Framework.ContentCollection.where(data);
+			   if (models.length > 1) {
+			     alert("skipping multiple content opening");
+			   }
+			   else if (models.length == 1) {
+			     models[0].set("isActive", true); // Or trigger click ???
+			   }
+			   else {
+			     Framework.ContentCollection.add(data);
+			   }
 			   // 1. Check if data was loaded yet
 			   // 2.1 activate tab if it was loaded before
 			   // 2.2 add loading view while loading
