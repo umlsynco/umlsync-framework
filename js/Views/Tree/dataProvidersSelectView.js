@@ -13,6 +13,10 @@ define(['marionette',
                 //this.on("switcher:toolbox:click", function () {
                 //    alert("CLICED 2");
                 //});
+            },
+            resize: function(event, width, height) {
+                this.$el.width(width);
+                return {width: width, height: this.$el.height()};
             }
         });
         return dataProviderSelectView;

@@ -17,7 +17,7 @@ define(['jquery',
                 toolbox: "#us-toolbox", // Toolbox region
                 tree: "#us-treetabs" // Tree region
             },
-            initialize: function() {
+            initialize: function () {
                 this.ToolboxCollection = new ToolboxCollection();
                 this.ToolboxCollection.add([
                     {   name: 'github-new',
@@ -47,23 +47,34 @@ define(['jquery',
                 var that = this;
 
                 // Initialize toolbox view
-                var toolboxView = new ToolboxView({
+                this.ToolboxView = new ToolboxView({
                     childViewEventPrefix: 'github',
                     collection: this.ToolboxCollection
                 });
 
-                toolboxView.on("github:toolbox:click", function(){
+                this.ToolboxView.on("github:toolbox:click", function () {
                     alert("Handle gihub toolbox item click !!!");
                 });
 
-                this.toolbox.show(toolboxView);
+                this.toolbox.show(this.ToolboxView);
 
-                this.activateTree({repo:"umlsynco/diagrams", branch:"master"});
+                this.activateTree({repo: "umlsynco/diagrams", branch: "master"});
+            },
+
+            resize: function(event, width, height) {
+                var res;
+                if (this.toolbox.currentView) {
+                    res = this.toolbox.currentView.resize(event, width, height);
+                }
+
+                if (this.tree.currentView) {
+                    this.tree.currentView.resize(event, width, height - res.height);
+                }
             },
 
             // There is no reason to create tree model and view
             // without repo/branch selection
-            activateTree: function(treeOptions) {
+            activateTree: function (treeOptions) {
                 var extendedTreeCollection = TreeModel.extend(treeOptions);
                 var ert = RawTree.extend(treeOptions);
 
@@ -72,7 +83,7 @@ define(['jquery',
                 });
 
                 this.TreeModel.fetch();
-                this.TreeModel.on("remove", function() {
+                this.TreeModel.on("remove", function () {
 
                 });
 
@@ -80,25 +91,25 @@ define(['jquery',
                 this.tree.show(this.TreeView);
 
                 var that = this;
-                this.TreeView.on("file:open", function(data){
+                this.TreeView.on("file:open", function (data) {
                     that.openContent(data);
                 });
             },
-            openContent: function(data) {
+            openContent: function (data) {
                 //var model = this.TreeModel.get(data.key);
                 //model.set({status:"removed"});
-				Framework.vent.trigger("content:open", {
-        title: data.title, // Content title
-        absPath: '/test2', // Absolute path to the content
-        isModified: false, // modified indicator
-        isOwner: true, // Indicates if it is possible to modify content
-        isEditable: true, // Indicates if if framework has corresponding handler
-        sha: null, // Git SHA summ
-        repo: 'umlsynco/umlsync', // GitHub repository name
-        branch: 'master', // Branch name
-        view: 'github', // view identifier - GitHub or something else
-        contentType: 'sourcecode' // content type uid
-    });
+                Framework.vent.trigger("content:open", {
+                    title: data.title, // Content title
+                    absPath: '/test2', // Absolute path to the content
+                    isModified: false, // modified indicator
+                    isOwner: true, // Indicates if it is possible to modify content
+                    isEditable: true, // Indicates if if framework has corresponding handler
+                    sha: null, // Git SHA summ
+                    repo: 'umlsynco/umlsync', // GitHub repository name
+                    branch: 'master', // Branch name
+                    view: 'github', // view identifier - GitHub or something else
+                    contentType: 'sourcecode' // content type uid
+                });
             }
         });
 

@@ -50,6 +50,9 @@ define(
                     this.$el.tabs("add", '#' + parentSelector, childViewInstance.model.get('title'));
                     childViewInstance.model.set('parentSelector', '#' + parentSelector);
                 }
+            },
+            resize: function(event, width, height) {
+                this.$el.parent().width(width).height(height);
             }
         });
 

@@ -30,14 +30,43 @@ define(['marionette', 'Collections/dataProviderCollection'], function(Marionette
         }
     });
 
-    Framework.addRegions({
-        HeaderRegion: '#content-header',
-        LeftRegion: '#content-left',
-        RightRegion: '#content-right',
-        BottomRegion: '#content-bottom'
+    var ResizableRegion = Marionette.Region.extend({
+        resize: function(event, w, h) {
+            if (this.currentView && this.currentView.resize) {
+                return this.currentView.resize(event, w, h);
+            }
+            else {
+                return {height: this.$el.height(), width: this.$el.width()};
+            }
+        }
     });
 
-    Framework.on("initialize:after", function(){
+    Framework.addRegions({
+        HeaderRegion: {
+            selector: '#content-header',
+            regionClass: ResizableRegion
+        },
+        LeftRegion: {
+            selector: '#content-left',
+            regionClass: ResizableRegion
+        },
+        RightRegion: {
+            selector: '#content-right',
+            regionClass: ResizableRegion
+        },
+        BottomRegion: {
+            selector: '#content-bottom',
+            regionClass: ResizableRegion
+        }
+    });
+
+    Framework.addInitializer( function(options){
+        var that = this;
+        // Subscribe on window resize
+        $(window).resize(function(e) {
+            that.vent.trigger('app:resize', e);
+        });
+
         if (Backbone.history){ Backbone.history.start(); }
     });
 

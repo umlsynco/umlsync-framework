@@ -17,6 +17,23 @@ define(['jquery',
                 "switcher:toolbox:click" : "activateProvider"
             },
 
+            resize: function(event, w, h) {
+                var width = w,
+                height = h;
+                // Update the height of current element
+                this.$el.height(h).children("DIV").height(h);
+
+                var res = this.dataProviderSelectView.resize(event, width, height);
+                if (res.height) {
+                    height -= res.height;
+                }
+
+                if (this.views.currentView) {
+                    this.views.currentView.resize(event, width, height);
+                }
+                return {width: this.$el.width()};
+            },
+
             onRender: function (options) {
                 //
                 // Selection list should be updated in runtime in case of

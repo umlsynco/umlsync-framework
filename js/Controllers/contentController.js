@@ -25,10 +25,44 @@ define(['marionette',
                     // The data provider selection is on the left region
                     this.DataProviderSwitcher = new DataProviderView();
                     this.LeftRegion.show(this.DataProviderSwitcher);
+
                     this.DataProviderSwitcher.on("toolbox:click", function() {alert("clicled")});
+
                     this.DataProviderSwitcher.on("switcher:toolbox:click", function() {alert("clicled")});
+
+                    this.vent.on('app:resize', function(e,u) {
+                        controller.handleWidowResize(e,u);
+                    });
                 });
             },
+
+            handleWidowResize: function(e, u) {
+                var height = $(window).height();
+                var width = $(window).width();
+                //$("#body").width(width).height(height);
+
+                $("#content-header").width(width);
+                // Resize header and bottom first
+                var head = Framework.HeaderRegion.resize(e, width, height);
+                var bottom = Framework.BottomRegion.resize(e, width, height);
+
+                // Re-calculate the resize line position
+
+                // Update left and right regions
+                height = height - head.height - bottom.height;
+                Framework.LeftRegion.$el.height(height);
+                var widthLeft = Framework.LeftRegion.$el.width();
+
+                Framework.LeftRegion.resize(e, widthLeft, height);
+
+                width = width - widthLeft - $("#content-left-right-resize").width() - 2;
+
+                // Content controller resize element
+                $("#content-left-right-resize").height(height);
+                Framework.RightRegion.$el.height(height).width(width);
+                Framework.RightRegion.resize(e, width, height);
+            },
+
 			// content:open
 			openContent: function(data) {
 			   var models = Framework.ContentCollection.where(data);
