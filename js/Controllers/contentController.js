@@ -33,6 +33,8 @@ define(['marionette',
                     this.vent.on('app:resize', function(e,u) {
                         controller.handleWidowResize(e,u);
                     });
+					// trigger resize on first load
+					controller.handleWidowResize(null);
                 });
             },
 

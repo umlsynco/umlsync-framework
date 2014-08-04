@@ -72,6 +72,7 @@ define(['jquery',
                         alert("Unregistered data provider view: " + name);
                     }
                 }
+				Framework.vent.trigger('app:resize', null);
             }
         });
         return dataProviderSwitcher;

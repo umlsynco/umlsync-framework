@@ -34,8 +34,8 @@ define(['marionette', 'dynatree', 'Views/Controls/treeItemView'],
             render: function(callection, x1, c2) {
             },
             resize: function(event, width, height) {
-                this.$el.parent().width(width).height(height);
-                this.$el.width(width).height(height);
+                this.$el.parent().width(width).height(height-20);
+                this.$el.width(width).height(height-20);
                 return {height: this.$el.height(), width: this.$el.width()}
             }
         });

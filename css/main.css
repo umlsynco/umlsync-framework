@@ -4,6 +4,7 @@ body {
     color: #666666;
     width: 100%;
     height: 100%;
+	overflow: hidden;
 }
 
 a {
@@ -354,6 +355,10 @@ span.cfolder span.dynatree-icon {
 
 #us-treetabs DIV DIV UL {
     overflow: visible;
+}
+
+#us-tree {
+	overflow: hidden;
 }
 
 .us-diagram-toolbox {
