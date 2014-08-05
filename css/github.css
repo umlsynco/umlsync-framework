@@ -1,0 +1,609 @@
+#readme {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border-radius: 3px 3px 3px 3px;
+    padding: 3px;
+}
+#readme.contributing > div {
+    max-height: 250px;
+    overflow: auto;
+}
+#readme span.name {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: -moz-linear-gradient(#FAFAFA, #EAEAEA) repeat scroll 0 0 transparent;
+    border-color: #CACACA #CACACA -moz-use-text-color;
+    border-style: solid solid none;
+    border-width: 1px 1px 0;
+    color: #555555;
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    padding: 10px;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+#readme .markdown-body, #readme .plain {
+    background-color: #FFFFFF;
+    border: 1px solid #CACACA;
+    padding: 30px;
+}
+#readme .plain pre {
+    font-size: 17px;
+    white-space: pre-wrap;
+}
+#files #readme {
+    background-color: #FFFFFF;
+    border: 0 none;
+    border-radius: 0 0 0 0;
+    padding: 30px;
+}
+#files #readme .markdown-body {
+    border: 0 none;
+    border-radius: 0 0 0 0;
+    padding: 0;
+}
+#missing-readme {
+    background-color: #FFFFCC;
+    border: 1px solid #CCCCCC;
+    font: 13.34px Helvetica,arial,freesans,clean,sans-serif;
+    padding: 0.7em;
+    text-align: center;
+}
+#readme.rst .borderless, #readme.rst table.borderless td, #readme.rst table.borderless th {
+    border: 0 none;
+}
+#readme.rst table.borderless td, #readme.rst table.borderless th {
+    padding: 0 0.5em 0 0 !important;
+}
+#readme.rst .first {
+    margin-top: 0 !important;
+}
+#readme.rst .last, #readme.rst .with-subtitle {
+    margin-bottom: 0 !important;
+}
+#readme.rst .hidden {
+    display: none;
+}
+#readme.rst a.toc-backref {
+    color: black;
+    text-decoration: none;
+}
+#readme.rst blockquote.epigraph {
+    margin: 2em 5em;
+}
+#readme.rst dl.docutils dd {
+    margin-bottom: 0.5em;
+}
+#readme.rst div.abstract {
+    margin: 2em 5em;
+}
+#readme.rst div.abstract p.topic-title {
+    font-weight: bold;
+    text-align: center;
+}
+#readme.rst div.admonition, #readme.rst div.attention, #readme.rst div.caution, #readme.rst div.danger, #readme.rst div.error, #readme.rst div.hint, #readme.rst div.important, #readme.rst div.note, #readme.rst div.tip, #readme.rst div.warning {
+    border: medium outset;
+    margin: 2em;
+    padding: 1em;
+}
+#readme.rst div.admonition p.admonition-title, #readme.rst div.hint p.admonition-title, #readme.rst div.important p.admonition-title, #readme.rst div.note p.admonition-title, #readme.rst div.tip p.admonition-title {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+#readme.rst div.attention p.admonition-title, #readme.rst div.caution p.admonition-title, #readme.rst div.danger p.admonition-title, #readme.rst div.error p.admonition-title, #readme.rst div.warning p.admonition-title {
+    color: red;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+#readme.rst div.dedication {
+    font-style: italic;
+    margin: 2em 5em;
+    text-align: center;
+}
+#readme.rst div.dedication p.topic-title {
+    font-style: normal;
+    font-weight: bold;
+}
+#readme.rst div.figure {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+#readme.rst div.footer, #readme.rst div.header {
+    clear: both;
+    font-size: smaller;
+}
+#readme.rst div.line-block {
+    display: block;
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+#readme.rst div.line-block div.line-block {
+    margin-bottom: 0;
+    margin-left: 1.5em;
+    margin-top: 0;
+}
+#readme.rst div.sidebar {
+    background-color: #FFFFEE;
+    border: medium outset;
+    clear: right;
+    float: right;
+    margin: 0 0 0.5em 1em;
+    padding: 1em;
+    width: 40%;
+}
+#readme.rst div.sidebar p.rubric {
+    font-family: sans-serif;
+    font-size: medium;
+}
+#readme.rst div.system-messages {
+    margin: 5em;
+}
+#readme.rst div.system-messages h1 {
+    color: red;
+}
+#readme.rst div.system-message {
+    border: medium outset;
+    padding: 1em;
+}
+#readme.rst div.system-message p.system-message-title {
+    color: red;
+    font-weight: bold;
+}
+#readme.rst div.topic {
+    margin: 2em;
+}
+#readme.rst h1.section-subtitle, #readme.rst h2.section-subtitle, #readme.rst h3.section-subtitle, #readme.rst h4.section-subtitle, #readme.rst h5.section-subtitle, #readme.rst h6.section-subtitle {
+    margin-top: 0.4em;
+}
+#readme.rst h1.title {
+    text-align: center;
+}
+#readme.rst h2.subtitle {
+    text-align: center;
+}
+#readme.rst hr.docutils {
+    width: 75%;
+}
+#readme.rst img.align-left, #readme.rst .figure.align-left, #readme.rst object.align-left {
+    clear: left;
+    float: left;
+    margin-right: 1em;
+}
+#readme.rst img.align-right, #readme.rst .figure.align-right, #readme.rst object.align-right {
+    clear: right;
+    float: right;
+    margin-left: 1em;
+}
+#readme.rst img.align-center, #readme.rst .figure.align-center, #readme.rst object.align-center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#readme.rst .align-left {
+    text-align: left;
+}
+#readme.rst .align-center {
+    clear: both;
+    text-align: center;
+}
+#readme.rst .align-right {
+    text-align: right;
+}
+#readme.rst div.align-right {
+    text-align: left;
+}
+#readme.rst ol.simple, #readme.rst ul.simple {
+    margin-bottom: 1em;
+}
+#readme.rst ol.arabic {
+    list-style: decimal outside none;
+}
+#readme.rst ol.loweralpha {
+    list-style: lower-alpha outside none;
+}
+#readme.rst ol.upperalpha {
+    list-style: upper-alpha outside none;
+}
+#readme.rst ol.lowerroman {
+    list-style: lower-roman outside none;
+}
+#readme.rst ol.upperroman {
+    list-style: upper-roman outside none;
+}
+#readme.rst p.attribution {
+    margin-left: 50%;
+    text-align: right;
+}
+#readme.rst p.caption {
+    font-style: italic;
+}
+#readme.rst p.credits {
+    font-size: smaller;
+    font-style: italic;
+}
+#readme.rst p.label {
+    white-space: nowrap;
+}
+#readme.rst p.rubric {
+    color: maroon;
+    font-size: larger;
+    font-weight: bold;
+    text-align: center;
+}
+#readme.rst p.sidebar-title {
+    font-family: sans-serif;
+    font-size: larger;
+    font-weight: bold;
+}
+#readme.rst p.sidebar-subtitle {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+#readme.rst p.topic-title {
+    font-weight: bold;
+}
+#readme.rst pre.address {
+    font: inherit;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+#readme.rst pre.literal-block, #readme.rst pre.doctest-block {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+#readme.rst span.classifier {
+    font-family: sans-serif;
+    font-style: oblique;
+}
+#readme.rst span.classifier-delimiter {
+    font-family: sans-serif;
+    font-weight: bold;
+}
+#readme.rst span.interpreted {
+    font-family: sans-serif;
+}
+#readme.rst span.option {
+    white-space: nowrap;
+}
+#readme.rst span.pre {
+    white-space: pre;
+}
+#readme.rst span.problematic {
+    color: red;
+}
+#readme.rst span.section-subtitle {
+    font-size: 80%;
+}
+#readme.rst table.citation {
+    border-left: 1px solid gray;
+    margin-left: 1px;
+}
+#readme.rst table.docinfo {
+    margin: 2em 4em;
+}
+#readme.rst table.docutils {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+}
+#readme.rst table.footnote {
+    border-left: 1px solid black;
+    margin-left: 1px;
+}
+#readme.rst table.docutils td, #readme.rst table.docutils th, #readme.rst table.docinfo td, #readme.rst table.docinfo th {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    vertical-align: top;
+}
+#readme.rst table.docutils th.field-name, #readme.rst table.docinfo th.docinfo-name {
+    font-weight: bold;
+    padding-left: 0;
+    text-align: left;
+    white-space: nowrap;
+}
+#readme.rst h1 tt.docutils, #readme.rst h2 tt.docutils, #readme.rst h3 tt.docutils, #readme.rst h4 tt.docutils, #readme.rst h5 tt.docutils, #readme.rst h6 tt.docutils {
+    font-size: 100%;
+}
+#readme.rst ul.auto-toc {
+    list-style-type: none;
+}
+.markdown-body {
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+}
+.markdown-body > *:first-child {
+    margin-top: 0 !important;
+}
+.markdown-body > *:last-child {
+    margin-bottom: 0 !important;
+}
+.markdown-body a.absent {
+    color: #CC0000;
+}
+.markdown-body a.anchor {
+    bottom: 0;
+    cursor: pointer;
+    display: block;
+    left: 0;
+    margin-left: -30px;
+    padding-left: 30px;
+    position: absolute;
+    top: 0;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+    cursor: text;
+    font-weight: bold;
+    margin: 20px 0 10px;
+    padding: 0;
+    position: relative;
+}
+.markdown-body h1 .mini-icon-link, .markdown-body h2 .mini-icon-link, .markdown-body h3 .mini-icon-link, .markdown-body h4 .mini-icon-link, .markdown-body h5 .mini-icon-link, .markdown-body h6 .mini-icon-link {
+    color: #000000;
+    display: none;
+}
+.markdown-body h1:hover a.anchor, .markdown-body h2:hover a.anchor, .markdown-body h3:hover a.anchor, .markdown-body h4:hover a.anchor, .markdown-body h5:hover a.anchor, .markdown-body h6:hover a.anchor {
+    line-height: 1;
+    margin-left: -22px;
+    padding-left: 0;
+    text-decoration: none;
+    top: 15%;
+}
+.markdown-body h1:hover a.anchor .mini-icon-link, .markdown-body h2:hover a.anchor .mini-icon-link, .markdown-body h3:hover a.anchor .mini-icon-link, .markdown-body h4:hover a.anchor .mini-icon-link, .markdown-body h5:hover a.anchor .mini-icon-link, .markdown-body h6:hover a.anchor .mini-icon-link {
+    display: inline-block;
+}
+.markdown-body h1 tt, .markdown-body h1 code, .markdown-body h2 tt, .markdown-body h2 code, .markdown-body h3 tt, .markdown-body h3 code, .markdown-body h4 tt, .markdown-body h4 code, .markdown-body h5 tt, .markdown-body h5 code, .markdown-body h6 tt, .markdown-body h6 code {
+    font-size: inherit;
+}
+.markdown-body h1 {
+    color: #000000;
+    font-size: 28px;
+}
+.markdown-body h2 {
+    border-bottom: 1px solid #CCCCCC;
+    color: #000000;
+    font-size: 24px;
+}
+.markdown-body h3 {
+    font-size: 18px;
+}
+.markdown-body h4 {
+    font-size: 16px;
+}
+.markdown-body h5 {
+    font-size: 14px;
+}
+.markdown-body h6 {
+    color: #777777;
+    font-size: 14px;
+}
+.markdown-body p, .markdown-body blockquote, .markdown-body ul, .markdown-body ol, .markdown-body dl, .markdown-body table, .markdown-body pre {
+    margin: 15px 0;
+}
+.markdown-body hr {
+    background: url("https://a248.e.akamai.net/assets.github.com/assets/primer/markdown/dirty-shade-0e7d81b119cc9beae17b0c98093d121fa0050a74.png") repeat-x scroll 0 0 transparent;
+    border: 0 none;
+    color: #CCCCCC;
+    height: 4px;
+    padding: 0;
+}
+.markdown-body > h2:first-child, .markdown-body > h1:first-child, .markdown-body > h1:first-child + h2, .markdown-body > h3:first-child, .markdown-body > h4:first-child, .markdown-body > h5:first-child, .markdown-body > h6:first-child {
+    margin-top: 0;
+    padding-top: 0;
+}
+.markdown-body a:first-child h1, .markdown-body a:first-child h2, .markdown-body a:first-child h3, .markdown-body a:first-child h4, .markdown-body a:first-child h5, .markdown-body a:first-child h6 {
+    margin-top: 0;
+    padding-top: 0;
+}
+.markdown-body h1 + p, .markdown-body h2 + p, .markdown-body h3 + p, .markdown-body h4 + p, .markdown-body h5 + p, .markdown-body h6 + p {
+    margin-top: 0;
+}
+.markdown-body li p.first {
+    display: inline-block;
+}
+.markdown-body ul, .markdown-body ol {
+    padding-left: 30px;
+}
+.markdown-body ul.no-list, .markdown-body ol.no-list {
+    list-style-type: none;
+    padding: 0;
+}
+.markdown-body ul li > *:first-child, .markdown-body ul li ul:first-of-type, .markdown-body ol li > *:first-child, .markdown-body ol li ul:first-of-type {
+    margin-top: 0;
+}
+.markdown-body ul ul, .markdown-body ul ol, .markdown-body ol ol, .markdown-body ol ul {
+    margin-bottom: 0;
+}
+.markdown-body dl {
+    padding: 0;
+}
+.markdown-body dl dt {
+    font-size: 14px;
+    font-style: italic;
+    font-weight: bold;
+    margin: 15px 0 5px;
+    padding: 0;
+}
+.markdown-body dl dt:first-child {
+    padding: 0;
+}
+.markdown-body dl dt > *:first-child {
+    margin-top: 0;
+}
+.markdown-body dl dt > *:last-child {
+    margin-bottom: 0;
+}
+.markdown-body dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px;
+}
+.markdown-body dl dd > *:first-child {
+    margin-top: 0;
+}
+.markdown-body dl dd > *:last-child {
+    margin-bottom: 0;
+}
+.markdown-body blockquote {
+    border-left: 4px solid #DDDDDD;
+    color: #777777;
+    padding: 0 15px;
+}
+.markdown-body blockquote > *:first-child {
+    margin-top: 0;
+}
+.markdown-body blockquote > *:last-child {
+    margin-bottom: 0;
+}
+.markdown-body table th {
+    font-weight: bold;
+}
+.markdown-body table th, .markdown-body table td {
+    border: 1px solid #CCCCCC;
+    padding: 6px 13px;
+}
+.markdown-body table tr {
+    background-color: #FFFFFF;
+    border-top: 1px solid #CCCCCC;
+}
+.markdown-body table tr:nth-child(2n) {
+    background-color: #F8F8F8;
+}
+.markdown-body img {
+    max-width: 100%;
+}
+.markdown-body span.frame {
+    display: block;
+    overflow: hidden;
+}
+.markdown-body span.frame > span {
+    border: 1px solid #DDDDDD;
+    display: block;
+    float: left;
+    margin: 13px 0 0;
+    overflow: hidden;
+    padding: 7px;
+    width: auto;
+}
+.markdown-body span.frame span img {
+    display: block;
+    float: left;
+}
+.markdown-body span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0;
+}
+.markdown-body span.align-center {
+    clear: both;
+    display: block;
+    overflow: hidden;
+}
+.markdown-body span.align-center > span {
+    display: block;
+    margin: 13px auto 0;
+    overflow: hidden;
+    text-align: center;
+}
+.markdown-body span.align-center span img {
+    margin: 0 auto;
+    text-align: center;
+}
+.markdown-body span.align-right {
+    clear: both;
+    display: block;
+    overflow: hidden;
+}
+.markdown-body span.align-right > span {
+    display: block;
+    margin: 13px 0 0;
+    overflow: hidden;
+    text-align: right;
+}
+.markdown-body span.align-right span img {
+    margin: 0;
+    text-align: right;
+}
+.markdown-body span.float-left {
+    display: block;
+    float: left;
+    margin-right: 13px;
+    overflow: hidden;
+}
+.markdown-body span.float-left span {
+    margin: 13px 0 0;
+}
+.markdown-body span.float-right {
+    display: block;
+    float: right;
+    margin-left: 13px;
+    overflow: hidden;
+}
+.markdown-body span.float-right > span {
+    display: block;
+    margin: 13px auto 0;
+    overflow: hidden;
+    text-align: right;
+}
+.markdown-body code, .markdown-body tt {
+    background-color: #F8F8F8;
+    border: 1px solid #EAEAEA;
+    border-radius: 3px 3px 3px 3px;
+    margin: 0 2px;
+    padding: 0 5px;
+}
+.markdown-body code {
+    white-space: nowrap;
+}
+.markdown-body pre > code {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+}
+.markdown-body .highlight pre, .markdown-body pre {
+    background-color: #F8F8F8;
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    font-size: 13px;
+    line-height: 19px;
+    overflow: auto;
+    padding: 6px 10px;
+}
+.markdown-body pre code, .markdown-body pre tt {
+    background-color: transparent;
+    border: medium none;
+    margin: 0;
+    padding: 0;
+}
+
+
+#files {
+    position: relative;
+}
+#files .add-bubble {
+    color: #4183C4;
+    cursor: pointer;
+    height: 16px;
+    left: 0;
+    margin-left: -25px;
+    margin-top: -1px;
+    opacity: 0;
+    position: absolute;
+    width: 25px;
+}
+#files tr:hover .add-bubble {
+    opacity: 1;
+}
+#files.commentable tr:hover td, #files.commentable tr:hover td .gd, #files.commentable tr:hover td .gi, #files.commentable tr:hover td .gc {
+    background-color: #FFFFCC;
+}
+#files.commentable tr:hover td.line-comments, #files.commentable tr:hover td .gd.line-comments, #files.commentable tr:hover td .gi.line-comments, #files.commentable tr:hover td .gc.line-comments {
+    background: none repeat scroll 0 0 #FFFFFF !important;
+}
+#files.commentable tr:hover td.line_numbers a, #files.commentable tr:hover td.line_numbers span {
+    color: #555555 !important;
+}

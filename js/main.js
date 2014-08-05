@@ -10,7 +10,8 @@ require.config({
 		base64 : 'lib/base64',
         textjs : 'lib/text',
         dynatree : 'lib/jquery.dynatree',
-        jcookie : 'lib/jquery.cookie'
+        jcookie : 'lib/jquery.cookie',
+        showdown: 'lib/showdown/showdown'
     },
     shim : {
         jquery : {
@@ -18,6 +19,9 @@ require.config({
         },
         underscore : {
             exports : '_'
+        },
+        showdown : {
+          export : 'Showdown'
         },
 		github : {
             deps : ['underscore', 'base64'],
@@ -51,7 +55,8 @@ require.config({
 require(
     ['Views/framework',
      'Controllers/contentController',
-     'Views/Files/sourcecodeView',
+        'Views/Files/sourcecodeView',
+        'Views/Files/markdownView',
      'Module/Github/Views/githubLayoutView'
     ],
 function(Framework, Controller, scview, ghView) {
@@ -68,7 +73,7 @@ function(Framework, Controller, scview, ghView) {
         repo: 'umlsynco/umlsync', // GitHub repository name
         branch: 'master', // Branch name
         view: 'github', // view identifier - GitHub or something else
-        contentType: 'sourcecode' // content type uid
+        contentType: 'markdown' // content type uid
     });
 
     Framework.ContentCollection.add({
