@@ -40,6 +40,7 @@ define(['backbone', 'Views/framework'], function (Backbone, Framework) {
             },
             sync: function (operation, model, somthing, callback) {
                 if (operation == "read") {
+                    alert("READ CALLED");
                     var that = this;
                     var gh = Framework.Backend.Github;
                     var repoId = this.repo;

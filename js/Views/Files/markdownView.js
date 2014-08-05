@@ -20,7 +20,7 @@ define(
             }
         });
 
-        Framework.registerContentTypeView('markdown', view);
+        Framework.registerContentTypeView({type: 'markdown', classPrototype: view, extensions: "MD"});
 
         return view;
     });

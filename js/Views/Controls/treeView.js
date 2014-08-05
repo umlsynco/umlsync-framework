@@ -26,7 +26,9 @@ define(['marionette', 'dynatree', 'Views/Controls/treeItemView'],
                         if (node.data.isFolder) {
                             return;
                         }
-                        that.trigger("file:open", node.data);
+                        var clone = $.extend({}, node.data, {absPath:node.getAbsolutePath()});
+                        // trigger file in focus event
+                        that.trigger("file:focus", clone);
                     }
                 });
 

@@ -10,7 +10,11 @@ define(
             }
         });
 
-        Framework.registerContentTypeView('sourcecode', sourcecodeView);
+        Framework.registerContentTypeView({
+            type: 'sourcecode',
+            classPrototype:sourcecodeView,
+            extensions:"C,CPP,H,HPP,PY,HS,JS,CSS,JAVA,RB,PL,PHP"
+        });
 
         return sourcecodeView;
     });

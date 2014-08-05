@@ -38,6 +38,7 @@ define(['backbone', 'Views/framework'], function (Backbone, Framework) {
             },
             sync: function (operation, model, somthing, callback) {
                 if (operation == "read") {
+                    alert("TRRRRRRRRREEEE ELEMENT ITEM SYNC");
                     var that = this;
                     var gh = Framework.Backend.Github;
                     var repoId = this.repo;
@@ -69,6 +70,7 @@ define(['backbone', 'Views/framework'], function (Backbone, Framework) {
                     ret["isLazy"] = false;
                     ret["title"] = this.get("path").split('/').pop();
                     ret["key"] = this.cid;
+                    ret["sha"] = this.get("sha");
                 }
                 else if (this.get("type") == "tree") {
                     ret["isFolder"] = true;

@@ -3,12 +3,19 @@ define(['marionette', 'Collections/dataProviderCollection'], function(Marionette
         contentTypeViews: {},
         dataProviders: new DataProviderCollection(),
 
-        registerContentTypeView : function (id, view) {
-          this.contentTypeViews[id] = view;
+        registerContentTypeView : function (options) {
+          this.contentTypeViews[options.type] = options;
         },
         getContentTypeView : function (id) {
-          // TODO: add unexpected content type view
-          return this.contentTypeViews[id];
+          return this.contentTypeViews[id].classPrototype;
+        },
+
+        getContentType : function (extension) {
+            for (var v in this.contentTypeViews) {
+                if (this.contentTypeViews[v].extensions.split(',').indexOf(extension) >=0) {
+                    return this.contentTypeViews[v].type;
+                }
+            }
         },
 
         registerDataProvider: function(name, object) {
