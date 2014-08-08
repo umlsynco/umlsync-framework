@@ -171,6 +171,13 @@
     </script>
 	
     <script id="umlsync-markdown-view-template" type="text/template">
+		<span class="us-diagram-toolbox">
+			<a id="us-link"><span id="us-getlink">Get link</span></a>
+			<a id="us-link"><span id="us-diagram-edit">Edit</span></a>
+            <br>
+            <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
+            </div>
+        </span>
 		<div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
 			<span class="mini-icon mini-icon-readme"></span> <%= title %></span>
 			<article class="markdown-body entry-content" itemprop="mainContentOfPage">
@@ -178,6 +185,21 @@
 			</article></div>
     </script>
 
+	<script id="umlsync-markdown-edit-template" type="text/template">
+		<span class="us-diagram-toolbox">
+			<a id="us-link"><span id="us-getlink">Get link</span></a>
+			<a id="us-link"><span id="us-diagram-edit">Edit</span></a>
+            <br>
+            <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
+            </div>
+        </span>
+		<div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
+			<span class="mini-icon mini-icon-readme"></span> <%= title %></span>
+			<article class="markdown-body entry-content" itemprop="mainContentOfPage">
+			  <%= showMarkdownViewContent() %>
+			</article></div>
+    </script>
+	
 </head>
 <body>
 <div id="body">
