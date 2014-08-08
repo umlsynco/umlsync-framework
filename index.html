@@ -161,6 +161,23 @@
     <script id="us-toolbox-template" type="text/template">
         <ul id="us-github-list" style="list-style:none;"></ul>
     </script>
+	
+    <script id="umlsync-content-loading-template" type="text/template">
+		<div><img id="puh" src="images/Puh.gif"/></div>
+    </script>
+
+    <script id="umlsync-content-failed-template" type="text/template">
+		<div>Something failed</div>
+    </script>
+	
+    <script id="umlsync-markdown-view-template" type="text/template">
+		<div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
+			<span class="mini-icon mini-icon-readme"></span> <%= title %></span>
+			<article class="markdown-body entry-content" itemprop="mainContentOfPage">
+			  <%= showMarkdownViewContent() %>
+			</article></div>
+    </script>
+
 </head>
 <body>
 <div id="body">

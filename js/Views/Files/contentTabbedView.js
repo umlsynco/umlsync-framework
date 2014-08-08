@@ -49,8 +49,15 @@ define(
                     var parentSelector = this.tabPrefix + childViewInstance.model.cid;
                     this.$el.tabs("add", '#' + parentSelector, childViewInstance.model.get('title'));
                     childViewInstance.model.set('parentSelector', '#' + parentSelector);
+					childViewInstance.$el.attr('id', parentSelector);
                 }
             },
+			attachHtml: function(collectionView, childView, index) {
+			    var ps = childView.model.get('parentSelector');
+				if (ps) {
+				  $(ps).append(childView.$el);
+				}
+			},
             resize: function(event, width, height) {
                 this.$el.parent().width(width).height(height);
             }
