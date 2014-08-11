@@ -22,6 +22,26 @@ define(['marionette',
                     this.vent.on('content:loaded', function(data) {
                         controller.loadedContent(data);
                     });
+					
+					this.vent.on('content:before:close', function(model) {
+					  if (model.get("isModified")) {
+					    alert("isModified dialog is responsible for trigger save and close ");
+					  }
+					  else {
+					    Framework.vent.trigger('content:close', model);
+					  }
+					});
+
+					this.vent.on('content:save', function(model) {
+					  if (model.get("isModified")) {
+					    alert("save content to the cache");
+					  }
+					});
+
+					this.vent.on('content:close', function(model) {
+					  Framework.ContentCollection.remove(model);
+					  // TODO: trigger to the content cache to resume reference count
+					});
 
                     // Attach an existing view, because it has own div#tabs
                     this.RightRegion.attachView(this.ContentView);
