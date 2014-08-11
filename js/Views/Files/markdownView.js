@@ -9,10 +9,13 @@ define(
 
         var view = Backbone.Marionette.ItemView.extend({
 		    ui:  {
-			  'edit' : "#us-diagram-edit"
+			  'editButton' : "#us-diagram-edit",
+			  'textarea' : 'textarea#markdown'
 			},
 			events: {
-			  'click @ui.edit': 'toggleEditMode'
+			  'click @ui.editButton': 'toggleEditMode',
+			  'keyup @ui.textarea' : 'changedContent',
+			  'paste @ui.textarea' : 'changedContent'
 			},
 			// Subscribe on model change
 			// and re-render model
@@ -20,8 +23,18 @@ define(
 				this.model.on('change:status', this.render);
 			},
 			
+			changedContent: function() {
+			  var text = this.ui.textarea.val()
+			  if (this.model.get("content") != text) {
+			    this.model.set('isModified', true);
+			  }
+			  else {
+			    this.model.set('isModified', false);
+			  }
+			},
+			
 			toggleEditMode: function() {
-			    var text = this.ui.edit.text();
+			    var text = this.ui.editButton.text();
 				if (text == 'Edit') {
 				  this.model.set("status", "edit");
 				  return;

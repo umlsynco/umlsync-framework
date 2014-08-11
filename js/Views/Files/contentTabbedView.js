@@ -7,6 +7,11 @@ define(
      'Collections/contentCollection'],
     function ($, useless, useless2,  Marionette, Framework, ContentCollection) {
         var contentCollectionView = Marionette.CollectionView.extend({
+		    collectionEvents: {
+			  'change:isModified': 'isModified',
+			  'change:isActive': 'isActive'
+			  
+			},
             // tab prefix + content Id
             tabPrefix: 'diag-',
             //
@@ -35,11 +40,6 @@ define(
 						  }
                         }
                     });
-				this.collection.on('change:isActive', function(data, something) {
-				  if (data.get("isActive")) {
-				    contentManager.$el.tabs('select', data.get("parentSelector"));
-			      }
-				});
             },
             //
             // Append tab item for View rendering
@@ -60,7 +60,30 @@ define(
 			},
             resize: function(event, width, height) {
                 this.$el.parent().width(width).height(height);
-            }
+            },
+			//
+			// Handle trigger event for tab activation
+			//
+			isActive: function(model, something) {
+ 		      if (model.get("isActive")) {
+				this.$el.tabs('select', model.get("parentSelector"));
+			  }
+			},
+			//
+			// Handle modified state of opened tab
+			//
+			isModified: function(model, state, something) {
+			  var selector = model.get("parentSelector");
+			  var $item = $('a[href$="' + selector + '"]').children("span");
+              var text = $item.text();
+              if (text[0] != "*" && state) {
+                text = "* " + text;
+              }
+              else if (text[0] == "*" && !state) {
+                text = text.substring(2);
+              }
+              $item.text(text);
+			}
         });
 
         return contentCollectionView;
