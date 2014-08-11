@@ -8,10 +8,25 @@ define(
         var converter = new Showdown.converter(); //{ extensions: ['umlsync'] }
 
         var view = Backbone.Marionette.ItemView.extend({
+		    ui:  {
+			  'edit' : "#us-diagram-edit"
+			},
+			events: {
+			  'click @ui.edit': 'toggleEditMode'
+			},
 			// Subscribe on model change
 			// and re-render model
 			initialize: function () {
 				this.model.on('change:status', this.render);
+			},
+			
+			toggleEditMode: function() {
+			    var text = this.ui.edit.text();
+				if (text == 'Edit') {
+				  this.model.set("status", "edit");
+				  return;
+				}
+				this.model.set("status", "view");
 			},
 
             getTemplate: function () {
@@ -24,9 +39,8 @@ define(
                 }
 
                 // Check if content is in edit mode
-                var mode = this.model.get("mode");
-                if (mode == "edit") {
-                    return "#umlsync-markdown-view-template";
+                if (status == "edit") {
+                    return "#umlsync-markdown-edit-template";
                 } else {
                     return "#umlsync-markdown-view-template";
                 }
