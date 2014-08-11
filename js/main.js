@@ -11,7 +11,8 @@ require.config({
         textjs : 'lib/text',
         dynatree : 'lib/jquery.dynatree',
         jcookie : 'lib/jquery.cookie',
-        showdown: 'lib/showdown/showdown'
+        showdown: 'lib/showdown/showdown',
+		fieldselection: 'lib/jquery-fieldselection/jquery-fieldselection'
     },
     shim : {
         jquery : {
@@ -23,6 +24,12 @@ require.config({
         showdown : {
           export : 'Showdown'
         },
+        jcookie: {
+		  deps: ['jquery']
+		},
+		fieldselection: {
+		  deps: ['jquery']
+		},
 		github : {
             deps : ['underscore', 'base64'],
 		    exports : 'Github'
@@ -30,9 +37,7 @@ require.config({
         scrolltab: {
             deps : ['jquery', 'jquery-ui']
         },
-        jcookie: {
-            deps : ['jquery']
-        },
+
         dynatree : {
             deps : ['jquery', 'jcookie'],
             exports : '$.fn.dynatree'
