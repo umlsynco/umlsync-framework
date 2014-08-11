@@ -24,7 +24,7 @@ define(
 			},
 			
 			changedContent: function() {
-			  var text = this.ui.textarea.val()
+			  var text = this.ui.textarea.val();
 			  if (this.model.get("content") != text) {
 			    this.model.set('isModified', true);
 			  }
@@ -38,6 +38,9 @@ define(
 				if (text == 'Edit') {
 				  this.model.set("status", "edit");
 				  return;
+				}
+				if (this.model.get("isModified")) {
+				  this.model.set("modifiedContent", this.ui.textarea.val());
 				}
 				this.model.set("status", "view");
 			},
@@ -59,8 +62,11 @@ define(
                 }
             },
 			templateHelpers : {
+			  showContent: function() {
+			        return contentData = this.modifiedContent || this.content;
+			  },
 			  showMarkdownViewContent: function() {
-			        var contentData = this.content || 'Goodby word !';
+			        var contentData = this.modifiedContent || this.content || 'Goodby word !';
 			        return converter.makeHtml(contentData);
 			  }
 			},
