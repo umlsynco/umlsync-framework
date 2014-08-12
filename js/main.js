@@ -12,7 +12,8 @@ require.config({
         dynatree : 'lib/jquery.dynatree',
         jcookie : 'lib/jquery.cookie',
         showdown: 'lib/showdown/showdown',
-		fieldselection: 'lib/jquery-fieldselection/jquery-fieldselection'
+		fieldselection: 'lib/jquery-fieldselection/jquery-fieldselection',
+		hotkeys: 'lib/hotkeys'
     },
     shim : {
         jquery : {
@@ -29,6 +30,10 @@ require.config({
 		},
 		fieldselection: {
 		  deps: ['jquery']
+		},
+		hotkeys: {
+		  deps: ['underscore'],
+		  export: 'HotKey'
 		},
 		github : {
             deps : ['underscore', 'base64'],

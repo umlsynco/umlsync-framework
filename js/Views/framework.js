@@ -64,7 +64,8 @@ define(['marionette', 'Collections/dataProviderCollection'], function(Marionette
         BottomRegion: {
             selector: '#content-bottom',
             regionClass: ResizableRegion
-        }
+        },
+		DialogRegion: '#content-dialog'
     });
 
     Framework.addInitializer( function(options){
@@ -76,6 +77,11 @@ define(['marionette', 'Collections/dataProviderCollection'], function(Marionette
 
         if (Backbone.history){ Backbone.history.start(); }
     });
+
+	Marionette.Behaviors.behaviorsLookup = function() {
+		return window.Behaviors;
+	}
+	window.Behaviors = window.Behaviors || {};
 
     return Framework;
 });

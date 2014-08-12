@@ -25,7 +25,7 @@ define(['marionette',
 					
 					this.vent.on('content:before:close', function(model) {
 					  if (model.get("isModified")) {
-					    alert("isModified dialog is responsible for trigger save and close ");
+					    Framework.vent.trigger('content:save', model);
 					  }
 					  else {
 					    Framework.vent.trigger('content:close', model);
@@ -34,7 +34,10 @@ define(['marionette',
 
 					this.vent.on('content:save', function(model) {
 					  if (model.get("isModified")) {
-					    alert("save content to the cache");
+					    require(['Views/Dialogs/saveOnCloseDialog'], function(saveOnCloseDialog) {
+						  var dialog = new saveOnCloseDialog({model:model});
+						  Framework.DialogRegion.show(dialog);
+						});
 					  }
 					});
 

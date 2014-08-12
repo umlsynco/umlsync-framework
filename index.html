@@ -143,7 +143,6 @@
     <script type="text/javascript" src="js/lib/underscore-min.js"></script>
     <script type="text/javascript" src="js/lib/backbone-min.js"></script>
     <script type="text/javascript" src="js/lib/backbone.marionette.js"></script>
-    <script type="text/javascript" src="js/lib/require.js" data-main="js/main.js"></script>
 
     <script id="content-left-layout" type="text/template">
         <div id="switcher" style="background-color:gray;">
@@ -161,56 +160,56 @@
     <script id="us-toolbox-template" type="text/template">
         <ul id="us-github-list" style="list-style:none;"></ul>
     </script>
-	
+    
     <script id="umlsync-content-loading-template" type="text/template">
-		<div><img id="puh" src="images/Puh.gif"/></div>
+        <div><img id="puh" src="images/Puh.gif"/></div>
     </script>
 
     <script id="umlsync-content-failed-template" type="text/template">
-		<div>Something failed</div>
+        <div>Something failed</div>
     </script>
-	
+    
     <script id="umlsync-markdown-view-template" type="text/template">
-		<span class="us-diagram-toolbox">
-			<a id="us-link"><span id="us-getlink">Get link</span></a>
-			<a id="us-link"><span id="us-diagram-edit">Edit</span></a>
-            <br>
-            <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
-            </div>
-        </span>
-		<div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
-			<span class="mini-icon mini-icon-readme"></span> <%= title %></span>
-			<article class="markdown-body entry-content" itemprop="mainContentOfPage">
-			  <%= showMarkdownViewContent() %>
-			</article></div>
-    </script>
-
-	<script id="umlsync-markdown-view-template" type="text/template">
-		<span class="us-diagram-toolbox">
-			<a id="us-link"><span id="us-getlink">Get link</span></a>
-			<a id="us-link"><span id="us-diagram-edit">Edit</span></a>
-            <br>
-            <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
-            </div>
-        </span>
-		<div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
-			<span class="mini-icon mini-icon-readme"></span> <%= title %></span>
-			<article class="markdown-body entry-content" itemprop="mainContentOfPage">
-			  <%= showMarkdownViewContent() %>
-			</article></div>
-    </script>
-
-	<script id="umlsync-markdown-edit-template" type="text/template">
         <span class="us-diagram-toolbox">
-			<a id="us-link"><span id="us-getlink">Get link</span></a>
-			<a id="us-link"><span id="us-diagram-edit">View</span></a>
+            <a id="us-link"><span id="us-getlink">Get link</span></a>
+            <a id="us-link"><span id="us-diagram-edit">Edit</span></a>
+            <br>
+            <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
+            </div>
+        </span>
+        <div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
+            <span class="mini-icon mini-icon-readme"></span> <%= title %></span>
+            <article class="markdown-body entry-content" itemprop="mainContentOfPage">
+              <%= showMarkdownViewContent() %>
+            </article></div>
+    </script>
+
+    <script id="umlsync-markdown-view-template" type="text/template">
+        <span class="us-diagram-toolbox">
+            <a id="us-link"><span id="us-getlink">Get link</span></a>
+            <a id="us-link"><span id="us-diagram-edit">Edit</span></a>
+            <br>
+            <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
+            </div>
+        </span>
+        <div class="us-diagram announce instapaper_body md" data-path="/" id="readme"><span class="name">
+            <span class="mini-icon mini-icon-readme"></span> <%= title %></span>
+            <article class="markdown-body entry-content" itemprop="mainContentOfPage">
+              <%= showMarkdownViewContent() %>
+            </article></div>
+    </script>
+
+    <script id="umlsync-markdown-edit-template" type="text/template">
+        <span class="us-diagram-toolbox">
+            <a id="us-link"><span id="us-getlink">Get link</span></a>
+            <a id="us-link"><span id="us-diagram-edit">View</span></a>
             <br>
             <div id="us-getlink-content"><label>Absolute path:</label><p><input value="<%= absPath %>"/></p>
             </div>
         </span>
 
-	    <span class="us-toolbox-header">
-	      <ul style="list-style:none outside none;">
+        <span class="us-toolbox-header">
+          <ul style="list-style:none outside none;">
                     <li class="us-toolbox-button us-toolbox-h1"><a title="Heading 1 [Ctrl+1]" accesskey="1" postfix="\n========\n">First Level Heading</a></li>
                     <li class="us-toolbox-button us-toolbox-h2"><a title="Heading 2 [Ctrl+2]" accesskey="2" postfix="\n--------\n" href="">Second Level Heading</a></li>
                     <li class="us-toolbox-button us-toolbox-h3"><a title="Heading 3 [Ctrl+3]" accesskey="3" prefix="### " href="">Heading 3</a></li>
@@ -233,10 +232,29 @@
                     <li class="us-toolbox-button us-toolbox-diagram"><a title="Insert diagram reference" prefix="diagram">Diagram reference / Diagram</a></li>
                     <li class="us-toolbox-separator">&nbsp</li>
           </ul>
-		</span>
-		<br>
-		<textarea rows="20" cols="80" id="markdown" class="us-markdown-editor"><%= showContent() %></textarea>
-    </script>	
+        </span>
+        <br>
+        <textarea rows="20" cols="80" id="markdown" class="us-markdown-editor"><%= showContent() %></textarea>
+    </script>
+
+    <script id="umlsync-confirmation-dialog-template" type="text/template">
+      <div aria-labelledby="ui-dialog-title-us-dialog-confirm" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable" style="display: block; z-index: 1002; outline: 0px none; height: auto; width: 300px; top: 102.5px; left: 567px;">
+        <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+            <span id="ui-dialog-title-us-dialog-confirm" class="ui-dialog-title">Save: <%= title %></span>
+            <a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span class="ui-icon ui-icon-closethick">close</span></a>
+        </div>
+        <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 0px; height: 50.4px;" class="ui-dialog-content ui-widget-content" id="us-dialog-confirm">
+          <p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Save file: "<%= absPath %>" ?</p>
+        </div>
+        <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+            <div class="ui-dialog-buttonset">
+                <button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button"><span class="ui-button-text">Yes</span></button>
+                <button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button"><span class="ui-button-text">No</span></button>
+                <button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button"><span class="ui-button-text">Cancel</span></button>
+            </div>
+        </div>
+      </div>
+    </script>
 </head>
 <body>
 <div id="body">
@@ -267,6 +285,9 @@
 
     </div>
     <div id="content-bottom" style="clear:both;">bottom</div>
+    <div id="content-dialog" style="position:absolute;visibility:hidden;"></div>
 </div>
+    <script type="text/javascript" src="js/lib/require.js" data-main="js/main.js"></script>
+  <div style="width: 1455px; height: 353px; z-index: 1001; display:none;" class="ui-widget-overlay"></div>    
 </body>
 </html>
