@@ -6,6 +6,8 @@ define(['backbone'], function (Backbone) {
             repo: null, // GitHub repository name
             branch: null, // Branch name
             contentType: null, // content type uid
+			isProcessed: false,
+			isModified: false,
             referenceCount: 0, // Indicates if we need to reserve content in cache
             created: 0 // Date of view creation
         },

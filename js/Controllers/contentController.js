@@ -137,14 +137,20 @@ define(['marionette',
 				require(['Views/Dialogs/saveOnCloseDialog'], function(saveOnCloseDialog) {
 				  var dialog = saveOnCloseDialog.extend({
 					onButtonYes: function() {
-					  Framework.vent.trigger('content:save', this.model);
-  					  Framework.vent.trigger('content:close', this.model);
+					  Framework.vent.trigger('content:save', options);
+
+					  if (options.action == "close")
+						Framework.vent.trigger('content:close', this.model);
 			  		  if (options.search) {
 					    Framework.vent.trigger('content:syncall', options.search);
 					  }
 					},
 					onButtonNo: function() {
+					  if (options.action == "close")
 						Framework.vent.trigger('content:close', this.model);
+
+  					  this.model.set({isProcessed: true});
+
 					  if (options.search) {
 					    Framework.vent.trigger('content:syncall', options.search);
 					  }
@@ -157,7 +163,9 @@ define(['marionette',
 				});
 			  }
 			  else {
-				Framework.vent.trigger('content:close', options.model);
+				if (options.action == "close")
+				  Framework.vent.trigger('content:close', options.model);
+
 			    if (options.search) {
 				  Framework.vent.trigger('content:syncall', options.search);
 			    }
@@ -171,9 +179,18 @@ define(['marionette',
 			},
 			
             // Close content			
-			onContentSave: function(model) {
-			  if (model.get("isModified")) {
-			    Framework.vent.trigger(model.get("view") + ":file:save", {key: model.get("key"), modifiedContent: model.get("modifiedContent")});
+			onContentSave: function(options) {
+			  if (options.model.get("isModified")) {
+			    var mc = options.model.get("modifiedContent")
+			    Framework.vent.trigger(options.model.get("view") + ":file:save", {key: options.model.get("key"), modifiedContent: mc});
+				if (options.action != "close") {
+					// change modified staus
+					options.model.set("isModified", false);
+					// update the content data
+					options.model.set("content", mc);
+					// update modified content data
+					options.model.set("modifiedContent", null);
+				}
 			  }
 			},
 			//
@@ -181,12 +198,16 @@ define(['marionette',
 			//
 			onContentSyncAll: function(options) {
 			  // clone options on first eneter
-			  var searchOptions = options.isModified ? options : $.extend({}, options, {isModified: true});
+			  var searchOptions = options.isModified ? options : $.extend({}, options, {isModified: true, isProcessed: false});
 			  var models = Framework.ContentCollection.where(searchOptions);
 			  if (models.length > 0) {
 			    Framework.vent.trigger("content:before:close", {search: searchOptions, model: models[0]});
 			  }
 			  else {
+			    // reset flag
+				_.each(Framework.ContentCollection.where({isProcessed:true}), function(model) {
+				  model.set({isProcessed:false});
+				});
 				Framework.vent.trigger('content:syncall:complete', searchOptions);			  
 			  }
 			},
