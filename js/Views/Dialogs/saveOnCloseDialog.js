@@ -12,29 +12,39 @@ define(['marionette', 'jquery-ui', 'Behaviors/HotKeysBehavior'],
 			},
 			events : {
 			  "mouseenter @ui.buttons": 'mouseHover1',
-			  "mouseexit @ui.buttons": 'mouseHover2'
-			},
-			triggers: {
-			  'click @ui.buttons': 'button:click',
-			  'click .ui-icon-closethick': 'button:click',
+			  "mouseexit @ui.buttons": 'mouseHover2',
+			  'click @ui.buttons': 'onButtonClick',
+			  'click .ui-icon-closethick': 'onButtonClick'
 			},
 			keyEvents : {
 			  'return': 'onReturnPressed',
 			  'esc': 'onEscPressed'
 			},
-			
 			behaviors: {
 			  HotKeysBehavior: {}
 			},
-			
 			onReturnPressed: function() {
-			  this.trigger("destroy");
+			  var inFocus = this.ui.buttons.filter("ui-state-focus");
+			  if (inFocus.length == 1) {
+			    var text = inFocus[0].children("SPAN").text();
+				this.triggerMethod("button:" + text);
+				this.trigger("destroy");
+			  }
 			},
 			onEscPressed: function() {
+			  this.trigger("button:cancel");
 			  this.trigger("destroy");
 			},
 			
 			onButtonClick: function(e) {
+			  var $et = $(e.currentTarget);
+			  if ($et.hasClass("ui-icon-closethick")) {
+			    this.trigger("button:cancel");
+			  }
+			  else {
+			    var text = $et.children("SPAN").text();
+				this.triggerMethod("button:" + text);
+			  }
 			  this.trigger("destroy");
 			},
 			onRender: function() {

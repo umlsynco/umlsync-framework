@@ -28,6 +28,9 @@ define(
 			
 			changedContent: function() {
 			  var text = this.ui.textarea.val();
+
+			  this.model.set("modifiedContent", text);
+
 			  if (this.model.get("content") != text) {
 			    this.model.set('isModified', true);
 			  }

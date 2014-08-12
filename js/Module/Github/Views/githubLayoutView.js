@@ -54,7 +54,7 @@ define(['jquery',
                 });
 
                 this.ToolboxView.on("github:toolbox:click", function () {
-                    alert("Handle gihub toolbox item click !!!");
+                    Framework.vent.trigger('content:syncall', {view:'github', branch: 'master'});
                 });
 
                 this.toolbox.show(this.ToolboxView);
@@ -106,6 +106,9 @@ define(['jquery',
                 Framework.vent.on("github:file:load", function(data) {
                     that.loadContent(data);
                 });
+				Framework.vent.on("github:file:save", function(data) {
+				  that.saveContent(data);
+				});
             },
             //
             // Send event to mediator to ask if we could open this content
@@ -120,6 +123,31 @@ define(['jquery',
 
                 Framework.vent.trigger("content:focus", clone);
             },
+            //
+            // Save content
+            //
+            saveContent: function(data) {
+                if (!data.key)
+                    return;
+
+                var model = this.contentCache.where({key:data.key});
+                //
+                // Expected only one instance of content
+                //
+                if (model.length > 1) {
+                    alert("content was loaded twice !");
+                }
+                //
+                // if content was cached
+                //
+                else if (model.length == 1) {
+				  // Saved content
+				  model[0].set("modifiedContent", data.modifiedContent);
+				}
+				else {
+				  alert("model was not found in cache");
+				}
+			},
             //
             // Respond from mediator to load content
             //

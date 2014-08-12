@@ -28,7 +28,7 @@ define(
 			  
 			  // trigger with content information
 			  if (models.length == 1) {
-				Framework.vent.trigger("content:before:close", models[0]);
+				Framework.vent.trigger("content:before:close", {model:models[0], action: "close"});
 			  }
             },
             //

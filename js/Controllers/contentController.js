@@ -23,27 +23,20 @@ define(['marionette',
                         controller.loadedContent(data);
                     });
 					
-					this.vent.on('content:before:close', function(model) {
-					  if (model.get("isModified")) {
-					    Framework.vent.trigger('content:save', model);
-					  }
-					  else {
-					    Framework.vent.trigger('content:close', model);
-					  }
+					this.vent.on('content:before:close', function(options) {
+						controller.onContentBeforeClose(options);
 					});
 
-					this.vent.on('content:save', function(model) {
-					  if (model.get("isModified")) {
-					    require(['Views/Dialogs/saveOnCloseDialog'], function(saveOnCloseDialog) {
-						  var dialog = new saveOnCloseDialog({model:model});
-						  Framework.DialogRegion.show(dialog);
-						});
-					  }
+					this.vent.on('content:close', function(options) {
+					  controller.onContentClose(options);
 					});
 
-					this.vent.on('content:close', function(model) {
-					  Framework.ContentCollection.remove(model);
-					  // TODO: trigger to the content cache to resume reference count
+					this.vent.on('content:save', function(options) {
+					  controller.onContentSave(options);
+					});
+
+					this.vent.on('content:syncall', function(options) {
+					  controller.onContentSyncAll(options);
 					});
 
                     // Attach an existing view, because it has own div#tabs
@@ -136,12 +129,68 @@ define(['marionette',
                        Framework.vent.trigger(data.view + ":file:load", data);
                    }
 			   }
-			   // 1. Check if data was loaded yet
-			   // 2.1
-			   // 2.2 add loading view while loading
-			   // 3. trigger (github:loadcontent)
-			   // 4.1 trigger content:changed
 			},
+			
+			// content:before:close
+			onContentBeforeClose: function(options) {
+			  if (options.model.get("isModified")) {
+				require(['Views/Dialogs/saveOnCloseDialog'], function(saveOnCloseDialog) {
+				  var dialog = saveOnCloseDialog.extend({
+					onButtonYes: function() {
+					  Framework.vent.trigger('content:save', this.model);
+  					  Framework.vent.trigger('content:close', this.model);
+			  		  if (options.search) {
+					    Framework.vent.trigger('content:syncall', options.search);
+					  }
+					},
+					onButtonNo: function() {
+						Framework.vent.trigger('content:close', this.model);
+					  if (options.search) {
+					    Framework.vent.trigger('content:syncall', options.search);
+					  }
+					},
+					onButtonCancel: function() {
+					  // Do nothing
+					}
+				  });
+				  Framework.DialogRegion.show(new dialog({model:options.model}));
+				});
+			  }
+			  else {
+				Framework.vent.trigger('content:close', options.model);
+			    if (options.search) {
+				  Framework.vent.trigger('content:syncall', options.search);
+			    }
+			  }
+			},
+
+            // Close content			
+			onContentClose: function(model) {
+			  Framework.ContentCollection.remove(model);
+		      // TODO: trigger to the content cache to resume reference count
+			},
+			
+            // Close content			
+			onContentSave: function(model) {
+			  if (model.get("isModified")) {
+			    Framework.vent.trigger(model.get("view") + ":file:save", {key: model.get("key"), modifiedContent: model.get("modifiedContent")});
+			  }
+			},
+			//
+			// Content sync all before repo change or commit
+			//
+			onContentSyncAll: function(options) {
+			  // clone options on first eneter
+			  var searchOptions = options.isModified ? options : $.extend({}, options, {isModified: true});
+			  var models = Framework.ContentCollection.where(searchOptions);
+			  if (models.length > 0) {
+			    Framework.vent.trigger("content:before:close", {search: searchOptions, model: models[0]});
+			  }
+			  else {
+				Framework.vent.trigger('content:syncall:complete', searchOptions);			  
+			  }
+			},
+
 			// content:revert
 			revertContent: function(data) {
 			  // steps on revert
