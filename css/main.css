@@ -634,3 +634,11 @@ div.us-snippet {
     font-family: Verdana,Arial,sans-serif;
     font-size: 11px;
 }
+
+div.dropdown-widget div.ui-dialog {
+  display: none;
+}
+
+.us-open-menu div div.ui-dialog {
+    display:block;
+}

@@ -7,15 +7,17 @@ define(['jquery',
         'Views/framework',
         'Module/Github/Model/treeItemModel',
         'Views/Controls/treeView',
-        '../Collections/contentCacheCollection'
+        '../Collections/contentCacheCollection',
+        'Views/Menus/dropDownMenu'
     ],
-    function ($, Marionette, Github, ToolboxCollection, RawTree, ToolboxView, Framework, TreeModel, TreeView, CacheCollection) {
+    function ($, Marionette, Github, ToolboxCollection, RawTree, ToolboxView, Framework, TreeModel, TreeView, CacheCollection, DropdownView) {
         var githubLayout = Marionette.LayoutView.extend({
             template: "#github-content-layout",
             regions: {
                 repository: "#us-viewmanager", // Repository selection region
                 branch: "#us-branch", // branch selection region
                 toolbox: "#us-toolbox", // Toolbox region
+                reposelect: "#us-repo-select", // Repo select drop down menu
                 tree: "#us-treetabs" // Tree region
             },
             initialize: function () {
@@ -61,6 +63,13 @@ define(['jquery',
 
                 this.activateTree({repo: "umlsynco/diagrams", branch: "master"});
                 this.activateContentCache({cacheLimit: 20});
+
+
+                var modelsc = new  Backbone.Collection([{title:"Repository", id:"repo"}, {title:"Branch", id:"branch"}]);
+                var views = new (Marionette.CollectionView.extend({childView:DropdownView}))({collection:modelsc});
+
+                this.reposelect.show(views);
+                //this.reposelect.show(this.branchView);
             },
 
             resize: function(event, width, height) {
