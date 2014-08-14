@@ -256,6 +256,58 @@
       </div>
     </script>
 
+    <script id="umlsync-list-template" type="text/template">
+        <ul>
+            <li class="diagramSelector" style="cursor:pointer;" id="umlsynco/diagrams">
+                <span>umlsynco/diagrams</span>
+            </li>
+            <li class="diagramSelector" style="cursor:pointer;" id="umlsynco/amaterasuml">
+                <span>umlsynco/amaterasuml</span>
+            </li>
+            <li class="diagramSelector" style="cursor:pointer;" id="umlsynco/github">
+                <span>umlsynco/github</span>
+            </li>
+        </ul>
+    </script>
+
+    <script id="umlsync-listitem-template" type="text/template">
+        <a href="#us-<%= title %>"><%= title %></a>
+    </script>
+
+    <script id="umlsync-filter-list-template" type="text/template">
+        <div id="us-search"></div>
+        <div id="us-list" class="ui-tabs ui-widget ui-widget-content ui-corner-all" style="scroll:auto"></div>
+    </script>
+
+    <script id="umlsync-tabitem-template" type="text/template"><%= title %></script>
+
+    <script id="umlsync-tabs-template" type="text/template">
+            <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"></li>
+            </ul>
+            <div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="us-Yours">
+            </div>
+    </script>
+
+
+    <script id="umlsync-multitabs-dialog-template" type="text/template">
+        <div aria-labelledby="ui-dialog-title-repo-selection-dialog" role="dialog" tabindex="-1"
+             class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable"
+             style="z-index: 1003; outline: 0px none; position: absolute; height: auto; width: 300px; top: 72.6px; left: 1px;">
+            <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span
+                    id="ui-dialog-title-repo-selection-dialog" class="ui-dialog-title">Select <%= title %></span><a
+                    role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span
+                    class="ui-icon ui-icon-closethick">close</span></a></div>
+            <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 0px; height: auto;"
+                 class="ui-dialog-content ui-widget-content" id="repo-selection-dialog">
+                <form>
+                    <fieldset>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </script>
+
     <script id="umlsync-menu-dropdown-template" type="text/template">
         <div class="dropdown-widget" id="us-<%= id %>">
             <div class="select-menu">
@@ -264,7 +316,7 @@
                         class="js-select-button"><%= showActive() %></span>
                 </a>
             </div>
-            <div aria-labelledby="ui-dialog-title-repo-selection-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="z-index: 1003; outline: 0px none; position: absolute; height: auto; width: 300px; top: 72.6px; left: 1px;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span id="ui-dialog-title-repo-selection-dialog" class="ui-dialog-title">Repository selection</span><a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span class="ui-icon ui-icon-closethick">close</span></a></div><div scrollleft="0" scrolltop="0" style="width: auto; min-height: 0px; height: auto;" class="ui-dialog-content ui-widget-content" id="repo-selection-dialog"><form>        <fieldset>        <div id="us-search"></div>        <div class="ui-tabs ui-widget ui-widget-content ui-corner-all" id="selectable-list" style="scroll:auto;">        <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"><li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"><a href="#us-Yours">Yours</a></li></ul><div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="us-Yours"><ul><li class="diagramSelector" style="cursor:pointer;" id="umlsynco/diagrams"><span>umlsynco/diagrams</span></li><li class="diagramSelector" style="cursor:pointer;" id="umlsynco/amaterasuml"><span>umlsynco/amaterasuml</span></li><li class="diagramSelector" style="cursor:pointer;" id="umlsynco/github"><span>umlsynco/github</span></li></ul></div></div>        </fieldset>        </form></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-n"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-e"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-s"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-w"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se ui-icon-grip-diagonal-se"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-sw"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-ne"></div><div style="z-index: 1000;" class="ui-resizable-handle ui-resizable-nw"></div></div>
+            <div id="umlsync-dropdown-region"></div>
         </div>
     </script>
 </head>

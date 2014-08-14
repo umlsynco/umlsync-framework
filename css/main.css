@@ -639,6 +639,6 @@ div.dropdown-widget div.ui-dialog {
   display: none;
 }
 
-.us-open-menu div div.ui-dialog {
+div.us-open-menu div.ui-dialog {
     display:block;
 }
