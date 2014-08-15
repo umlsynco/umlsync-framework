@@ -2,15 +2,14 @@ define(['jquery',
         'marionette',
         'github',
         'Collections/toolboxIconsCollection',
-        'Module/Github/Collections/rawTree',
         'Views/Controls/toolboxView',
         'Views/framework',
-        'Module/Github/Model/treeItemModel',
         'Views/Controls/treeView',
         '../Collections/contentCacheCollection',
-        'Views/Menus/dropDownMenu'
+        'Views/Menus/dropDownMenu',
+        'Module/Github/backend'
     ],
-    function ($, Marionette, Github, ToolboxCollection, RawTree, ToolboxView, Framework, TreeModel, TreeView, CacheCollection, DropdownView) {
+    function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB) {
         var githubLayout = Marionette.LayoutView.extend({
             template: "#github-content-layout",
             regions: {
@@ -65,10 +64,32 @@ define(['jquery',
                 this.activateContentCache({cacheLimit: 20});
 
 
-                var modelsc = new  Backbone.Collection([{title:"Repository", id:"repo"}, {title:"Branch", id:"branch"}]);
-                var views = new (Marionette.CollectionView.extend({childView:DropdownView}))({collection:modelsc});
+                var modelsc = new  (Backbone.Collection.extend({
+                        setGroupFilter: function(filter) {
+                            _.each(this.models, function(model){
+                               var visibility = true;
+                               if (model.get("group") != filter) {
+                                   visibility = "none";
+                               }
+                               model.set("visibility", visibility);
+                            });
+                        }
+                    }))(
+                        [{title:"umlsynco/diagrams", group: "Owner"},
+                         {title:"umlsynco/umlsync", group: "Owner"},
+                         {title:"Starred/diagrams", group: "Starred"},
+                         {title:"Starred/umlsync", group: "Starred"},
+                         {title:"Forked/umlsync", group: "Forked"},
+                         {title:"Forked/diagrams", group: "Forked"}
+                        ]),
+                    groups = [{title:"Owner", isDefault:true}, {title:"Starred"}, {title:"Forked"}];
+                var repoView = new (DropdownView.extend({
+                             groups:groups,
+                             title:"Repository",
+                             uid: "repo"
+                }))({collection:modelsc});
 
-                this.reposelect.show(views);
+                this.reposelect.show(repoView);
                 //this.reposelect.show(this.branchView);
             },
 
@@ -86,15 +107,9 @@ define(['jquery',
             // There is no reason to create tree model and view
             // without repo/branch selection
             activateTree: function (treeOptions) {
-                var extendedTreeCollection = TreeModel.extend(treeOptions);
-                var ert = RawTree.extend(treeOptions);
 
-                this.TreeModel = new ert({
-                    model: extendedTreeCollection
-                });
-
+                this.TreeModel = Framework.Backend.Github.GetTreeCollection(treeOptions);
                 this.TreeModel.fetch();
-
                 this.TreeModel.on("remove", function () {
                     // Handle remove item use-case
                 });
@@ -198,16 +213,8 @@ define(['jquery',
                         Framework.vent.trigger("content:loaded", _.clone(model.attributes));
                     });
                 }
-                // 1. Check if content was loaded before
-                // 1.1 was loaded: ++reference item
-                // 1.2 load content
-                // 2.2 on content load complete trigger(content:loaded)
-
             }
         });
-
-        Framework.module('Backend');
-        Framework.Backend.Github = new Github('umlsynco');
 
         Framework.addInitializer(function (options) {
             this.registerDataProvider('GitHub', githubLayout);

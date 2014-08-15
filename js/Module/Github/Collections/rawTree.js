@@ -32,7 +32,7 @@ define(['backbone', 'Views/framework','Module/Github/Model/treeItemModel'], func
         },
         sync: function (operation, that, options) {
             if (operation == "read") {
-                var gh = Framework.Backend.Github;
+                var gh = Framework.Backend.Github.github;
                 var repoId = this.repo;
                 var branch = this.branch;
 

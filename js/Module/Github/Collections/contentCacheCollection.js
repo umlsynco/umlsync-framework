@@ -5,7 +5,7 @@ define(['backbone', 'base64', '../../../Views/framework', 'Models/loadedContentC
             sync: function (operation, model, something, callback) {
                 if (operation == "read") {
                     var that = this;
-                    var gh = Framework.Backend.Github;
+                    var gh = Framework.Backend.Github.github;
 
                     var repoId = something.data.repo;
                     var branch = something.data.branch;

@@ -271,39 +271,32 @@
     </script>
 
     <script id="umlsync-listitem-template" type="text/template">
-        <a href="#us-<%= title %>"><%= title %></a>
-    </script>
-
-    <script id="umlsync-filter-list-template" type="text/template">
-        <div id="us-search"></div>
-        <div id="us-list" class="ui-tabs ui-widget ui-widget-content ui-corner-all" style="scroll:auto"></div>
+        <span id="<%= title %>"><%= title %></span>
     </script>
 
     <script id="umlsync-tabitem-template" type="text/template"><%= title %></script>
 
     <script id="umlsync-tabs-template" type="text/template">
-            <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-                <li class="ui-state-default ui-corner-top ui-tabs-selected ui-state-active"></li>
-            </ul>
-            <div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="us-Yours">
-            </div>
+
     </script>
 
 
     <script id="umlsync-multitabs-dialog-template" type="text/template">
         <div aria-labelledby="ui-dialog-title-repo-selection-dialog" role="dialog" tabindex="-1"
              class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable"
-             style="z-index: 1003; outline: 0px none; position: absolute; height: auto; width: 300px; top: 72.6px; left: 1px;">
+             style="z-index: 1003; outline: 0px none; position: absolute; height: auto; width: 300px; left: -1px;">
             <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span
                     id="ui-dialog-title-repo-selection-dialog" class="ui-dialog-title">Select <%= title %></span><a
                     role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span
                     class="ui-icon ui-icon-closethick">close</span></a></div>
             <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 0px; height: auto;"
                  class="ui-dialog-content ui-widget-content" id="repo-selection-dialog">
-                <form>
-                    <fieldset>
-                    </fieldset>
-                </form>
+                  <div class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+                        <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+                        </ul>
+                        <div class="ui-tabs-panel ui-widget-content ui-corner-bottom" id="us-list">
+                        </div>
+                 </div>
             </div>
         </div>
     </script>

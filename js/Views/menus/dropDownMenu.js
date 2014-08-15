@@ -7,11 +7,22 @@ define([
         'Behaviors/HotKeysBehavior'],
     function ($, useless, Marionette, Framework, ContentCollection, HotKeys) {
         var MenuItem = Marionette.ItemView.extend({
-           template: "umlsync-listitem-template",
-           className: "ui-state-default ui-corner-top ui-tabs-selected ui-state-active",
+           template: "#umlsync-listitem-template",
+           className: "diagram-selector",
            tagName: 'li',
            triggers: {
                "click a": "menu:selected"
+           },
+           templateHelpers: {
+             showStyle: function() {
+                 var text = "cursor:pointer;",
+                     image = this.model.get("image");
+
+                 if (image) {
+                     text += "list-style-image:url('" + image + "'";
+                 }
+                 return text;
+             }
            },
            modelEvents: {
             'change:visibility': 'onVisibilityChange'
@@ -27,9 +38,8 @@ define([
         });
 
         var MenuList = Marionette.CollectionView.extend({
-            tagName: 'ul',
-            className: 'ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all',
-            itemView: MenuItem
+            tagName: 'ul#diagram-menu',
+            childView: MenuItem
         });
 
         var SearchItem = Marionette.ItemView.extend({
@@ -44,34 +54,16 @@ define([
             }
         });
 
-        var TabItem = Marionette.ItemView.extend({
-            tagName: "li",
-            className: "ui-state-default ui-corner-top ui-tabs-selected ui-state-active",
-            template: "umlsync-tabitem-template"
-        });
-
-        var GroupCollectionView = Marionette.CollectionView.extend({
-            tagName: "ul",
-            className: "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all",
-            itemView: TabItem
-        });
-
-        var MenuListWithFiler = Marionette.LayoutView.extend({
-            template : "#umlsync-filter-list-template",
-            regions: {
-                search: "#us-search",
-                list: "#us-list"
-            },
-
-            onShow: function() {
-                this.list.show(new GroupCollectionView({collection: this.collection, groups: this.groups}));
-            }
-        });
-
-
-
         var DialogView = Marionette.LayoutView.extend({
             template:"#umlsync-multitabs-dialog-template",
+            ui: {
+                tabs : ".ui-tabs-nav li"
+            },
+            events: {
+              "click @ui.tabs": "changeGroupFilter",
+              "mouseenter @ui.tabs": "menter",
+              "mouseleave @ui.tabs": "mexit"
+            },
             keyEvents : {
                 'return': 'onReturnPressed',
                 'esc': 'onEscPressed'
@@ -80,13 +72,43 @@ define([
                 HotKeysBehavior: {}
             },
             regions: {
-                tabs: 'fieldset'
+                tabs: '#us-list'
+            },
+            templateHelpers : function() {
+                return {title: this.title};
+            },
+            menter: function(e) {
+                $(e.currentTarget).addClass("ui-state-hover");
+            },
+            mexit: function(e) {
+                $(e.currentTarget).removeClass("ui-state-hover");
             },
             onReturnPressed: function() {
               this.trigger("button:enter");
             },
             onEscPressed: function() {
                 this.trigger("button:cancel");
+            },
+            onShow: function() {
+              this.tabs.show(new MenuList({collection:this.collection}));
+                var that = this.$el.find("ul.ui-tabs-nav");
+                var collection = this.collection;
+                _.each(this.groups, function(group) {
+                  var active = group.isDefault ? "ui-state-active ui-tabs-selected": "";
+                  that.append('<li class="ui-state-default ui-corner-top '+active+'"><a><span>'+group.title+'</a></span></li>');
+
+                  // Setup default group filter
+                  if (group.isDefault) {
+                      collection.setGroupFilter(group.title);
+                  }
+                });
+            },
+            changeGroupFilter: function(e) {
+                this.$el.find(".ui-tabs-nav li").removeClass("ui-state-active");
+                $(e.currentTarget).addClass("ui-state-active");
+                var group = $(e.currentTarget).find("SPAN").text();
+
+                this.collection.setGroupFilter(group);
             }
         });
 
@@ -99,10 +121,14 @@ define([
                 "click .minibutton" : "toggleDropDownMenu"
             },
 
-            templateHelpers : {
-                showActive: function() {
-                    return "none";
-                }
+            templateHelpers : function() {
+                return {
+                    showActive: function () {
+                        return "none";
+                    },
+                    'title': this.title,
+                    'id': this.uid
+                };
             },
 
             toggleDropDownMenu: function() {
@@ -110,7 +136,7 @@ define([
             },
 
             onShow: function() {
-                var view = new DialogView({model:this.model});
+                var view = new (DialogView.extend({title:this.title, groups: this.groups}))({collection:this.collection});
                 this.Dropdown.show(view);
                 this.listenTo(view, "button:cancel", function() {alert("CANCEL")});
             }
