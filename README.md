@@ -1,4 +1,4 @@
-umlsync-framework
+Re-writing of umlsync-framework via backbone, marionette and requirejs
 =================
 
-Transition of umlsync project to a new framework
+Tree, dropdow repo select menu, opened content tabs, dialogs
