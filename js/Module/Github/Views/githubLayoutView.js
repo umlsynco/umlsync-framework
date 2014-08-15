@@ -44,6 +44,11 @@ define(['jquery',
                         icon: 'images/reload.png',
                         cssClass: 'right'}
                 ]);
+
+                Framework.vent.on("github:repo:selected", function () {
+                    // Framework.command.request
+                    Framework.vent.trigger('content:syncall', {view:'github', branch: 'master'});
+                });
             },
             // Layered view was rendered
             onRender: function (options) {
@@ -92,6 +97,7 @@ define(['jquery',
                 this.RepoModel = Framework.Backend.Github.GetRepoCollection();
 
                 var repoView = new (DropdownView.extend({
+                    childViewEventPrefix: "github:repo",
                     groups:this.RepoModel.groups,
                     title:"Repository",
                     uid: "repo"
@@ -104,6 +110,7 @@ define(['jquery',
                 // only itemViews have to be updated.
                 this.BranchModel = Framework.Backend.Github.GetBranchCollection();
                 var branchView = new (DropdownView.extend({
+                    childViewEventPrefix: "github:branch",
                     groups:this.BranchModel.groups,
                     title:"Branch",
                     uid: "branch"

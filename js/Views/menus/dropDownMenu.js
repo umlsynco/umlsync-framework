@@ -11,7 +11,7 @@ define([
            className: "diagram-selector",
            tagName: 'li',
            triggers: {
-               "click span": "menu:selected"
+               "click span": "selected"
            },
            templateHelpers: {
              showStyle: function() {
@@ -45,14 +45,7 @@ define([
         var MenuList = Marionette.CollectionView.extend({
             tagName: 'ul',
             childView: MenuItem,
-            itemViewEventPrefix: "menu",
-            onMenuSelected: function() {
-                alert("SELECTED !");
-            },
-            onItemviewMenuSelected: function() {
-                alert("SELECTED IV!");
-            }
-
+            childViewEventPrefix: "menu"
         });
 
         var SearchItem = Marionette.ItemView.extend({
@@ -69,6 +62,7 @@ define([
 
         var DialogView = Marionette.LayoutView.extend({
             template:"#umlsync-multitabs-dialog-template",
+            childViewEventPrefix: "dialog",
             ui: {
                 tabs : ".ui-tabs-nav li"
             },
@@ -105,8 +99,6 @@ define([
             onShow: function() {
                 this.menuList = new MenuList({collection:this.collection});
                 this.tabs.show(this.menuList);
-
-                this.listenTo(this.menuList, "itemview:menu:selected", function() {alert("MENU!!!")});
 
                 var that = this.$el.find("ul.ui-tabs-nav");
                 var collection = this.collection;
@@ -156,8 +148,12 @@ define([
             onShow: function() {
                 var view = new (DialogView.extend({title:this.title, groups: this.groups}))({collection:this.collection});
                 this.Dropdown.show(view);
-                this.listenTo(view, "button:cancel", function() {alert("CANCEL")});
-                this.listenTo(view, "menu:selected", function() {alert("MENU!!!")});
+                var that = this;
+                view.menuList.on("menu:selected", function(data) {
+                    if (that.childViewEventPrefix) {
+                        Framework.vent.trigger(that.childViewEventPrefix + ":selected", data);
+                    }
+                });
             }
         });
 

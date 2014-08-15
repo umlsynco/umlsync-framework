@@ -27,7 +27,7 @@ define(['marionette',
 
             Backend.Github.GetBranchCollection = function() {
                 return new Branches();
-            }
+            };
 
 
         });
