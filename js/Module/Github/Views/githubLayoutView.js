@@ -17,6 +17,7 @@ define(['jquery',
                 branch: "#us-branch", // branch selection region
                 toolbox: "#us-toolbox", // Toolbox region
                 reposelect: "#us-repo-select", // Repo select drop down menu
+                branchselect: "#us-branch-select", // Repo select drop down menu
                 tree: "#us-treetabs" // Tree region
             },
             initialize: function () {
@@ -48,49 +49,11 @@ define(['jquery',
             onRender: function (options) {
                 var that = this;
 
-                // Initialize toolbox view
-                this.ToolboxView = new ToolboxView({
-                    childViewEventPrefix: 'github',
-                    collection: this.ToolboxCollection
-                });
-
-                this.ToolboxView.on("github:toolbox:click", function () {
-                    Framework.vent.trigger('content:syncall', {view:'github', branch: 'master'});
-                });
-
-                this.toolbox.show(this.ToolboxView);
-
+                this.activateToolbox();
+                this.activateRepoAndBranch();
                 this.activateTree({repo: "umlsynco/diagrams", branch: "master"});
                 this.activateContentCache({cacheLimit: 20});
 
-
-                var modelsc = new  (Backbone.Collection.extend({
-                        setGroupFilter: function(filter) {
-                            _.each(this.models, function(model){
-                               var visibility = true;
-                               if (model.get("group") != filter) {
-                                   visibility = "none";
-                               }
-                               model.set("visibility", visibility);
-                            });
-                        }
-                    }))(
-                        [{title:"umlsynco/diagrams", group: "Owner"},
-                         {title:"umlsynco/umlsync", group: "Owner"},
-                         {title:"Starred/diagrams", group: "Starred"},
-                         {title:"Starred/umlsync", group: "Starred"},
-                         {title:"Forked/umlsync", group: "Forked"},
-                         {title:"Forked/diagrams", group: "Forked"}
-                        ]),
-                    groups = [{title:"Owner", isDefault:true}, {title:"Starred"}, {title:"Forked"}];
-                var repoView = new (DropdownView.extend({
-                             groups:groups,
-                             title:"Repository",
-                             uid: "repo"
-                }))({collection:modelsc});
-
-                this.reposelect.show(repoView);
-                //this.reposelect.show(this.branchView);
             },
 
             resize: function(event, width, height) {
@@ -104,8 +67,54 @@ define(['jquery',
                 }
             },
 
+            ////////////////////////////////////// INITIALIZATION STUFF ////////////////////////////////////////////////
+            //
+            // Toolbox for content management: Add, Remove, commit,  reload etc
+            //
+            activateToolbox: function() {
+                // Initialize toolbox view
+                this.ToolboxView = new ToolboxView({
+                    childViewEventPrefix: 'github',
+                    collection: this.ToolboxCollection
+                });
+
+                this.ToolboxView.on("github:toolbox:click", function () {
+                    Framework.vent.trigger('content:syncall', {view:'github', branch: 'master'});
+                });
+
+                this.toolbox.show(this.ToolboxView);
+            },
+
+            //
+            // DropDown menu for repository and branch selection
+            //
+            activateRepoAndBranch: function() {
+                this.RepoModel = Framework.Backend.Github.GetRepoCollection();
+
+                var repoView = new (DropdownView.extend({
+                    groups:this.RepoModel.groups,
+                    title:"Repository",
+                    uid: "repo"
+                }))({collection:this.RepoModel});
+
+                this.reposelect.show(repoView);
+
+                // Branch select model depends on repo select model
+                // but it doesn't required to re-render full model
+                // only itemViews have to be updated.
+                this.BranchModel = Framework.Backend.Github.GetBranchCollection();
+                var branchView = new (DropdownView.extend({
+                    groups:this.BranchModel.groups,
+                    title:"Branch",
+                    uid: "branch"
+                }))({collection:this.BranchModel});
+                this.branchselect.show(branchView);
+            },
+
+            //
             // There is no reason to create tree model and view
             // without repo/branch selection
+            //
             activateTree: function (treeOptions) {
 
                 this.TreeModel = Framework.Backend.Github.GetTreeCollection(treeOptions);
@@ -123,6 +132,11 @@ define(['jquery',
                 });
             },
 
+            //
+            // Content cache contain the number of loaded files and all modified and added files
+            // There is no way to keep in cache all loaded content therefore it will get garbage collection event
+            // from time to time
+            //
             activateContentCache: function(options) {
                 var that = this;
                 this.contentCache = new CacheCollection();
@@ -134,6 +148,7 @@ define(['jquery',
 				  that.saveContent(data);
 				});
             },
+            ////////////////////////////////////// CONTENT CACHE FUNCTIONALITY /////////////////////////////////////////
             //
             // Send event to mediator to ask if we could open this content
             //

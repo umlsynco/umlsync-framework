@@ -11,15 +11,20 @@ define([
            className: "diagram-selector",
            tagName: 'li',
            triggers: {
-               "click a": "menu:selected"
+               "click span": "menu:selected"
            },
            templateHelpers: {
              showStyle: function() {
                  var text = "cursor:pointer;",
-                     image = this.model.get("image");
+                     image = this.model.get("image"),
+                     private = this.model.get("private");
+
 
                  if (image) {
                      text += "list-style-image:url('" + image + "'";
+                 }
+                 else if (!private) {
+                     text += "list-style-image:url('images/public.png'";
                  }
                  return text;
              }
@@ -38,8 +43,16 @@ define([
         });
 
         var MenuList = Marionette.CollectionView.extend({
-            tagName: 'ul#diagram-menu',
-            childView: MenuItem
+            tagName: 'ul',
+            childView: MenuItem,
+            itemViewEventPrefix: "menu",
+            onMenuSelected: function() {
+                alert("SELECTED !");
+            },
+            onItemviewMenuSelected: function() {
+                alert("SELECTED IV!");
+            }
+
         });
 
         var SearchItem = Marionette.ItemView.extend({
@@ -90,7 +103,11 @@ define([
                 this.trigger("button:cancel");
             },
             onShow: function() {
-              this.tabs.show(new MenuList({collection:this.collection}));
+                this.menuList = new MenuList({collection:this.collection});
+                this.tabs.show(this.menuList);
+
+                this.listenTo(this.menuList, "itemview:menu:selected", function() {alert("MENU!!!")});
+
                 var that = this.$el.find("ul.ui-tabs-nav");
                 var collection = this.collection;
                 _.each(this.groups, function(group) {
@@ -103,12 +120,13 @@ define([
                   }
                 });
             },
+
             changeGroupFilter: function(e) {
                 this.$el.find(".ui-tabs-nav li").removeClass("ui-state-active");
                 $(e.currentTarget).addClass("ui-state-active");
                 var group = $(e.currentTarget).find("SPAN").text();
 
-                this.collection.setGroupFilter(group);
+                var result = this.collection.setGroupFilter(group);
             }
         });
 
@@ -139,6 +157,7 @@ define([
                 var view = new (DialogView.extend({title:this.title, groups: this.groups}))({collection:this.collection});
                 this.Dropdown.show(view);
                 this.listenTo(view, "button:cancel", function() {alert("CANCEL")});
+                this.listenTo(view, "menu:selected", function() {alert("MENU!!!")});
             }
         });
 
