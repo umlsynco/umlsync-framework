@@ -21,6 +21,9 @@ define(['jquery',
                 tree: "#us-treetabs" // Tree region
             },
             initialize: function () {
+			    // Working stack to push event and context
+			    this.workingStack = new Array();
+				// Toolbox
                 this.ToolboxCollection = new ToolboxCollection();
                 this.ToolboxCollection.add([
                     {   name: 'github-new',
@@ -45,11 +48,21 @@ define(['jquery',
                         cssClass: 'right'}
                 ]);
 
-                Framework.vent.on("github:repo:selected", function () {
-                    // Framework.command.request
-                    Framework.vent.trigger('content:syncall', {view:'github', branch: 'master'});
+				var that = this;
+                Framework.vent.on("github:repo:selected", function (data) {
+				    that.onGithubRepoSelected(data);
                 });
-            },
+				
+				Framework.vent.on("github:repo:chage", function (data) {
+				    that.onGithubRepoChange(data);
+                });
+				Framework.vent.on("github:stack:continue", function (data) {
+				    that.onGithubStackContinue(data);
+                });
+				Framework.vent.on("github:stack:cancel", function (data) {
+				    that.onGithubStackCancel(data);
+                });
+			},
             // Layered view was rendered
             onRender: function (options) {
                 var that = this;
@@ -235,8 +248,55 @@ define(['jquery',
                         Framework.vent.trigger("content:loaded", _.clone(model.attributes));
                     });
                 }
-            }
+            },
+			onContentSyncallComplete: function(data) {
+			  Framework.vent.trigger('github:stack:continue', data);
+			},
+			onContentSyncallCancel: function(data) {
+			  Framework.vent.trigger('github:stack:cancel', data);
+			},
+			//
+			// Pop event and context from queue
+			//
+			onGithubStackContinue: function(data) {
+			  var next = this.workingStack.pop();
+			  if (next) {
+			    Framework.vent.trigger(next.event, next.context || data);
+			  }
+			},
+			onGithubStackCancel: function(data) {
+			  this.workingStack = new Array();
+			},
+			//////////////////////////// REPO CHANGE
+			onGithubRepoSelected: function(data) {
+				    // Do nothing if the same repo was selected
+				    if (this.activeRepo == data.model.get("full_name")) {
+					  return;
+					}
+					
+					this.workingStack.push({event:"github:repo:change", context:data});
+					
+					// Force open if repo was not selected before
+					if (!this.activeRepo) {
+					  Framework.vent.trigger('github:stack:continue');
+					  return;
+					}
+					
+					this.workingStack.push({event:"github:repo:commit", context:data});
+					
+					// Check if content cache has modification
+					// of if opened content has modification
+				    // if (that.contentCacheHasModifications() || Framework.request("contentHasModification", {view:'github', branch: 'master'}
+                    // Framework.command.request
+                    Framework.vent.trigger('content:syncall', {view:'github', repo:this.activeRepo, branch: this.activeBrach});
+			},
+			onGithubRepoChange: function(data) {
+			  this.activeRepo = data.model.get("full_name");
+			  // Change isActive field of this model and disable it for the previous item
+			  this.activeBranch = data.model.get("default_branch"); // select the default branch of repository and re-fetch the branch structure
+			}
         });
+
 
         Framework.addInitializer(function (options) {
             this.registerDataProvider('GitHub', githubLayout);
