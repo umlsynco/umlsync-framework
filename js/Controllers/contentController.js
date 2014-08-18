@@ -156,7 +156,9 @@ define(['marionette',
 					  }
 					},
 					onButtonCancel: function() {
-					  // Do nothing
+                        if (options.search) {
+                            Framework.vent.trigger('content:syncall:cancel', options.search);
+                        }
 					}
 				  });
 				  Framework.DialogRegion.show(new dialog({model:options.model}));

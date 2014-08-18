@@ -33,13 +33,18 @@ define(['backbone', 'Views/framework','Module/Github/Model/treeItemModel'], func
         sync: function (operation, that, options) {
             if (operation == "read") {
                 var gh = Framework.Backend.Github.github;
-                var repoId = this.repo;
-                var branch = this.branch;
+                var repoId = options.data.repo;
+                var branch = options.data.branch;
 
                 if (options.data && options.data.sha) {
+                    // all items extracts by sha after root load
                     branch = options.data.sha;
                 }
-                this.wr = this.wr || gh.getRepo(repoId.split('/')[0], repoId.split('/')[1]);
+                else {
+                    // update working repo on branch/repo update
+                    this.wr = gh.getRepo(repoId.split('/')[0], repoId.split('/')[1]);
+                }
+
                 this.wr.getTree(branch, function (err, tree) {
                     if (err) {
                         if (options.error) options.error(err);

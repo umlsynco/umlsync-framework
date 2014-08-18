@@ -49,19 +49,44 @@ define(['jquery',
                 ]);
 
 				var that = this;
+                // Repository operations
                 Framework.vent.on("github:repo:selected", function (data) {
-				    that.onGithubRepoSelected(data);
+				    that.onGithubRepoOrBranchSelected(data, true);
                 });
-				
-				Framework.vent.on("github:repo:chage", function (data) {
-				    that.onGithubRepoChange(data);
+
+                Framework.vent.on("github:branch:selected", function (data) {
+                    that.onGithubRepoOrBranchSelected(data, false);
                 });
+
+
+                Framework.vent.on("github:repo:change", function (data) {
+                    that.onGithubRepoChange(data);
+                });
+
+                Framework.vent.on("github:branch:change", function (data) {
+                    that.onGithubBranchChange(data);
+                });
+
+                Framework.vent.on("github:repo:commit", function (data) {
+                    that.onGithubRepoCommit(data);
+                });
+
+                // Stack of commands
 				Framework.vent.on("github:stack:continue", function (data) {
 				    that.onGithubStackContinue(data);
                 });
-				Framework.vent.on("github:stack:cancel", function (data) {
-				    that.onGithubStackCancel(data);
+                Framework.vent.on("github:stack:cancel", function (data) {
+                    that.onGithubStackCancel(data);
                 });
+
+                // Listeners of content manager
+                Framework.vent.on("content:syncall:cancel", function (data) {
+                    that.onContentSyncallCancel(data);
+                });
+                Framework.vent.on("content:syncall:complete", function (data) {
+                    that.onContentSyncallComplete(data);
+                });
+
 			},
             // Layered view was rendered
             onRender: function (options) {
@@ -69,7 +94,7 @@ define(['jquery',
 
                 this.activateToolbox();
                 this.activateRepoAndBranch();
-                this.activateTree({repo: "umlsynco/diagrams", branch: "master"});
+                this.activateTree();
                 this.activateContentCache({cacheLimit: 20});
 
             },
@@ -135,10 +160,9 @@ define(['jquery',
             // There is no reason to create tree model and view
             // without repo/branch selection
             //
-            activateTree: function (treeOptions) {
+            activateTree: function () {
 
-                this.TreeModel = Framework.Backend.Github.GetTreeCollection(treeOptions);
-                this.TreeModel.fetch();
+                this.TreeModel = Framework.Backend.Github.GetTreeCollection();
                 this.TreeModel.on("remove", function () {
                     // Handle remove item use-case
                 });
@@ -175,8 +199,8 @@ define(['jquery',
             contentInFocus: function (data) {
                 var clone = $.extend({}, data, {
                     isOwner: true, // Indicates if user could modify this file
-                    repo: 'umlsynco/diagrams',
-                    branch: 'master', // Branch name
+                    repo: this.activeRepo,
+                    branch: this.activeBranch, // Branch name
                     view: 'github' // view identifier - GitHub or something else
                 });
 
@@ -268,33 +292,87 @@ define(['jquery',
 			  this.workingStack = new Array();
 			},
 			//////////////////////////// REPO CHANGE
-			onGithubRepoSelected: function(data) {
+            onGithubRepoOrBranchSelected: function(data, isRepoFlag) {
+				    var triggerContinue = false;
 				    // Do nothing if the same repo was selected
-				    if (this.activeRepo == data.model.get("full_name")) {
-					  return;
+				    if (isRepoFlag) {
+                        if (this.activeRepo == data.model.get("full_name")) {
+                            return;
+                        }
+                        this.workingStack.push({event:"github:repo:change", context:data});
+
+                        triggerContinue = !this.activeRepo;
 					}
-					
-					this.workingStack.push({event:"github:repo:change", context:data});
-					
+                    else {
+                        if (this.activeBranch == data.model.get("full_name")) {
+                            return;
+                        }
+                        this.workingStack.push({event:"github:branch:change", context:data});
+
+                        triggerContinue = !this.activeBranch; // happens automatically (because we have default branch)
+                    }
+
 					// Force open if repo was not selected before
-					if (!this.activeRepo) {
+					if (triggerContinue) {
 					  Framework.vent.trigger('github:stack:continue');
 					  return;
 					}
-					
+
+                    // Commit repo changes in both cases
 					this.workingStack.push({event:"github:repo:commit", context:data});
 					
-					// Check if content cache has modification
-					// of if opened content has modification
-				    // if (that.contentCacheHasModifications() || Framework.request("contentHasModification", {view:'github', branch: 'master'}
-                    // Framework.command.request
                     Framework.vent.trigger('content:syncall', {view:'github', repo:this.activeRepo, branch: this.activeBrach});
 			},
 			onGithubRepoChange: function(data) {
+              // Disable isActive for the previous repo
+              if (this.activeRepo) {
+                  var models = this.RepoModel.where({isActive:true}); // full_name:this.activeRepo,
+                  if (models.length == 1) {
+                      models[0].set({isActive:false});
+                  }
+              }
+              // set an active repository
 			  this.activeRepo = data.model.get("full_name");
-			  // Change isActive field of this model and disable it for the previous item
-			  this.activeBranch = data.model.get("default_branch"); // select the default branch of repository and re-fetch the branch structure
-			}
+              // lead to dropdown dialog change
+              data.model.set({isActive:true});
+
+              // as far as we trust to Github.API we could extract the list of branches
+              // and reload tree in parallel
+              this.activeBranch = data.model.get("default_branch") || 'master';
+              // reload tree for default branch
+              this.TreeModel.reset();
+              this.TreeModel.fetch({data:{repo:this.activeRepo, branch:this.activeBranch}});
+              // reload the list of branches/tags for repository
+              this.BranchModel.reset();
+              this.BranchModel.fetch({data:{repo:this.activeRepo, default_branch:this.activeBranch, group:'Branches'}});
+			},
+            //
+            // Commit all modified files
+            // an empty for a while
+            //
+            onGithubRepoCommit: function(data) {
+                Framework.vent.trigger("github:stack:continue",data);
+            },
+            //
+            // change the github branch
+            //
+            onGithubBranchChange: function(data) {
+                // Disable isActive for the previous branch
+                if (this.activeBranch) {
+                    var models = this.BranchModel.where({isActive:true});// full_name:this.activeBranch
+                    if (models.length == 1) {
+                        models[0].set({isActive:false});
+                    }
+                }
+                // set an active branch
+                this.activeBranch = data.model.get("full_name");
+                // lead to dropdown dialog change
+                data.model.set({isActive:true});
+
+                // reload tree for a new branch
+                this.TreeModel.reset();
+                this.TreeModel.fetch({data:{repo:this.activeRepo, branch:this.activeBranch}});
+            }
         });
 
 

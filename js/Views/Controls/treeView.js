@@ -5,6 +5,7 @@ define(['marionette', 'dynatree', 'Views/Controls/treeItemView'],
             initialize: function () {
                 this.$el.attr('id', 'us-tree');
                 this.collection.on('sync', this.render, this);
+                this.collection.on('reset', this.onReset, this);
 
                 var that = this;
                 this.$el.dynatree({
@@ -39,6 +40,9 @@ define(['marionette', 'dynatree', 'Views/Controls/treeItemView'],
                 this.$el.parent().width(width).height(height-20);
                 this.$el.width(width).height(height-20);
                 return {height: this.$el.height(), width: this.$el.width()}
+            },
+            onReset: function() {
+                this.$el.dynatree("getTree").reload();
             }
         });
         return TreeView;

@@ -14,7 +14,10 @@ define([
                     var gh = Framework.Backend.Github.github;
                     var user = gh.getUser();
                     var group = options.data.group;
-                    var repoId = options.data.repo;
+
+                    this.repoId = options.data.repo || this.repoId; // Keep repoId in cache while not re-defined
+                    var repoId = this.repoId;
+                    var defaultb = options.data.default_branch;
                     if (!repoId)
                       return;
                     // working repo
@@ -36,19 +39,26 @@ define([
                                     g.status = "ok";
                                 }
                             });
+                            var result = [], counter = 0;
                             // Extend data with corresponding group
-                            _.each(data, function(d){d.group = group;});
-                            if (options.success) options.success(data);
+                            _.each(data, function(d){result[counter] = {
+                                'group': group, // The group of menu
+                                'full_name':d,  // title of branch
+                                'isActive': d == defaultb ? true: false // use default branch value to separate tree reload and load branches
+                               };
+                               ++counter;
+                            });
+                            if (options.success) options.success(result);
 
 
                         }
                     };
 
-                    if (group == "Branch") {
-                        repo.listBranches(handler);
+                    if (group == "Branches") {
+                        wr.listBranches(handler);
                     }
                     else if (group == "Tags") {
-                        repo.listTags(handler);
+                        wr.listTags(handler);
                     }
                     else {
                         if (options.error) options.error("Unknown group id: " + group);

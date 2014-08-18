@@ -657,3 +657,7 @@ div.dropdown-widget div.ui-dialog {
 div.us-open-menu div.ui-dialog {
     display:block;
 }
+
+div.select-menu a {
+    overflow: hidden;
+}
