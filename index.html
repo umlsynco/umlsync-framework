@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/simple_menu.css" type="text/css" media="all"/>
     <link rel="stylesheet/less" href="css/main.less" type="text/css" media="screen"/>
     <link rel="stylesheet" href="css/dynatree/src/skin-vista/ui.dynatree.css" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen"/>
 
     <!--link rel="stylesheet" href="js/3pp/simple-color-picker/jquery.simple-color-picker.css" type="text/css" media="screen"/>
     <link rel="stylesheet" href="./js/3pp/tablesorter/themes/blue/style.css" type="text/css" media="screen"/>
@@ -161,7 +162,7 @@
     <script id="us-toolbox-template" type="text/template">
         <ul id="us-github-list" style="list-style:none;"></ul>
     </script>
-    
+
     <script id="umlsync-content-loading-template" type="text/template">
         <div><img id="puh" src="images/Puh.gif"/></div>
     </script>
@@ -169,7 +170,7 @@
     <script id="umlsync-content-failed-template" type="text/template">
         <div>Something failed</div>
     </script>
-    
+
     <script id="umlsync-markdown-view-template" type="text/template">
         <span class="us-diagram-toolbox">
             <a id="us-link"><span id="us-getlink">Get link</span></a>
@@ -313,6 +314,42 @@
             <div id="umlsync-dropdown-region"></div>
         </div>
     </script>
+
+    <script id="umlsync-commit-dialog-template" type="text/template">
+        <div aria-labelledby="ui-dialog-title-commit-changes-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1004; outline: 0px none; position: absolute; height: auto; width: 550px; top: 241px; left: 433.5px;">
+            <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+                <span id="ui-dialog-title-commit-changes-dialog" class="ui-dialog-title">Commit data:</span>
+                <a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#">
+                    <span class="ui-icon ui-icon-closethick">close</span>
+                </a>
+            </div>
+            <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 0px; height: 194.4px;" class="ui-dialog-content ui-widget-content" id="commit-changes-dialog">
+                <div id="list-item"><div><div class="scrollable" style="scroll:auto;">
+                    <table id="us-commit-table" class="tablesorter">
+                        <thead><tr class="header"><th></th><th>File path</th></tr></thead>
+                    </table>
+                </div>
+                    <p><label>Commit message: </label>
+                        <br>
+                        <textarea id="us-commit-message" maxlength="300" pattern="[a-zA-Z ]{5,}" style="width:99%;"></textarea>
+                        <br>
+                        <label id="us-commit-status"></label>
+                    </p>
+                </div>
+                </div>
+            </div>
+            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+                <div class="ui-dialog-buttonset">
+                    <button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button">
+                        <span class="ui-button-text">Commit</span>
+                    </button>
+                    <button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button">
+                        <span class="ui-button-text">Cancel</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </script>
 </head>
 <body>
 <div id="body">
@@ -346,6 +383,6 @@
     <div id="content-dialog" style="position:absolute;visibility:hidden;"></div>
 </div>
     <script type="text/javascript" src="js/lib/require.js" data-main="js/main.js"></script>
-  <div style="width: 1455px; height: 353px; z-index: 1001; display:none;" class="ui-widget-overlay"></div>    
+  <div style="width: 1455px; height: 353px; z-index: 1001; display:none;" class="ui-widget-overlay"></div>
 </body>
 </html>

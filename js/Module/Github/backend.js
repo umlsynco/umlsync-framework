@@ -9,7 +9,7 @@ define(['marionette',
     function (Marionette, Framework, Github, RawTree, TreeModel, RepoCollection, Branches) {
         Framework.module('Backend', function(Backend) {
             Backend.Github = {};
-            Backend.Github.github = new Github('umlsynco');
+            Backend.Github.github = new Github({username:'umlsynco', token:'bb57c9b48005118aad87461d4bfa420253a8e831'});
 
             Backend.Github.GetTreeCollection = function(treeOptions) {
                 var extendedTreeCollection = TreeModel.extend(treeOptions);

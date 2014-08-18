@@ -7,9 +7,10 @@ define(['jquery',
         'Views/Controls/treeView',
         '../Collections/contentCacheCollection',
         'Views/Menus/dropDownMenu',
-        'Module/Github/backend'
+        'Module/Github/backend',
+        'Views/Dialogs/commitDialog'
     ],
-    function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB) {
+    function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB, CommitDialog) {
         var githubLayout = Marionette.LayoutView.extend({
             template: "#github-content-layout",
             regions: {
@@ -351,7 +352,17 @@ define(['jquery',
             // an empty for a while
             //
             onGithubRepoCommit: function(data) {
-                Framework.vent.trigger("github:stack:continue",data);
+                var dialog = new CommitDialog({collection:this.contentCache});
+                dialog.on("button:commit", function(data) {
+                    Framework.vent.trigger("github:stack:continue",data);
+                });
+
+                dialog.on("button:cancel", function(data) {
+                    Framework.vent.trigger("github:stack:cancel",data);
+                });
+
+                Framework.DialogRegion.show(dialog, {forceShow: true});
+
             },
             //
             // change the github branch
