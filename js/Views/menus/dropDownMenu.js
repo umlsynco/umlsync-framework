@@ -170,6 +170,7 @@ define([
                 this.Dropdown.show(view);
                 var that = this;
                 view.menuList.on("menu:selected", function (data) {
+                    that.toggleDropDownMenu();
                     if (that.childViewEventPrefix) {
                         Framework.vent.trigger(that.childViewEventPrefix + ":selected", data);
                     }
