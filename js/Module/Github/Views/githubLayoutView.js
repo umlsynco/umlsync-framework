@@ -351,6 +351,12 @@ define(['jquery',
             // COMMIT DIALOG
             //
             onGithubRepoCommit: function(data) {
+			    if (!_.some(this.contentCache.models, function(model) {
+				  return model.has('modifiedContent');
+				})) {
+				  Framework.vent.trigger("github:stack:continue",data);
+				  return;
+				}
                 var dialog = new CommitDialog({collection:this.contentCache});
                 var that = this;
                 dialog.on("button:commit", function(data) {
