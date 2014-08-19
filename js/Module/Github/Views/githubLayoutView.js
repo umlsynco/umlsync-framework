@@ -348,13 +348,18 @@ define(['jquery',
               this.BranchModel.fetch({data:{repo:this.activeRepo, default_branch:this.activeBranch, group:'Branches'}});
 			},
             //
-            // Commit all modified files
-            // an empty for a while
+            // COMMIT DIALOG
             //
             onGithubRepoCommit: function(data) {
                 var dialog = new CommitDialog({collection:this.contentCache});
+                var that = this;
                 dialog.on("button:commit", function(data) {
-                    Framework.vent.trigger("github:stack:continue",data);
+                    if (that.contentCache.when({waitingForCommit:true}).length > 0) {
+                        Framework.vent.trigger("github:repo:commit:start",data);
+                    }
+                    else {
+                        Framework.vent.trigger("github:stack:continue",data);
+                    }
                 });
 
                 dialog.on("button:cancel", function(data) {
@@ -362,6 +367,40 @@ define(['jquery',
                 });
 
                 Framework.DialogRegion.show(dialog, {forceShow: true});
+            },
+
+            //
+            // Implements repo commit behavior
+            //
+            onGithubRepoCommitStart: function(data) {
+                var models = that.contentCache.when({waitingForCommit:true});
+                if (models.length > 0) {
+
+                    Framework.vent.trigger("github:repo:commit:checkhead");
+
+
+                    // Save triggers create blob
+                    _.each(model, function(model) {
+                        model.save();
+                    });
+                }
+            },
+            //
+            // Implements repo commit strategy
+            //
+            onGithubRepoCommitContinue: function(data) {
+
+            },
+            //
+            // Implements repo commit strategy
+            //
+            onGithubRepoCommitComplete: function(data) {
+
+            },
+            //
+            // Implements repo commit strategy
+            //
+            onGithubRepoCommitFailed: function(data) {
 
             },
             //
