@@ -39,16 +39,12 @@ define([
                                     g.status = "ok";
                                 }
                             });
-                            var result = [], counter = 0;
                             // Extend data with corresponding group
-                            _.each(data, function(d){result[counter] = {
-                                'group': group, // The group of menu
-                                'full_name':d,  // title of branch
-                                'isActive': d == defaultb ? true: false // use default branch value to separate tree reload and load branches
-                               };
-                               ++counter;
+                            _.each(data, function(d){
+                                d.group = group;
+                                d.isActive = d == defaultb ? true: false; // Compare with default branch to separate tree loading and list branches
                             });
-                            if (options.success) options.success(result);
+                            if (options.success) options.success(data);
 
 
                         }

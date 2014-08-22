@@ -327,7 +327,7 @@
       this.listBranches = function(cb) {
         _request("GET", repoPath + "/git/refs/heads", null, function(err, heads) {
           if (err) return cb(err);
-          cb(null, _.map(heads, function(head) { return _.last(head.ref.split('/')); }));
+          cb(null, _.map(heads, function(head) { return {full_name:_.last(head.ref.split('/')), commit: head.object.sha}; }));
         });
       };
 
@@ -359,7 +359,7 @@
         this.getTree = function(tree, cb) {
             _request("GET", repoPath + "/git/trees/"+tree, null, function(err, res) {
                 if (err) return cb(err);
-                cb(null, res.tree);
+                cb(null, res.tree, res.sha);
             });
         };
 
@@ -412,6 +412,133 @@
           cb(null, res.sha);
         });
       };
+
+        // Update an existing tree adding a new blob object getting a tree SHA back
+        // -------
+
+        this.removeTree = function(baseTree, cb) {
+            var data = {
+                "tree": baseTree
+            };
+            _request("POST", repoPath + "/git/trees", data, function(err, res) {
+                if (err) return cb(err);
+                cb(null, res.sha);
+            });
+
+        };
+
+
+        this.multipleUpdateTree = function(baseTree, blobs, cb) {
+            var p, data, hasRemove = false;
+
+            for (p in blobs) {
+                if (blobs[p] == null) {
+                    hasRemove = true;
+                    break;
+                }
+            }
+
+            if (false) {
+                // Extrac all tree recursibly and remove blob(s) from it
+                that.getTree(baseTree+"?recursive=true", function(err, tree) {
+                    var iter;
+                    var newTree = tree;
+                    // Update Tree
+                    for (iter=0; iter<newTree.length; ++iter) {
+                        // update tree
+                        if (newTree[iter].type == "tree") {
+                            delete newTree[iter]["sha"];
+                            continue;
+                        }
+                        // remove file
+                        if (blobs[newTree[iter].path] === null) {
+                            delete newTree.splice(iter, 1);
+                            delete blobs[newTree[iter].path];
+                            --iter;
+                            continue;
+                        }
+                        if (blobs[newTree[iter].path] != undefined) {
+                            newTree[iter].sha = blobs[newTree[iter].path];
+                            delete blobs[newTree[iter].path];
+                        }
+                    }
+
+                    // Expand tree with newly created
+                    // context blobs
+                    for (iter in blobs) {
+                        var magic = "100644";
+                        if (blobs[iter].type == "tree") {
+                            magic = "040000";
+                        }
+                        newTree.push({
+                            "path": iter,
+                            "mode": magic,
+                            "type": blobs[iter].type,
+                            "sha": blobs[iter]
+                        });
+                    }
+
+                    that.postTree(newTree, function(err, res) {
+                        if (err) return cb(err);
+                        cb(null, res);
+                    });
+                });
+            }
+            else {
+                data = {
+                    "base_tree": baseTree,
+                    "tree": [
+                    ]
+                };
+
+                for (p in blobs) {
+                    var item;
+                    // Remove item if content is empty
+                    if (blobs[p].sha != null) {
+                        var magic = "100644";
+                        var treePath = p;
+                        if (blobs[p].type == "tree") {
+                            magic = "040000";
+                            treePath = treePath.substring(0, treePath.lastIndexOf("/")+1);
+                        }
+                        item = {
+                            "path": treePath,
+                            "mode": magic,
+                            "type": blobs[p].type,
+                            "sha": blobs[p].sha
+                        };
+                        data["tree"].push(item);
+                    }
+                    else {
+                        for (var xxx in blobs[p].tree) {
+                            data["tree"].push(blobs[p].tree[xxx]);
+                        }
+                        /*              var subspl = p.split("/");
+                         if (subspl.length > 1) {
+                         item = {
+                         "path": subspl[0],
+                         "type": "tree",
+                         "mode": "040000",
+                         "sha":null
+                         };
+                         data["tree"].push(item);
+                         }
+                         item = {
+                         "path": p,
+                         "type": "blob",
+                         "mode": "100644",
+                         "content":null,
+                         "sha": blobs[p].rmsha
+                         };*/
+                    }
+
+                }
+                _request("POST", repoPath + "/git/trees", data, function(err, res) {
+                    if (err) return cb(err);
+                    cb(null, res.sha);
+                });
+            }
+        };
 
       // Post a new tree object having a file path pointer replaced
       // with a new blob SHA getting a tree SHA back
@@ -630,6 +757,74 @@
           });
         });
       };
+
+        // Write multiple file contents to a given branch and path
+        // -------
+
+        this.multipleCommit = function(branch, mapPathContent, message, cb, statusCallback) {
+            statusCallback("Fetch HEAD of the " + branch);
+            updateTree(branch, function(err, latestCommit) {
+                // Failed to update the head of the branch
+                if (err) return cb(err);
+
+                statusCallback("HEAD of the " + branch + " is ok");
+
+                var blobContentList = mapPathContent;
+                var blobShaList = {};
+                var nextBlob;
+
+                function nextBlobOrTree(err, blob, tree) {
+                    if (err) return cb(err);
+
+                    if (nextBlob) {
+                        statusCallback("Done " + nextBlob.path);
+                        if (tree) {
+                            blobShaList[nextBlob.path] = {sha:blob, type:'tree'};
+                        }
+                        else {
+                            blobShaList[nextBlob.path] = {sha:blob, type:'blob'};
+                        }
+                    }
+
+                    nextBlob =  blobContentList.shift();
+                    if (nextBlob) {
+                        if (nextBlob.content) {
+                            statusCallback("Transmitting  " + nextBlob.path);
+                            that.postBlob(nextBlob.content, nextBlobOrTree);
+                        }
+                        else {
+                            // Remove blob from the tree
+                            for (var xxx in nextBlob.tree) {
+                                if (nextBlob.tree[xxx].sha == nextBlob.sha) {
+                                    delete nextBlob.tree[xxx];
+                                    nextBlob.tree.splice(xxx, 1);
+                                }
+                            }
+                            that.removeTree(nextBlob.tree, function(err, blob) {
+                                nextBlobOrTree(err, blob, 'tree');
+                            });
+                        }
+                    }
+                    else {
+                        statusCallback("Updating the tree...");
+                        that.multipleUpdateTree(latestCommit, blobShaList, function(err, tree) {
+                            statusCallback("Done the tree update");
+                            // Create a git commit
+                            statusCallback("Commit creation ...");
+                            that.commit(latestCommit, tree, message, function(err, commit) {
+                                if (err) return cb(err);
+                                // Move the commit result to the HEAD
+                                statusCallback("Commit done");
+                                statusCallback("Update the HEAD");
+                                that.updateHead(branch, commit, cb);
+                            });
+                        });
+                    }
+                };
+
+                nextBlobOrTree();
+            });
+        };
 
       // List commits on a repository. Takes an object of optional paramaters:
       // sha: SHA or branch to start listing commits from
