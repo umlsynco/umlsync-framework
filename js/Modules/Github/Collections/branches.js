@@ -1,8 +1,8 @@
 define([
         'backbone',
-        'Module/Github/backend',
+        '.././Github/backend',
         'Views/framework',
-        'Module/Github/Model/repoItemModel'],
+        '.././Github/Model/repoItemModel'],
     function (Backbone, Backend, Framework, RepoModel) {
         var Repositories = Backbone.Collection.extend({
             groups: [

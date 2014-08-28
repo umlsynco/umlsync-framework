@@ -7,7 +7,7 @@ define(['jquery',
         'Views/Controls/treeView',
         '../Collections/contentCacheCollection',
         'Views/Menus/dropDownMenu',
-        'Module/Github/backend',
+        '.././Github/backend',
         'Views/Dialogs/commitDialog'
     ],
     function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB, CommitDialog) {

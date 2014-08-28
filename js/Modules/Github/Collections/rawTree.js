@@ -1,5 +1,5 @@
 
-define(['backbone', 'Views/framework','Module/Github/Model/treeItemModel'], function (Backbone, Framework, TreeModel) {
+define(['backbone', 'Views/framework','.././Github/Model/treeItemModel'], function (Backbone, Framework, TreeModel) {
     var TreeCollection = Backbone.Collection.extend({
         model: TreeModel,
         processTree: function (path, data) {

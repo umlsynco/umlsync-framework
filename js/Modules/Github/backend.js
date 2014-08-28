@@ -1,15 +1,15 @@
 define(['marionette',
         'Views/framework',
         'github',
-        'Module/Github/Collections/rawTree',
-        'Module/Github/Model/treeItemModel',
-        'Module/Github/Collections/repositories',
-        'Module/Github/Collections/branches'
+        'Modules/Github/Collections/rawTree',
+        'Modules/Github/Model/treeItemModel',
+        'Modules/Github/Collections/repositories',
+        'Modules/Github/Collections/branches'
     ],
     function (Marionette, Framework, Github, RawTree, TreeModel, RepoCollection, Branches) {
         Framework.module('Backend', function(Backend) {
             Backend.Github = {};
-            Backend.Github.github = new Github({username:'umlsynco', token:'49f73b29795878a727847148976b9e9ced692e20'});
+            Backend.Github.github = new Github({username:'umlsynco', token:'0528657ffgfgrfd8bbc5c783e0df'});
 
             Backend.Github.GetTreeCollection = function(treeOptions) {
                 var extendedTreeCollection = TreeModel.extend(treeOptions);

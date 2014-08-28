@@ -67,7 +67,7 @@ require(
      'Controllers/contentController',
         'Views/Files/sourcecodeView',
         'Views/Files/markdownView',
-     'Module/Github/Views/githubLayoutView'
+     'Modules/Github/Views/githubLayoutView'
     ],
 function(Framework, Controller, scview, ghView) {
     // Start the framework

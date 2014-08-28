@@ -2961,7 +2961,7 @@
             var args = slice.call(arguments);
             args.unshift(this);
 
-            // see the Marionette.Module object for more information
+            // see the Marionette.Modules object for more information
             return ModuleClass.create.apply(ModuleClass, args);
         },
 
@@ -2998,7 +2998,7 @@
 
     /* jshint maxparams: 9 */
 
-    // Module
+    // Modules
     // ------
 
     // A simple module system, used to create privacy and encapsulation in
@@ -3029,12 +3029,12 @@
 
     Marionette.Module.extend = Marionette.extend;
 
-    // Extend the Module prototype with events / listenTo, so that the module
+    // Extend the Modules prototype with events / listenTo, so that the module
     // can be used as an event aggregator or pub/sub.
     _.extend(Marionette.Module.prototype, Backbone.Events, {
 
         // Initialize is an empty function by default. Override it with your own
-        // initialization logic when extending Marionette.Module.
+        // initialization logic when extending Marionette.Modules.
         initialize: function() {},
 
         // Initializer for a specific module. Initializers are run when the
@@ -3184,10 +3184,10 @@
             return module;
         },
 
-        // ## Module Classes
+        // ## Modules Classes
         //
-        // Module classes can be used as an alternative to the define pattern.
-        // The extend function of a Module is identical to the extend functions
+        // Modules classes can be used as an alternative to the define pattern.
+        // The extend function of a Modules is identical to the extend functions
         // on other Backbone and Marionette classes.
         // This allows module lifecyle events like `onStart` and `onStop` to be called directly.
         getClass: function(moduleDefinition) {
