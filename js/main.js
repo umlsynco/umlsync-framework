@@ -6,7 +6,7 @@ require.config({
         scrolltab : "lib/jquery.scrollabletab",
         backbone : "lib/backbone-min",
         marionette : "lib/backbone.marionette",
-		github : 'lib/github',
+		github : 'lib/marionette.github',
 		base64 : 'lib/base64',
         textjs : 'lib/text',
         dynatree : 'lib/jquery.dynatree',
@@ -36,7 +36,7 @@ require.config({
 		  export: 'HotKey'
 		},
 		github : {
-            deps : ['underscore', 'base64'],
+            deps : ['underscore', 'base64', 'marionette'],
 		    exports : 'Github'
 		},
         scrolltab: {

@@ -7,7 +7,7 @@ define(['jquery',
         'Views/Controls/treeView',
         '../Collections/contentCacheCollection',
         'Views/Menus/dropDownMenu',
-        '.././Github/backend',
+        'Modules/Github/backend',
         'Views/Dialogs/commitDialog'
     ],
     function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB, CommitDialog) {
@@ -133,7 +133,10 @@ define(['jquery',
             // DropDown menu for repository and branch selection
             //
             activateRepoAndBranch: function() {
-                this.RepoModel = Framework.Backend.Github.GetRepoCollection();
+                this.User = Framework.Backend.Github.getUser();
+                this.User.fetch();
+
+                this.RepoModel = this.User.getRepositories();
 
                 var repoView = new (DropdownView.extend({
                     childViewEventPrefix: "github:repo",
@@ -147,7 +150,8 @@ define(['jquery',
                 // Branch select model depends on repo select model
                 // but it doesn't required to re-render full model
                 // only itemViews have to be updated.
-                this.BranchModel = Framework.Backend.Github.GetBranchCollection();
+                this.BranchModel = Framework.Backend.Github.getRefs();
+
                 var branchView = new (DropdownView.extend({
                     childViewEventPrefix: "github:branch",
                     groups:this.BranchModel.groups,
@@ -163,7 +167,7 @@ define(['jquery',
             //
             activateTree: function () {
 
-                this.TreeModel = Framework.Backend.Github.GetTreeCollection();
+                this.TreeModel = Framework.Backend.Github.getTree();
                 this.TreeModel.on("remove", function () {
                     // Handle remove item use-case
                 });
