@@ -8,9 +8,10 @@ define(['jquery',
         '../Collections/contentCacheCollection',
         'Views/Menus/dropDownMenu',
         'Modules/Github/backend',
-        'Views/Dialogs/commitDialog'
+        'Views/Dialogs/commitDialog',
+        'Modules/Github/Controllers/syncModelController'
     ],
-    function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB, CommitDialog) {
+    function ($, Marionette, Github, ToolboxCollection, ToolboxView, Framework, TreeView, CacheCollection, DropdownView, GHB, CommitDialog, syncController) {
         var githubLayout = Marionette.LayoutView.extend({
             template: "#github-content-layout",
             regions: {
@@ -97,6 +98,14 @@ define(['jquery',
                 this.activateRepoAndBranch();
                 this.activateTree();
                 this.activateContentCache({cacheLimit: 20});
+
+                // Controller which is responsible for models sync-up
+                this.syncController = new syncController({
+                    repo: this.RepoModel,
+                    refs: this.BranchModel,
+                    tree: this.TreeModel,
+                    cache: this.ContentCache
+                });
 
             },
 
@@ -197,6 +206,7 @@ define(['jquery',
 				  that.saveContent(data);
 				});
             },
+
             ////////////////////////////////////// CONTENT CACHE FUNCTIONALITY /////////////////////////////////////////
             //
             // Send event to mediator to ask if we could open this content
@@ -211,6 +221,7 @@ define(['jquery',
 
                 Framework.vent.trigger("content:focus", clone);
             },
+
             //
             // Save content
             //
@@ -236,6 +247,7 @@ define(['jquery',
 				  alert("model was not found in cache");
 				}
 			},
+
             //
             // Respond from mediator to load content
             //
@@ -309,7 +321,7 @@ define(['jquery',
                         triggerContinue = !this.activeRepo;
 					}
                     else {
-                        if (this.activeBranch == data.model.get("full_name")) {
+                        if (this.activeBranch == data.model.get("name")) {
                             return;
                         }
                         this.workingStack.push({event:"github:branch:change", context:data});
@@ -328,28 +340,9 @@ define(['jquery',
 					
                     Framework.vent.trigger('content:syncall', {view:'github', repo:this.activeRepo, branch: this.activeBrach});
 			},
-			onGithubRepoChange: function(data) {
-              // Disable isActive for the previous repo
-              if (this.activeRepo) {
-                  var models = this.RepoModel.where({isActive:true}); // full_name:this.activeRepo,
-                  if (models.length == 1) {
-                      models[0].set({isActive:false});
-                  }
-              }
-              // set an active repository
-			  this.activeRepo = data.model.get("full_name");
-              // lead to dropdown dialog change
-              data.model.set({isActive:true});
 
-              // as far as we trust to Github.API we could extract the list of branches
-              // and reload tree in parallel
-              this.activeBranch = data.model.get("default_branch") || 'master';
-              // reload tree for default branch
-              this.TreeModel.reset();
-              this.TreeModel.fetch({data:{repo:this.activeRepo, branch:this.activeBranch}});
-              // reload the list of branches/tags for repository
-              this.BranchModel.reset();
-              this.BranchModel.fetch({data:{repo:this.activeRepo, default_branch:this.activeBranch, group:'Branches'}});
+			onGithubRepoChange: function(data) {
+              this.syncController.SetActiveRepo(data.model);
 			},
             //
             // COMMIT DIALOG
@@ -417,21 +410,7 @@ define(['jquery',
             // change the github branch
             //
             onGithubBranchChange: function(data) {
-                // Disable isActive for the previous branch
-                if (this.activeBranch) {
-                    var models = this.BranchModel.where({isActive:true});// full_name:this.activeBranch
-                    if (models.length == 1) {
-                        models[0].set({isActive:false});
-                    }
-                }
-                // set an active branch
-                this.activeBranch = data.model.get("full_name");
-                // lead to dropdown dialog change
-                data.model.set({isActive:true});
-
-                // reload tree for a new branch
-                this.TreeModel.reset();
-                this.TreeModel.fetch({data:{repo:this.activeRepo, branch:this.activeBranch}});
+                this.syncController.SetActiveBranch(data.model);
             }
         });
 

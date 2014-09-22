@@ -27,6 +27,9 @@ define([
                         text += "list-style-image:url('images/public.png'";
                     }
                     return text;
+                },
+                getTitle: function() {
+                    return this.full_name || this.name;
                 }
             },
             modelEvents: {
@@ -133,17 +136,26 @@ define([
             ui: {
                 title: "a.minibutton span.js-select-button"
             },
-            initialize: function () {
+            _getTitle: function(data) {
+                if (data.has("full_name")) {
+                    return data.get("full_name");
+                }
+
+                if (data.has("name")) {
+                    return data.get("name");
+                }
+            },
+            initialize: function() {
                 var that = this;
                 this.collection.on("change:isActive", function (data) {
-                    var title = data.get("full_name");
+                    var title = that._getTitle(data);
                     if (title) {
                         that.ui.title.html(title);
                     }
                 }, this);
 
                 this.collection.on("add", function (model) {
-                    var title = model.get("full_name");
+                    var title = that._getTitle(model);
                     if (title && model.get("isActive")) {
                         that.ui.title.html(title);
                     }

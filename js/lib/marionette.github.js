@@ -63,49 +63,38 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 model: TreeModel,
                 getUrl: function (method, model, options) {
                     if (method == "read") {
-                        var username = this.login;
-                        var reponame = this.repository;
-                        var sha = options.sha || this.commit.sha;
-                        return API_URL + "/repos/" + username + "/" + reponame + "/git/trees/" + sha;
+                        var reponame = this.Branch.collection.Repository.get('full_name');
+                        var sha = options.sha || this.Branch.get("commit").sha;
+                        return API_URL + "/repos/" + reponame + "/git/trees/" + sha;
                     }
                 },
                 parse: function (resp, options) {
                     return resp.tree;
                 },
-                initialize: function (options) {
-                    if (options) {
-                        this.commit = options.commit;         // Commit SHA
-                        this.repository = options.repository; // Repository name
-                        this.branch = options.branch;         // Branch name [optional]
-                        this.login = options.login;           // username
-                    }
+                initialize: function (options, attr) {
+                    attr && (this.Branch = attr.branch);
                 },
                 loadSubTree: function (model) {
                     if (model.get("type") == "tree" && model.get("sha")) {
                         this.fetch({sha: model.get("sha")});
                     }
+                },
+                setBranch: function(model, options) {
+                    this.Branch = model;
+                    this.fetch(options || {reset:true, add:true});
                 }
             });
 
             //////////////////////////////////////////////// BRANCH
             var BranchModel = Backbone.GithubModel.extend({
                 url: function (args) {
-                    var username = this.login;
-                    var reponame = this.repository;
-                    var branch = this.get("branch");
-                    return API_URL + "/repos/" + username + "/" + reponame + "/branches/" + branch;
+                    var username = this.collection.Repository.get("full_name");
+                    var branch = this.get("name");
+                    return API_URL + "/repos/" + username + "/branches/" + branch;
                 },
-                initialize: function (options) {
-                    this.login = options.login;
-                    this.repository = options.repository;
-                },
-                getTree: function (commit) {
-                    if (this.tree) {
-                        this.tree.setCommit(commit || this.get("commit"));
-                        return this.tree;
-                    }
-                    else {
-                        this.tree = new TreeCollection({login: this.login, repository: this.repository, branch: this.get("branch"), commit: commit || this.get("commit")});
+                getTree: function () {
+                    if (!this.tree) {
+                      this.tree = new TreeCollection([], {branch: this});
                     }
                     return this.tree;
                 },
@@ -115,8 +104,10 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             });
 
             Backbone.GithubExtendedCollection = Backbone.GithubCollection.extend({
+                isValid: function() {return true;},
                 lazyLoad: function (data) {
-                    if (!data.group)
+                    // TODO: replace this.repository on
+                    if (!data.group || !this.isValid())
                         return;
 
                     var that = this;
@@ -161,14 +152,22 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     {title: "Tags"}
                 ],
                 defaultGroup: "Branches",
+                isValid: function() {
+                  return (this.Repository != undefined);
+                },
                 getUrl: function (method, model, options) {
                     if (method == "read") {
                         var group = options.group || this.defaultGroup;
+                        var user = this.Repository.collection.User;
+
+                        // User information required to start branches
+                        var login = user.get('login');
+
                         if (group == 'Tags') {
-                            return API_URL + "/repos/" + this.login + "/" + this.repository + "/tags";
+                            return API_URL + "/repos/" + login + "/" + this.Repository.get('name') + "/tags";
                         }
                         else {
-                            return API_URL + "/repos/" + this.login + "/" + this.repository + "/branches";
+                            return API_URL + "/repos/" + login + "/" + this.Repository.get('name') + "/branches";
                         }
                     }
                     return "/";
@@ -180,10 +179,10 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     return this._getRef(name, 'Tags');
                 },
                 _getRef: function (name, group) {
-                    var models = this.where({branch: name});
+                    var models = this.where({name: name});
                     if (models.length == 0) {
                         // describe model
-                        var model = new BranchModel({branch: name, login: this.login, repository: this.repository, group: group});
+                        var model = new BranchModel({collection:this, group: group, name: name});
                         // add on fetch completion
                         var that = this;
                         model.on("sync", function () {
@@ -195,51 +194,44 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         return models[0];
                     }
                 },
-                initialize: function (options) {
-                    if (options) {
-                        this.login = options.login;
-                        this.repository = options.repository;
-
-                        // extend model opptions with login
-                        this.modelOptions = {
-                            login: this.login,
-                            repository: this.repository
-                        };
-                    }
+                initialize: function (options, attr) {
+                    attr && (this.Repository = attr.repository);
                 },
-                model: function (attrs, options) {
-                    var opt = $.extend({}, options, this.modelOptions);
-                    return new BranchModel(attrs, opt);
-                }
+                setRepository: function(model, options) {
+                  options || (options = {reset: true});
+                  this.Repository = model;
+                  this.fetch(options);
+                },
+                model: BranchModel
             });
 
             var Tags = Branches.extend({defaultGroup: 'Tags'});
 
-            //////////////////////////////////////////////// REPOSITORY
+            //////////////////////////////////////////////// REPOSITORY API
             var RepositoryModel = Backbone.GithubModel.extend({
                 defaults: {
                   full_name: 'none'
                 },
                 url: function (args) {
-                    var username = this.login;
+                    var user = this.collection.User;
+                    var username = user.get('login');
                     var reponame = this.get("name");
                     return API_URL + "/repos/" + username + "/" + reponame;
                 },
-                initialize: function (options) {
-                    this.login = options.login;
-                },
                 getBranches: function () {
                     if (!this.branches) {
-                        this.branches = new Branches({login: this.login, repository: this.get("name"), group: 'Branches'});
+                        this.branches =
+                          new Branches([], {repository: this, // Get pointer on the base model
+                                            group: 'Branches'});
                     }
                     return this.branches;
                 },
                 getTags: function () {
                     if (!this.tags) {
-                        this.tags = new Branches({login: this.login, repository: this.get("name"), group: 'Tags'});
+                        this.tags = new Branches([], {repository: this, group: 'Tags'});
                     }
                     return this.tags;
-                },
+                }
             });
 
             var Repositories = Backbone.GithubExtendedCollection.extend({
@@ -254,7 +246,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     var models = this.where({name: name});
                     if (models.length == 0) {
                         // describe model
-                        var model = new RepositoryModel({name: name, login: this.login});
+                        var model = new RepositoryModel({collection:this});
                         // fetch model
                         model.fetch();
                         // add on fetch completion
@@ -265,20 +257,13 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     }
                     return model;
                 },
-                initialize: function (options) {
-                    this.login = options.login;
-                    // extend model options with login
-                    this.modelOptions = {
-                        login: this.login
-                    };
+                initialize: function (options, attr) {
+                    this.User = attr.user;
                 },
-                model: function (attrs, options) {
-                    var opt = $.extend({}, options, {login: this.login});
-                    return new RepositoryModel(attrs, opt);
-                }
+                model: RepositoryModel
             });
 
-            //////////////////////////////////////////////// USER
+            //////////////////////////////////////////////// USER API
             var UserModel = Backbone.GithubModel.extend({
                 url: function () {
                     var name = this.get("login");
@@ -286,7 +271,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 getRepositories: function () {
                     if (!this.repositories) {
-                        this.repositories = new Repositories({login: this.get("login")});
+                        this.repositories = new Repositories([], {user: this});
                     }
                     return this.repositories;
                 }
@@ -298,7 +283,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             };
 
             this.getRepositories = function (username) {
-                return new Repositories({login: username});
+                return new Repositories([], {user: this.getUser(username)});
             };
 
             this.getRefs = function (full_name) {
