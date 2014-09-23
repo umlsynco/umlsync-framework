@@ -54,6 +54,28 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     else {
                         return API_URL + "/repos/" + username + "/" + reponame + "/git/trees";
                     }
+                },
+                getDynatreeData: function() {
+                    var ret = {};
+                    if (this.get("type") == "blob") {
+                        ret["isFolder"] = false;
+                        ret["isLazy"] = false;
+                        ret["title"] = this.get("path").split('/').pop();
+                        ret["key"] = this.cid;
+                        ret["sha"] = this.get("sha");
+                    }
+                    else if (this.get("type") == "tree") {
+                        ret["isFolder"] = true;
+                        ret["isLazy"] = true;
+                        ret["title"] = this.get("path").split('/').pop();
+                        ret["key"] = this.cid;
+                    }
+                    var pcid = this.get("parentCid");
+                    if (pcid) {
+                        ret["parentCid"] = pcid;
+                    }
+
+                    return ret;
                 }
             });
 
@@ -64,11 +86,13 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 getUrl: function (method, model, options) {
                     if (method == "read") {
                         var reponame = this.Branch.collection.Repository.get('full_name');
-                        var sha = options.sha || this.Branch.get("commit").sha;
+                        var sha = options.data ? options.data.sha  : this.Branch.get("commit").sha;
                         return API_URL + "/repos/" + reponame + "/git/trees/" + sha;
                     }
                 },
                 parse: function (resp, options) {
+                    if (options.data && options.data.parentCid)
+                      _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid;});
                     return resp.tree;
                 },
                 initialize: function (options, attr) {
@@ -81,7 +105,27 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 setBranch: function(model, options) {
                     this.Branch = model;
-                    this.fetch(options || {reset:true, add:true});
+                    this.reset(); // Drop an existing items
+                    this.fetch(options);
+                },
+                lazyLoad: function(data) {
+                    if (!data.key)
+                        return;
+
+                    var model = this.get({cid:data.key});
+
+                    if (!model)
+                        return;
+
+                    var sha = model.get('sha');
+                    if (!sha)
+                        return;
+                    this.fetch({
+                        add: true,
+                        remove:false,
+                        merge: false,
+                        data: {sha:sha, parentCid:data.key}
+                    });
                 }
             });
 
