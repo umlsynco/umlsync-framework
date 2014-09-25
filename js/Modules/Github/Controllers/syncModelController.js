@@ -13,7 +13,7 @@ define(['marionette',
             // Provide all controllable items
             //
             initialize: function (options) {
-                this.RepoModel = options.repository;
+                this.RepoModel = options.repo;
                 this.Refs = options.refs;
                 this.Tree = options.tree;
                 this.ContentCache = options.cache;
@@ -32,7 +32,7 @@ define(['marionette',
             SetActiveRepo: function(model) {
                 // Disable isActive for the previous repo
                 if (this.activeRepo) {
-                    var models = this.Repo.where({isActive:true}); // full_name:this.activeRepo,
+                    var models = this.RepoModel.where({isActive:true}); // full_name:this.activeRepo,
                     if (models.length == 1) {
                         models[0].set({isActive:false});
                     }

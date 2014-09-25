@@ -87,7 +87,7 @@ define(['marionette',
                 // Load content in focus and implement the content cache
                 // functionality (priority queue, number of references etc).
                 this.LoadContentController = new LoadContentController({
-                    treeView: this.TreeModel, // Tree view
+                    treeView: this.TreeView, // Tree view
                     cache: this.ContentCache, // Cache model
                     controller: this // To provide actual data on getViewInfo()
                 });

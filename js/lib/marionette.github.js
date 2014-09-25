@@ -77,7 +77,6 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 setBranch: function(model, options) {
                     this.Branch = model;
                     this.reset(); // Drop an existing items
-                    this.fetch(options);
                 }
             });
 

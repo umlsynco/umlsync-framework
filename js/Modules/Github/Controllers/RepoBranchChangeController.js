@@ -18,31 +18,41 @@ define(['marionette',
                     that.onGithubRepoOrBranchSelected(data, false);
                 });
             },
+            changeRepoOrBranch: function(data, isRepoFlag) {
+                var ghc = this.GithubController;
+                if (isRepoFlag)
+                    ghc.SyncModelsController.SetActiveRepo(data.model);
+                else
+                    ghc.SyncModelsController.SetActiveBranch(data.model);
+
+            },
             onGithubRepoOrBranchSelected: function(data, isRepoFlag) {
                 var info = this.GithubController.getViewInfo();
+                var that = this;
 
                 // Do nothing if the same repo was selected
                 if (isRepoFlag) {
                     if (info.repo == data.model.get("full_name")) {
                         return;
                     }
+                    else if (info.repo == undefined || info.repo == "none") {
+                        this.changeRepoOrBranch(data, isRepoFlag);
+                    }
                 }
                 else {
                     if (info.branch == data.model.get("name")) {
                         return;
                     }
+                    else if (info.branch == undefined || info.branch == "none") {
+                      this.changeRepoOrBranch(data, isRepoFlag);
+                    }
                 }
 				
-				var ghc = this.GithubController;
                 this.GithubController.HandleOpenedContent({
                     close:true,
                     done: function() {
                         // On commit completion
-						if (isRepoFlag)
-						  ghc.SyncModelsController.SetActiveRepo(data.model);
-						else
-						  ghc.SyncModelsController.SetActiveBranch(data.model);
-
+                        that.changeRepoOrBranch(data, isRepoFlag);
                     },
                     cancel: function() {
                         // On Commit cancel
