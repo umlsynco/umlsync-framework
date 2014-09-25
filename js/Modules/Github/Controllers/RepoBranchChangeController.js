@@ -32,15 +32,22 @@ define(['marionette',
                         return;
                     }
                 }
-                this.GithubController.CommitChanges({
+				
+				var ghc = this.GithubController;
+                this.GithubController.HandleOpenedContent({
                     close:true,
-                    complete: function() {
+                    done: function() {
                         // On commit completion
+						if (isRepoFlag)
+						  ghc.SyncModelsController.SetActiveRepo(data.model);
+						else
+						  ghc.SyncModelsController.SetActiveBranch(data.model);
+
                     },
                     cancel: function() {
                         // On Commit cancel
                     },
-                    continue: function() {
+                    skip: function() {
                         // Skip commit -> change repo/branch
                     }
                 });

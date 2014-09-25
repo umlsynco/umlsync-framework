@@ -9,14 +9,15 @@ define(['marionette',
         'Views/Menus/dropDownMenu',
         './SyncModelController',  // Controller to synchronize models
         './LoadContentController',// Load content in focus if needed
-        './SyncTabsController'    // Sync tabs controller
+        './SyncTabsController',   // Sync tabs controller
+		'./RepoBranchChangeController'
     ],
     function(// Basic
               Marionette, Framework,
              // Views
              TreeView, DropdownView,
              // Controllers
-             SyncModelController, LoadContentController, SyncTabsController) {
+             SyncModelController, LoadContentController, SyncTabsController, RBController) {
         var Facade = Marionette.Controller.extend({
             initialize: function(options) {
                 this.Regions = options.regions;
@@ -90,6 +91,8 @@ define(['marionette',
                     cache: this.ContentCache, // Cache model
                     controller: this // To provide actual data on getViewInfo()
                 });
+				
+				this.RbcController = new RBController({controller:this});
             },
 
             //
