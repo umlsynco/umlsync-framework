@@ -41,6 +41,46 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 sync: wrapSync
             });
 
+            var ContentModel = Backbone.GithubModel.extend({
+                //repos/:owner/:repo/git/trees
+                url: function (args) {
+                    var username = this.login;
+                    var reponame = this.repository;
+                    var sha = this.get("sha");
+                    if (sha) {
+                        return API_URL + "/repos/" + username + "/" + reponame + "/git/blobs/" + sha;
+                    }
+                    else {
+                        return API_URL + "/repos/" + username + "/" + reponame + "/git/blobs";
+                    }
+                }
+            });
+
+            var ContentCollection = Backbone.GithubCollection.extend({
+                model: ContentModel,
+                // GET /repos/:owner/:repo/git/blobs/:sha
+                getUrl: function (method, model, options) {
+                    if (method == "read") {
+                        var reponame = this.Branch.collection.Repository.get('full_name');
+                        var sha = options.data ? options.data.sha  : this.Branch.get("commit").sha;
+                        return API_URL + "/repos/" + reponame + "/git/blobs/" + sha;
+                    }
+                },
+                parse: function (resp, options) {
+                    if (options.data && options.data.parentCid)
+                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid;});
+                    return resp.tree;
+                },
+                initialize: function (options, attr) {
+                    attr && (this.Branch = attr.branch);
+                },
+                setBranch: function(model, options) {
+                    this.Branch = model;
+                    this.reset(); // Drop an existing items
+                    this.fetch(options);
+                }
+            });
+
             var TreeModel = Backbone.GithubModel.extend({
                 //repos/:owner/:repo/git/trees
                 url: function (args) {
@@ -142,8 +182,11 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     }
                     return this.tree;
                 },
-                getContentCache: function () {
-                    return null;
+                getContentCache: function() {
+                    if (!this.content) {
+                        this.content = new ContentCollection([], {branch: this});
+                    }
+                    return this.content;
                 }
             });
 
@@ -344,8 +387,12 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 return new Branches({login: items[0], repository: items[1]});
             };
 
-            this.getTree = function (full_name, commit) {
-                return new TreeCollection();
+            this.getTree = function (branch) {
+                return new TreeCollection({branch:branch});
+            };
+
+            this.getContentCache= function (branch) {
+                return new ContentCollection({branch:branch});
             };
 
             this.workingStack = new Array(); // {event, context}
