@@ -37,6 +37,7 @@ define(['marionette',
                     }
                     else if (info.repo == undefined || info.repo == "none") {
                         this.changeRepoOrBranch(data, isRepoFlag);
+                        return;
                     }
                 }
                 else {
@@ -45,6 +46,7 @@ define(['marionette',
                     }
                     else if (info.branch == undefined || info.branch == "none") {
                       this.changeRepoOrBranch(data, isRepoFlag);
+                      return;
                     }
                 }
 				

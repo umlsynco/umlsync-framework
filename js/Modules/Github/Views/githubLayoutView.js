@@ -19,7 +19,7 @@ define(['jquery',
             },
             // Layered view was rendered
             onRender: function (options) {
-                this.Facade = new Facade({regions:this});
+                if (!this.Facade) this.Facade = new Facade({regions:this});
             },
 
             resize: function(event, width, height) {
