@@ -22,11 +22,11 @@ define(['marionette',
 
                 // trigger loaded
                 this.ContentCache.on("add", function(model) {
-                    Framework.vent.trigger("content:loaded", _.clone(model.attributes));
+                    that.triggerContentLoaded(model);
                 });
                 // Handle Error
                 this.ContentCache.on("error", function(model) {
-                    Framework.vent.trigger("content:loaded", _.clone(model.attributes));
+                    that.triggerContentLoaded(model);
                 });
 
                 // Subscribe on global tree events
@@ -44,7 +44,7 @@ define(['marionette',
             // Send event to mediator to ask if we could open this content
             //
             contentInFocus: function (data) {
-                var clone = $.extend({}, data, this.GithubController.getViewInfo());
+                var clone = $.extend({}, _.pick(data, "key", "sha", 'title', "absPath"), this.GithubController.getViewInfo());
 
                 // Trigger content in focus to tabs controller
                 Framework.vent.trigger("content:focus", clone);
@@ -76,6 +76,10 @@ define(['marionette',
                 }
             },
 
+            triggerContentLoaded: function(model) {
+                var clone = $.extend({}, model.attributes, this.GithubController.getViewInfo());
+                Framework.vent.trigger("content:loaded", clone);
+            },
             //
             // Respond from mediator to load content
             //
@@ -91,7 +95,7 @@ define(['marionette',
                 }
                 // if content was cached yet
                 else if (model.length == 1) {
-                    Framework.vent.trigger("content:loaded", _.clone(model[0].attributes));
+                    this.triggerContentLoaded(model[0]);
                 }
                 // get content from github
                 else {
@@ -99,7 +103,7 @@ define(['marionette',
                         add: true,
                         remove:false,
                         merge: false,
-                        data: data
+                        contentData: data
                     });
                 }
             }

@@ -1,7 +1,7 @@
 // Backbone.Github.js 0.0.1
 // (c) 2014 Evgeny Alexeyev 
 
-define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (jQuery, _, Base64, Backbone, Marionette) {
+define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (jQuery, _, B64, Backbone, Marionette) {
 
     var API_URL = 'https://api.github.com';
 
@@ -17,7 +17,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 // wrap before send method
                 options.beforeSend = function (xhr) {
                     // Setup request headers
-                    xhr.setRequestHeader('Accept', 'application/vnd.github.v3.raw+json');
+                    xhr.setRequestHeader('Accept', 'application/vnd.github.v3.json');
                     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
                     if (token) {
                         xhr.setRequestHeader('Authorization', 'token ' + token);
@@ -62,14 +62,15 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 getUrl: function (method, model, options) {
                     if (method == "read") {
                         var reponame = this.Branch.collection.Repository.get('full_name');
-                        var sha = options.data ? options.data.sha  : this.Branch.get("commit").sha;
+                        var sha = options.contentData ? options.contentData.sha  : this.Branch.get("commit").sha;
                         return API_URL + "/repos/" + reponame + "/git/blobs/" + sha;
                     }
                 },
                 parse: function (resp, options) {
-                    if (options.data && options.data.parentCid)
-                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid;});
-                    return resp.tree;
+                    if (resp.encoding == "base64") {
+                        resp.content = Base64.decode(resp.content);
+                    }
+                    return [$.extend({}, options.contentData, resp)];
                 },
                 initialize: function (options, attr) {
                     attr && (this.Branch = attr.branch);

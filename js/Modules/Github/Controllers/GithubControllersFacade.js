@@ -10,14 +10,15 @@ define(['marionette',
         './SyncModelController',  // Controller to synchronize models
         './LoadContentController',// Load content in focus if needed
         './SyncTabsController',   // Sync tabs controller
-		'./RepoBranchChangeController'
+		'./RepoBranchChangeController',
+        './ToolboxController' // Github toolbox icons
     ],
     function(// Basic
               Marionette, Framework,
              // Views
              TreeView, DropdownView,
              // Controllers
-             SyncModelController, LoadContentController, SyncTabsController, RBController) {
+             SyncModelController, LoadContentController, SyncTabsController, RBController, ToolboxController) {
         var Facade = Marionette.Controller.extend({
             initialize: function(options) {
                 this.Regions = options.regions;
@@ -70,6 +71,10 @@ define(['marionette',
 
                 //////////////////////////////// CONTENT CACHE
                 this.ContentCache = Framework.Backend.Github.getContentCache();
+
+                //////////////////////////////// TOOLBOX
+                this.Toolbox = new ToolboxController({controller:this});
+                this.Regions.toolbox.show(this.Toolbox.ToolboxView);
             },
             //
             // There are several controllers required to
@@ -119,12 +124,40 @@ define(['marionette',
                 new SyncTabsController($.extend({}, options, {controller:this}));
             },
 
+            ////////////////////////////////////////////// TREE API
             //
             // Commit changes controller
             //
             CommitChanges: function(options) {
                 return new CommitChangesController($.extend({}, options,
                     {controller:this}));
+            },
+            //
+            // Rebase tree controller
+            //
+            Rebase: function(options) {
+                return new RebaseTreeController(($.extend({}, options,
+                    {controller:this})));
+            },
+
+            //////////////////////////////////////////// CONTENT API
+            //
+            // Trigger new content creation dialog (including path search/load controller)
+            //
+            NewContent: function() {
+
+            },
+            //
+            // Revert content + dialog
+            //
+            RevertContent: function(){
+
+            },
+            //
+            // remove content + dialog
+            //
+            RemoveContent: function() {
+
             }
         });
         return Facade;

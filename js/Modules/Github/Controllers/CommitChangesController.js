@@ -1,8 +1,7 @@
 define(['marionette',
-        'Views/framework',
-        'Controllers/router'],
-    function(Marionette, CollectionView, DataProviderView, ContentCollection, Framework, FrameworkRouter) {
-        var ContentController = Marionette.Controller.extend({
+        'Views/framework'],
+    function(Marionette, Framework) {
+        var Controller = Marionette.Controller.extend({
 
             initialize: function (options) {
                 this.tree = options.tree;                 // tree cache
@@ -11,6 +10,16 @@ define(['marionette',
 
                 // Start the commit
                 this.onGithubRepoCommitUpdateHead();
+                var that = this;
+
+                // Stack implementation
+                Framework.vent.on("github:stack:continue", function (data) {
+                    that.onGithubStackContinue(data);
+                });
+                Framework.vent.on("github:stack:cancel", function (data) {
+                    that.onGithubStackCancel(data);
+                });
+
             },
             onGithubRepoCommitUpdateHead: function() {
                 this.head.on("sync", this.onGithubRepoCommitUpdateHeadComplete, this);
@@ -43,10 +52,84 @@ define(['marionette',
                         content[0].set({sha: model.get("commitSha")});
                     }
                 });
+            },
+            //
+            // COMMIT DIALOG
+            //
+            onGithubRepoCommit: function(data) {
+                if (!_.some(this.contentCache.models, function(model) {
+                    return model.has('modifiedContent');
+                })) {
+                    Framework.vent.trigger("github:stack:continue",data);
+                    return;
+                }
+                var dialog = new CommitDialog({collection:this.contentCache});
+                var that = this;
+                dialog.on("button:commit", function(data) {
+                    if (that.contentCache.when({waitingForCommit:true}).length > 0) {
+                        Framework.vent.trigger("github:repo:commit:start",data);
+                    }
+                    else {
+                        Framework.vent.trigger("github:stack:continue",data);
+                    }
+                });
+
+                dialog.on("button:cancel", function(data) {
+                    Framework.vent.trigger("github:stack:cancel",data);
+                });
+
+                Framework.DialogRegion.show(dialog, {forceShow: true});
+            },
+
+            //
+            // Implements repo commit behavior
+            //
+            onGithubRepoCommitStart: function(data) {
+                var models = that.contentCache.when({waitingForCommit:true});
+                if (models.length > 0) {
+
+                    Framework.vent.trigger("github:repo:commit:checkhead");
+
+
+                    // Save triggers create blob
+                    _.each(model, function(model) {
+                        model.save();
+                    });
+                }
+            },
+            //
+            // Implements repo commit strategy
+            //
+            onGithubRepoCommitContinue: function(data) {
+
+            },
+            //
+            // Implements repo commit strategy
+            //
+            onGithubRepoCommitComplete: function(data) {
+
+            },
+            //
+            // Implements repo commit strategy
+            //
+            onGithubRepoCommitFailed: function(data) {
+
+            },
+            //
+            // Pop event and context from queue
+            //
+            onGithubStackContinue: function(data) {
+                var next = this.workingStack.pop();
+                if (next) {
+                    Framework.vent.trigger(next.event, next.context || data);
+                }
+            },
+            onGithubStackCancel: function(data) {
+                this.workingStack = new Array();
             }
         });
 
-        return ContentController;
+        return Controller;
     }
 );
 
