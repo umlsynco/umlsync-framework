@@ -78,7 +78,43 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 setBranch: function(model, options) {
                     this.Branch = model;
                     this.reset(); // Drop an existing items
-                }
+                },
+				findNewOrBase: function(data) {
+				  var clone = _.pick(data, "absPath", "title");
+				  var models = this.models.where(clone);
+				  // found nothing
+				  if (models.length == 0)
+				    return;
+				  // only base model available
+				  if (models.length == 1) {
+				    return models[1];
+				  }
+				  
+				  // check if models has new model
+				  var result = _.find(models, function(model) {
+				    return model.isNew();
+				  });
+				  if (result) return result;
+				  
+				  // find the concrete model by SHA
+				  return _.find(models, function(model) {
+				    return (model.get("sha") == data.sha)
+				  });
+				  
+				},
+				findNewOrCreate: function(data) {
+				  var model = this.findNewOrBase(data);
+				  // new model already exists
+				  if (model && model.isNew()) {
+				    return model;
+				  }
+
+				  // Clone model except sha which is equal to id
+				  if (model) {
+				    var attr = _.pick(model.attributes, "absPath", "title");
+					return this.create(attr);
+				  }
+				}
             });
 
             var TreeModel = Backbone.GithubModel.extend({
