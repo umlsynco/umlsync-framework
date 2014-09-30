@@ -184,7 +184,7 @@ define(['marionette',
 			onContentSave: function(options) {
 			  if (options.model.get("isModified")) {
 			    var mc = options.model.get("modifiedContent")
-			    Framework.vent.trigger(options.model.get("view") + ":file:save", {key: options.model.get("key"), modifiedContent: mc});
+			    Framework.vent.trigger(options.model.get("view") + ":file:save", $.extend({},options.model.attributes, {modifiedContent: mc}));
 				if (options.action != "close") {
 					// change modified staus
 					options.model.set("isModified", false);

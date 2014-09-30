@@ -11,14 +11,16 @@ define(['marionette',
         './LoadContentController',// Load content in focus if needed
         './SyncTabsController',   // Sync tabs controller
 		'./RepoBranchChangeController',
-        './ToolboxController' // Github toolbox icons
+        './ToolboxController', // Github toolbox icons
+        './CommitChangesController' // Controller to commit changes
     ],
     function(// Basic
               Marionette, Framework,
              // Views
              TreeView, DropdownView,
              // Controllers
-             SyncModelController, LoadContentController, SyncTabsController, RBController, ToolboxController) {
+             SyncModelController, LoadContentController, SyncTabsController,
+             RBController, ToolboxController, CommitChangesController) {
         var Facade = Marionette.Controller.extend({
             initialize: function(options) {
                 this.Regions = options.regions;
@@ -120,6 +122,9 @@ define(['marionette',
             // Instantiate controller which is responsible for
             // synchronization of tab view content
             //
+            // @param options: {closeAll: true} - force all tabs close
+            //                 {done: function} - callback on completion
+            //
             HandleOpenedContent: function(options) {
                 new SyncTabsController($.extend({}, options, {controller:this}));
             },
@@ -129,8 +134,18 @@ define(['marionette',
             // Commit changes controller
             //
             CommitChanges: function(options) {
-                return new CommitChangesController($.extend({}, options,
-                    {controller:this}));
+                var that = this;
+                this.HandleOpenedContent({
+                    done: function () {
+                        that.CommitController =
+                            new CommitChangesController($.extend({}, options,
+                                {controller: that,
+                                 tree: that.TreeModel,
+                                 branch:that.SyncModelsController.getActiveBranch(),
+                                 contentCache: that.ContentCache
+                                }));
+                    }
+                });
             },
             //
             // Rebase tree controller

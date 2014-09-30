@@ -26,6 +26,13 @@ define(['marionette',
               return this.activeRepo || "none";
             },
 
+            getActiveBranch: function() {
+                var models = this.Refs.where({isActive:true}); // full_name:this.activeRepo,
+                if (models.length == 1) {
+                    return models[0];
+                }
+            },
+
             //
             // Change active repository
             //

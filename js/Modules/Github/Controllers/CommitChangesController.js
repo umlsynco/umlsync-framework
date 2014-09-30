@@ -4,13 +4,12 @@ define(['marionette',
         var Controller = Marionette.Controller.extend({
 
             initialize: function (options) {
-                this.tree = options.tree;                 // tree cache
-                this.contentCache = options.contentCache; // Cache of content
-                this.head = options.head;                 // head of branch
-
-                // Start the commit
-                this.onGithubRepoCommitUpdateHead();
+                this.TreeModel = options.tree;            // tree cache
+                this.ContentCache = options.contentCache; // Cache of content
+                this.Branch = options.Branch;             // head of the changeable branch
                 var that = this;
+
+                $.when(this.start()).then(options.success, options.cancel);
 
                 // Stack implementation
                 Framework.vent.on("github:stack:continue", function (data) {
@@ -21,17 +20,33 @@ define(['marionette',
                 });
 
             },
-            onGithubRepoCommitUpdateHead: function() {
-                this.head.on("sync", this.onGithubRepoCommitUpdateHeadComplete, this);
-                this.head.fetch();
+            start: function() {
+                return [this.commitBlobs()];//, this.updateTree(), this.makeCommit(), this.changeHead()];
             },
-            onGithubRepoCommitUpdateHeadComplete: function(data) {
-                if (this.tree.getCommit() == data.commit) {
-                    this.onGithubRepoCommitContent();
-                }
-                else {
-                    Framework.trigger("github:repo:commit:failure", {error: 1, msg: "HEAD is not up to date !"});
-                }
+            commitBlobs: function() {
+                var models = this.ContentCache.where({status: "new"});
+
+                var dfd = $.Deferred();
+                dfd.resolve(models);
+                _.each(models, function(model) {
+                    dfd.pipe(function() {
+                        return model.save();
+                    });
+                });
+
+                return dfd.promise();
+            },
+            updateTree: function() {
+                var dfd = $.Deferred();
+                return dfd.promise();
+            },
+            makeCommit: function() {
+                var dfd = $.Deferred();
+                return dfd.promise();
+            },
+            changeHead: function() {
+                var dfd = $.Deferred();
+                return dfd.promise();
             },
             onGithubRepoCommitContent: function() {
                 var commitModels = this.contentCache.where({waitingForCommit:true});

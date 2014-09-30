@@ -57,19 +57,11 @@ define(['marionette',
                 if (!data.key)
                     return;
 
-                var model = this.ContentCache.where({key:data.key});
-                //
-                // Expected only one instance of content
-                //
-                if (model.length > 1) {
-                    alert("content was loaded twice !");
-                }
-                //
-                // if content was cached
-                //
-                else if (model.length == 1) {
+                var model = this.ContentCache.findNewOrCreate(data);
+
+                if (model) {
                     // Saved content
-                    model[0].set("modifiedContent", data.modifiedContent);
+                    model.set("content", data.modifiedContent);
                 }
                 else {
                     alert("model was not found in cache");
@@ -87,15 +79,10 @@ define(['marionette',
                 if (!data.key)
                     return;
 
-                var model = this.ContentCache.where({key:data.key});
+                var model = this.ContentCache.findNewOrBase(data);
 
-                // Expected only one instance of content
-                if (model.length > 1) {
-                    alert("content was loaded twice !");
-                }
-                // if content was cached yet
-                else if (model.length == 1) {
-                    this.triggerContentLoaded(model[0]);
+                if (model) {
+                    this.triggerContentLoaded(model);
                 }
                 // get content from github
                 else {

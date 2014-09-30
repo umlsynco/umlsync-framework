@@ -81,18 +81,18 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
 				findNewOrBase: function(data) {
 				  var clone = _.pick(data, "absPath", "title");
-				  var models = this.models.where(clone);
+				  var models = this.where(clone);
 				  // found nothing
 				  if (models.length == 0)
 				    return;
 				  // only base model available
 				  if (models.length == 1) {
-				    return models[1];
+				    return models[0];
 				  }
 				  
 				  // check if models has new model
 				  var result = _.find(models, function(model) {
-				    return model.isNew();
+				    return (model.get("status") == "new");
 				  });
 				  if (result) return result;
 				  
@@ -105,15 +105,17 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
 				findNewOrCreate: function(data) {
 				  var model = this.findNewOrBase(data);
 				  // new model already exists
-				  if (model && model.isNew()) {
+				  if (model && (model.get("status") == "new")) {
 				    return model;
 				  }
 
 				  // Clone model except sha which is equal to id
 				  if (model) {
-				    var attr = _.pick(model.attributes, "absPath", "title");
-					return this.create(attr);
-				  }
+					var mclone = model.clone();
+                      mclone.set({status:"new", sha:null});
+                      this.add(mclone, {silent:true});
+                      return mclone;
+                  }
 				}
             });
 
