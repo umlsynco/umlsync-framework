@@ -27,14 +27,13 @@ define(['marionette',
                 var models = this.ContentCache.where({status: "new"});
 
                 var dfd = $.Deferred();
-                dfd.resolve(models);
+                var pms = dfd.promise();
                 _.each(models, function(model) {
-                    dfd.pipe(function() {
-                        return model.save();
-                    });
+                    pms = pms.then(model.getSavePromise());
                 });
 
-                return dfd.promise();
+                dfd.resolve(models);
+                return pms;
             },
             updateTree: function() {
                 var dfd = $.Deferred();

@@ -53,6 +53,23 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     else {
                         return API_URL + "/repos/" + username + "/" + reponame + "/git/blobs";
                     }
+                },
+                getSavePromise: function() {
+                    var model = this;
+                    var saveMethodWrapper = function() {
+                        var m = model;
+                        var dfd2 = $.Deferred();
+                        m.save({
+                            success: function() {
+                                dfd2.resolve();
+                            },
+                            error: function() {
+                                dfd2.reject();
+                            }
+                        });
+                        return dfd2.promise();
+                    }
+                    return saveMethodWrapper;
                 }
             });
 
