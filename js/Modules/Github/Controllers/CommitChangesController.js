@@ -6,76 +6,74 @@ define(['marionette',
             initialize: function (options) {
                 this.TreeModel = options.tree;            // tree cache
                 this.ContentCache = options.contentCache; // Cache of content
-                this.Branch = options.Branch;             // head of the changeable branch
+                this.Branch = options.branch;             // head of the changeable branch
                 var that = this;
 
                 $.when(this.start()).then(options.success, options.cancel);
-
-                // Stack implementation
-                Framework.vent.on("github:stack:continue", function (data) {
-                    that.onGithubStackContinue(data);
-                });
-                Framework.vent.on("github:stack:cancel", function (data) {
-                    that.onGithubStackCancel(data);
-                });
-
             },
             start: function() {
                 var dfd = $.Deferred();
                 var pms = dfd.promise();
                 dfd.resolve();
+                // TODO: make it more pipe-oriented
+                // 1. get all modified items
+                // 2. open commit dialog
+                // 3. get selected items from the pipe and commit them
+                // 4. provide the list of committed items to the tree via pipe and update tree
+                // 5. pipe-get an updated tree and make a commit
+                // 6. pipe-get a commit object and put it on HEAD of branch
+                // 7. sync-up cache and reload tree
                 pms
                     .then(_.bind(this.commitBlobs, this))
-                    .then(_.bind(this.makeCommit, this))
-                    .then(_.bind(this.changeHead, this));
+                    .then(_.bind(this.updateTree, this))
+                    .pipe(_.bind(this.makeCommit, this))
+                    .pipe(_.bind(this.changeHead, this));
 
                 return pms;
             },
+            //
+            // Make blob for each selected content item
+            //
             commitBlobs: function() {
                 var models = this.ContentCache.where({status: "new"});
 
                 var dfd = $.Deferred();
                 var pms = dfd.promise();
                 _.each(models, function(model) {
-                    pms = pms.then(model.getSavePromise());
+                    pms = pms.then(_.bind(model.getSavePromise, model));
                 });
 
                 dfd.resolve(models);
                 return pms;
             },
+            //
+            // patch base tree with a new blobs
+            //
             updateTree: function() {
+              var models = this.ContentCache.where({status: "new"});
+              return this.TreeModel.getSavePromise(models);
+            },
+            //
+            // Make a commit git object
+            //
+            makeCommit: function(resultTree) {
+                var commitData = $.parseJSON(resultTree);
+                var commit = this.Branch.createCommit(commitData.sha, "Test commit");
+
+                var dfd = $.Deferred();
+                dfd.resolve();
+                dfd.then(commit.getSavePromise());
+                return dfd.promise();
+            },
+            //
+            // Getting the result commit object and move it on the
+            // HEAD of the current branch
+            //
+            changeHead: function(resultCommit) {
+                alert(resultCommit.url);
                 var dfd = $.Deferred();
                 dfd.resolve();
                 return dfd.promise();
-            },
-            makeCommit: function() {
-                var dfd = $.Deferred();
-                dfd.resolve();
-                return dfd.promise();
-            },
-            changeHead: function() {
-                var dfd = $.Deferred();
-                return dfd.promise();
-            },
-            onGithubRepoCommitContent: function() {
-                var commitModels = this.contentCache.where({waitingForCommit:true});
-                if (commitModels.length > 0) {
-                    commitModels[0].on("save", this.onGithubRepoCommitContent, this);
-                }
-                else {
-                    this.onGithubRepoCommitTree();
-                }
-            },
-            onGithubRepoCommitTree: function() {
-                var models = this.contentCache.where({committed:true});
-                var tree = this.tree;
-                _.each(models, function(model){
-                    var content = tree.where({cid:model.get("key")});
-                    if (content.length == 0) {
-                        // Update commit SHA
-                        content[0].set({sha: model.get("commitSha")});
-                    }
-                });
             },
             //
             // COMMIT DIALOG
@@ -103,53 +101,6 @@ define(['marionette',
                 });
 
                 Framework.DialogRegion.show(dialog, {forceShow: true});
-            },
-
-            //
-            // Implements repo commit behavior
-            //
-            onGithubRepoCommitStart: function(data) {
-                var models = that.contentCache.when({waitingForCommit:true});
-                if (models.length > 0) {
-
-                    Framework.vent.trigger("github:repo:commit:checkhead");
-
-
-                    // Save triggers create blob
-                    _.each(model, function(model) {
-                        model.save();
-                    });
-                }
-            },
-            //
-            // Implements repo commit strategy
-            //
-            onGithubRepoCommitContinue: function(data) {
-
-            },
-            //
-            // Implements repo commit strategy
-            //
-            onGithubRepoCommitComplete: function(data) {
-
-            },
-            //
-            // Implements repo commit strategy
-            //
-            onGithubRepoCommitFailed: function(data) {
-
-            },
-            //
-            // Pop event and context from queue
-            //
-            onGithubStackContinue: function(data) {
-                var next = this.workingStack.pop();
-                if (next) {
-                    Framework.vent.trigger(next.event, next.context || data);
-                }
-            },
-            onGithubStackCancel: function(data) {
-                this.workingStack = new Array();
             }
         });
 

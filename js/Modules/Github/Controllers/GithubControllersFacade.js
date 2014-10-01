@@ -141,7 +141,7 @@ define(['marionette',
                             new CommitChangesController($.extend({}, options,
                                 {controller: that,
                                  tree: that.TreeModel,
-                                 branch:that.SyncModelsController.getActiveBranch(),
+                                 branch:that.SyncModelsController.GetActiveBranch(),
                                  contentCache: that.ContentCache
                                 }));
                     }

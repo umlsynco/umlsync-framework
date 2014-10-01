@@ -30,7 +30,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     options.url = this.getUrl.apply(this, arguments);
                 }
                 // Call the Backbone.sync
-                Backbone.Model.prototype.sync.apply(this, arguments);
+                return Backbone.Model.prototype.sync.apply(this, arguments);
             };
 
             Backbone.GithubModel = Backbone.Model.extend({
@@ -55,21 +55,12 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     }
                 },
                 getSavePromise: function() {
-                    var model = this;
-                    var saveMethodWrapper = function() {
-                        var m = model;
-                        var dfd2 = $.Deferred();
-                        m.save({
-                            success: function() {
-                                dfd2.resolve();
-                            },
-                            error: function() {
-                                dfd2.reject();
-                            }
-                        });
-                        return dfd2.promise();
-                    }
-                    return saveMethodWrapper;
+                    var dfd2 = $.Deferred();
+                    this.save(null, {
+                        success: function () {dfd2.resolve();},
+                        error: function () {dfd2.reject();}
+                    });
+                    return dfd2.promise();
                 }
             });
 
@@ -96,44 +87,44 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     this.Branch = model;
                     this.reset(); // Drop an existing items
                 },
-				findNewOrBase: function(data) {
-				  var clone = _.pick(data, "absPath", "title");
-				  var models = this.where(clone);
-				  // found nothing
-				  if (models.length == 0)
-				    return;
-				  // only base model available
-				  if (models.length == 1) {
-				    return models[0];
-				  }
-				  
-				  // check if models has new model
-				  var result = _.find(models, function(model) {
-				    return (model.get("status") == "new");
-				  });
-				  if (result) return result;
-				  
-				  // find the concrete model by SHA
-				  return _.find(models, function(model) {
-				    return (model.get("sha") == data.sha)
-				  });
-				  
-				},
-				findNewOrCreate: function(data) {
-				  var model = this.findNewOrBase(data);
-				  // new model already exists
-				  if (model && (model.get("status") == "new")) {
-				    return model;
-				  }
+                findNewOrBase: function(data) {
+                    var clone = _.pick(data, "absPath", "title");
+                    var models = this.where(clone);
+                    // found nothing
+                    if (models.length == 0)
+                        return;
+                    // only base model available
+                    if (models.length == 1) {
+                        return models[0];
+                    }
 
-				  // Clone model except sha which is equal to id
-				  if (model) {
-					var mclone = model.clone();
-                      mclone.set({status:"new", sha:null});
-                      this.add(mclone, {silent:true});
-                      return mclone;
-                  }
-				}
+                    // check if models has new model
+                    var result = _.find(models, function(model) {
+                        return (model.get("status") == "new");
+                    });
+                    if (result) return result;
+
+                    // find the concrete model by SHA
+                    return _.find(models, function(model) {
+                        return (model.get("sha") == data.sha)
+                    });
+
+                },
+                findNewOrCreate: function(data) {
+                    var model = this.findNewOrBase(data);
+                    // new model already exists
+                    if (model && (model.get("status") == "new")) {
+                        return model;
+                    }
+
+                    // Clone model except sha which is equal to id
+                    if (model) {
+                        var mclone = model.clone();
+                        mclone.set({status:"new", sha:null});
+                        this.add(mclone, {silent:true});
+                        return mclone;
+                    }
+                }
             });
 
             var TreeModel = Backbone.GithubModel.extend({
@@ -184,10 +175,14 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         var sha = options.data ? options.data.sha  : this.Branch.get("commit").sha;
                         return API_URL + "/repos/" + reponame + "/git/trees/" + sha;
                     }
+                    else if (method == "create") {
+                        var reponame = this.Branch.collection.Repository.get('full_name');
+                        return API_URL + "/repos/" + reponame + "/git/trees";
+                    }
                 },
                 parse: function (resp, options) {
                     if (options.data && options.data.parentCid)
-                      _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid;});
+                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid;});
                     return resp.tree;
                 },
                 initialize: function (options, attr) {
@@ -222,6 +217,63 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         merge: false,
                         data: {sha:sha, parentCid:data.key}
                     });
+                },
+                save: function(commitModels, options) {
+                    return this.sync("create", this, options);
+                },
+                cacheToTree: function(commitModels) {
+                    var commit = this.Branch.get("commit");
+                    var items = [];
+                    _.each(commitModels, function(model) {
+                        items.push({
+                            "path": model.get("absPath").substr(1),
+                            "mode": "100644",
+                            "type": "blob",
+                            "sha": model.get("sha")
+                        });
+                    });
+                    return JSON.stringify({
+                        "base_tree": commit.sha,
+                        "tree": items
+                    });
+                },
+                getSavePromise: function(commitModels) {
+                    var m = this;
+                    var dfd2 = $.Deferred();
+                    this.save(null, {
+                        success: function (commitJSON, status, result) {
+                            dfd2.resolve(result.responseText);
+                        },
+                        error: function () {
+                            dfd2.reject();
+                        },
+                        data: this.cacheToTree(commitModels)
+                    });
+                    return dfd2.promise();
+                }
+            });
+
+            //////////////////////////////////////////////// BRANCH
+            var CommitModel = Backbone.GithubModel.extend({
+                url: function (args) {
+                    var username = this.Branch.collection.Repository.get("full_name");
+                    return API_URL + "/repos/" + username + "/git/commits";
+                },
+                initialize: function(options, attr) {
+                    if (attr)
+                      this.Branch = attr.branch;
+                },
+                getSavePromise: function(commitModels) {
+                    var dfd2 = $.Deferred();
+                    this.save(null, {
+                        success: function (thisModel, resultObject, backboneAjax) {
+                            dfd2.resolve(resultObject);
+                        },
+                        error: function () {
+                            dfd2.reject();
+                        }
+                    });
+                    return dfd2.promise();
                 }
             });
 
@@ -234,7 +286,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 getTree: function () {
                     if (!this.tree) {
-                      this.tree = new TreeCollection([], {branch: this});
+                        this.tree = new TreeCollection([], {branch: this});
                     }
                     return this.tree;
                 },
@@ -243,6 +295,9 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         this.content = new ContentCollection([], {branch: this});
                     }
                     return this.content;
+                },
+                createCommit: function(sha, message) {
+                    return new CommitModel({parents: [this.get("commit").sha], message:message, tree:sha}, {branch:this});
                 }
             });
 
@@ -296,7 +351,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 ],
                 defaultGroup: "Branches",
                 isValid: function() {
-                  return (this.Repository != undefined);
+                    return (this.Repository != undefined);
                 },
                 getUrl: function (method, model, options) {
                     if (method == "read") {
@@ -341,9 +396,9 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     attr && (this.Repository = attr.repository);
                 },
                 setRepository: function(model, options) {
-                  options || (options = {reset: true});
-                  this.Repository = model;
-                  this.fetch(options);
+                    options || (options = {reset: true});
+                    this.Repository = model;
+                    this.fetch(options);
                 },
                 model: BranchModel
             });
@@ -353,7 +408,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             //////////////////////////////////////////////// REPOSITORY API
             var RepositoryModel = Backbone.GithubModel.extend({
                 defaults: {
-                  full_name: 'none'
+                    full_name: 'none'
                 },
                 url: function (args) {
                     var user = this.collection.User;
@@ -364,8 +419,8 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 getBranches: function () {
                     if (!this.branches) {
                         this.branches =
-                          new Branches([], {repository: this, // Get pointer on the base model
-                                            group: 'Branches'});
+                            new Branches([], {repository: this, // Get pointer on the base model
+                                group: 'Branches'});
                     }
                     return this.branches;
                 },
@@ -450,83 +505,6 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             this.getContentCache= function (branch) {
                 return new ContentCollection({branch:branch});
             };
-
-            this.workingStack = new Array(); // {event, context}
-            this.on("github:continue", this.onContinue, this);
-            this.on("github:commit:head", this.onCommitHead, this);
-            this.on("github:commit:commit", this.onCommitCommit, this);
-            this.on("github:commit:tree", this.onCommitTree, this);
-            this.on("github:commit:blob", this.onCommitBlob, this);
-        },
-        onContinue: function(context) {
-          var next = this.workingStack.pop();
-          if (next) {
-              this.trigger(next.event, $.extend({}, next.context, context));
-          }
-          else {
-              this.trigger("github:complete",context);
-          }
-        },
-        onCommitBlob: function(args) {
-          var branch = args[0],
-              tree = args[1],
-              contentCache = args[2],
-              message = args[3];
-
-          this.trigger("github:continue", {branch:branch});
-        },
-        onCommitTree: function(args) {
-            var branch = args[0],
-                tree = args[1],
-                contentCache = args[2],
-                message = args[3];
-
-            this.trigger("github:continue", {branch:branch});
-        },
-        onCommitCommit: function(args) {
-            var branch = args[0],
-                tree = args[1],
-                contentCache = args[2],
-                message = args[3];
-
-            this.trigger("github:continue", {branch:branch});
-        },
-        onCommitHead: function(args) {
-            var branch = args[0],
-                tree = args[1],
-                contentCache = args[2],
-                message = args[3];
-
-            this.trigger("github:continue", {branch:branch});
-        },
-        // TODO: think about how to make each operation available from API.
-        //       For example: patch tree or commit blob or update head
-        commit: function(branch, tree, contentCache, message) {
-            // clone branch because someone could be subscribed on it's changes
-            var context = {branch:branch, tree:tree, contentCache:contentCache, message:message};
-            this.workingStack.push({event:"github:commit:head", context:context});
-            this.workingStack.push({event:"github:commit:commit", context:context});
-            this.workingStack.push({event:"github:commit:tree", context:context});
-            this.workingStack.push({event:"github:commit:blob", context:context});
-
-            // Clone branch before check for conflicts and get the latest head
-            var cb = branch.clone();
-            this.checkForConflicts(cb, tree);
-        },
-        reload: function(branch, tree, content) {
-            // TODO: think about how to reload tree and check for conflicts
-            this.checkForConflicts(branch, tree);
-        },
-        checkForConflicts: function(branch, tree) {
-            // Note: there is no 'change' event on fetch of no data change happen
-            // Check if branch head was changed
-            branch.on("sync", function(data) {
-                // Check for changes
-                // Continue if everything is Ok
-                this.trigger("github:continue", {branch:branch});
-            }, this);
-
-            branch.fetch();
         }
     });
 

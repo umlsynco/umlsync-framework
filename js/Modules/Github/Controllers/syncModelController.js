@@ -26,13 +26,6 @@ define(['marionette',
               return this.activeRepo || "none";
             },
 
-            getActiveBranch: function() {
-                var models = this.Refs.where({isActive:true}); // full_name:this.activeRepo,
-                if (models.length == 1) {
-                    return models[0];
-                }
-            },
-
             //
             // Change active repository
             //
@@ -58,8 +51,8 @@ define(['marionette',
                 var that = this;
                 this.Refs.setRepository(model, {reset:true, add:true, merge:true, success: function() {
                     var branch = that.Refs.getBranch(that.activeBranch);
-                    that.Tree.setBranch(branch);
-                    that.ContentCache.setBranch(branch);
+                    if (branch)
+                      that.SetActiveBranch(branch);
                 }});
             },
 
@@ -70,6 +63,15 @@ define(['marionette',
                 return this.activeBranch || "none";
             },
 
+            //
+            // Get active branch model
+            //
+            GetActiveBranch: function() {
+                var models = this.Refs.where({isActive:true}); // full_name:this.activeRepo,
+                if (models.length == 1) {
+                    return models[0];
+                }
+            },
             //
             // Change an active branch
             //
@@ -88,7 +90,7 @@ define(['marionette',
                 model.set({isActive:true});
 
                 this.Tree.setBranch(model);
-                this.ContentCache.setBranch(branch);
+                this.ContentCache.setBranch(model);
             }
         });
 
