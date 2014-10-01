@@ -21,7 +21,15 @@ define(['marionette',
 
             },
             start: function() {
-                return [this.commitBlobs()];//, this.updateTree(), this.makeCommit(), this.changeHead()];
+                var dfd = $.Deferred();
+                var pms = dfd.promise();
+                dfd.resolve();
+                pms
+                    .then(_.bind(this.commitBlobs, this))
+                    .then(_.bind(this.makeCommit, this))
+                    .then(_.bind(this.changeHead, this));
+
+                return pms;
             },
             commitBlobs: function() {
                 var models = this.ContentCache.where({status: "new"});
@@ -37,10 +45,12 @@ define(['marionette',
             },
             updateTree: function() {
                 var dfd = $.Deferred();
+                dfd.resolve();
                 return dfd.promise();
             },
             makeCommit: function() {
                 var dfd = $.Deferred();
+                dfd.resolve();
                 return dfd.promise();
             },
             changeHead: function() {

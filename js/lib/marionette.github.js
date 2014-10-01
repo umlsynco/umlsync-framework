@@ -44,14 +44,14 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             var ContentModel = Backbone.GithubModel.extend({
                 //repos/:owner/:repo/git/trees
                 url: function (args) {
-                    var username = this.login;
-                    var reponame = this.repository;
+                    var branch = this.collection.Branch,
+                        reponame = branch.collection.Repository.get('full_name');
                     var sha = this.get("sha");
                     if (sha) {
-                        return API_URL + "/repos/" + username + "/" + reponame + "/git/blobs/" + sha;
+                        return API_URL + "/repos/" + reponame + "/git/blobs/" + sha;
                     }
                     else {
-                        return API_URL + "/repos/" + username + "/" + reponame + "/git/blobs";
+                        return API_URL + "/repos/" + reponame + "/git/blobs";
                     }
                 },
                 getSavePromise: function() {
