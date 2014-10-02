@@ -77,6 +77,8 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 parse: function (resp, options) {
                     if (resp.encoding == "base64") {
                         resp.content = Base64.decode(resp.content);
+                        // Change encoding, because it was decoded
+                        resp.encoding = "utf-8";
                     }
                     return [$.extend({}, options.contentData, resp)];
                 },
@@ -279,10 +281,33 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
 
             //////////////////////////////////////////////// BRANCH
             var BranchModel = Backbone.GithubModel.extend({
-                url: function (args) {
-                    var username = this.collection.Repository.get("full_name");
-                    var branch = this.get("name");
-                    return API_URL + "/repos/" + username + "/branches/" + branch;
+                isNew: function() {
+                    var commit = this.get("commit");
+                    if (commit && commit.sha) {
+                        return false;
+                    }
+                    return true;
+                },
+                getUrl: function(method, model, options) {
+                    if (method == "read") {
+                        var username = this.collection.Repository.get("full_name");
+                        var branch = this.get("name");
+                        return API_URL + "/repos/" + username + "/branches/" + branch;
+                    }
+
+/* [TBD]: API to create branch
+                    if (method == "create") {
+                        var username = this.collection.Repository.get("full_name");
+                        var branch = this.get("name");
+                        return API_URL + "/repos/" + username + "/git/refs";
+                    }
+*/
+
+                    if (method == "patch") {
+                        var username = this.collection.Repository.get("full_name");
+                        var branch = this.get("name");
+                        return API_URL + "/repos/" + username + "/git/refs/heads/" + branch;
+                    }
                 },
                 getTree: function () {
                     if (!this.tree) {
@@ -298,6 +323,24 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 createCommit: function(sha, message) {
                     return new CommitModel({parents: [this.get("commit").sha], message:message, tree:sha}, {branch:this});
+                },
+                getSavePromise: function(finalCommit) {
+
+                    var dfd2 = $.Deferred();
+                    this.save({}, {
+                        success: function (commitJSON, status, result) {
+                            dfd2.resolve(result);
+                        },
+                        error: function () {
+                            dfd2.reject("The branch HEAD is out of date");
+                        },
+                        data: JSON.stringify({
+                            sha: finalCommit.sha,
+                            force: false // Prevent overwriting of HEAD if it was changed in a parallel commit
+                        }),
+                        patch: true
+                    });
+                    return dfd2.promise();
                 }
             });
 

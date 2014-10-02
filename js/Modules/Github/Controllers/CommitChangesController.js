@@ -59,21 +59,14 @@ define(['marionette',
             makeCommit: function(resultTree) {
                 var commitData = $.parseJSON(resultTree);
                 var commit = this.Branch.createCommit(commitData.sha, "Test commit");
-
-                var dfd = $.Deferred();
-                dfd.resolve();
-                dfd.then(commit.getSavePromise());
-                return dfd.promise();
+                return commit.getSavePromise();
             },
             //
             // Getting the result commit object and move it on the
             // HEAD of the current branch
             //
             changeHead: function(resultCommit) {
-                alert(resultCommit.url);
-                var dfd = $.Deferred();
-                dfd.resolve();
-                return dfd.promise();
+                return this.Branch.getSavePromise(resultCommit)
             },
             //
             // COMMIT DIALOG

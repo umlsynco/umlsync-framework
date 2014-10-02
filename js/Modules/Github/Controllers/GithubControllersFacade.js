@@ -10,12 +10,12 @@ define(['marionette',
         './SyncModelController',  // Controller to synchronize models
         './LoadContentController',// Load content in focus if needed
         './SyncTabsController',   // Sync tabs controller
-		'./RepoBranchChangeController',
+        './RepoBranchChangeController',
         './ToolboxController', // Github toolbox icons
         './CommitChangesController' // Controller to commit changes
     ],
     function(// Basic
-              Marionette, Framework,
+             Marionette, Framework,
              // Views
              TreeView, DropdownView,
              // Controllers
@@ -98,8 +98,8 @@ define(['marionette',
                     cache: this.ContentCache, // Cache model
                     controller: this // To provide actual data on getViewInfo()
                 });
-				
-				this.RbcController = new RBController({controller:this});
+
+                this.RbcController = new RBController({controller:this});
             },
 
             //
@@ -138,7 +138,7 @@ define(['marionette',
                 this.HandleOpenedContent({
                     done: function () {
                         that.CommitController =
-                            new CommitChangesController($.extend({}, options,
+                            new CommitChangesController($.extend({},options,
                                 {controller: that,
                                  tree: that.TreeModel,
                                  branch:that.SyncModelsController.GetActiveBranch(),
