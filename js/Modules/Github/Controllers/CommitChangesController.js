@@ -1,6 +1,8 @@
 define(['marionette',
-        'Views/framework'],
-    function(Marionette, Framework) {
+        'Views/framework',
+        'Views/Dialogs/commitDialog'
+    ],
+    function(Marionette, Framework, CommitDialog) {
         var Controller = Marionette.Controller.extend({
 
             initialize: function (options) {
@@ -26,6 +28,7 @@ define(['marionette',
                 // 6. pipe-get a commit object and put it on HEAD of branch
                 // 7. sync-up cache and reload tree
                 pms
+                    .then(_.bind(this.commitDialog, this))
                     .then(_.bind(this.commitBlobs, this))
                     .then(_.bind(this.updateTree, this))
                     .pipe(_.bind(this.makeCommit, this))
@@ -37,7 +40,7 @@ define(['marionette',
             // Make blob for each selected content item
             //
             commitBlobs: function() {
-                var models = this.ContentCache.where({status: "new"});
+                var models = this.ContentCache.where({status: "new", waitingForCommit:true});
 
                 var dfd = $.Deferred();
                 var pms = dfd.promise();
@@ -52,7 +55,7 @@ define(['marionette',
             // patch base tree with a new blobs
             //
             updateTree: function() {
-              var models = this.ContentCache.where({status: "new"});
+              var models = this.ContentCache.where({status: "new", waitingForCommit:true});
               return this.TreeModel.getSavePromise(models);
             },
             //
@@ -73,29 +76,33 @@ define(['marionette',
             //
             // COMMIT DIALOG
             //
-            onGithubRepoCommit: function(data) {
-                if (!_.some(this.contentCache.models, function(model) {
-                    return model.has('modifiedContent');
+            commitDialog: function(data) {
+                var dfd = $.Deferred();
+                if (!_.some(this.ContentCache.models, function(model) {
+                    return (model.get("status") == "new");
                 })) {
-                    Framework.vent.trigger("github:stack:continue",data);
-                    return;
+                    dfd.reject("nothing");
+                    return dfd.promise();
                 }
-                var dialog = new CommitDialog({collection:this.contentCache});
+
+                var dialog = new CommitDialog({collection:this.ContentCache});
                 var that = this;
                 dialog.on("button:commit", function(data) {
-                    if (that.contentCache.when({waitingForCommit:true}).length > 0) {
-                        Framework.vent.trigger("github:repo:commit:start",data);
+                    if (that.ContentCache.where({waitingForCommit:true}).length > 0) {
+                      dfd.resolve();
                     }
                     else {
-                        Framework.vent.trigger("github:stack:continue",data);
+                      dfd.reject("nothing");
                     }
                 });
 
                 dialog.on("button:cancel", function(data) {
-                    Framework.vent.trigger("github:stack:cancel",data);
+                    dfd.reject("cancel");
                 });
 
                 Framework.DialogRegion.show(dialog, {forceShow: true});
+
+                return dfd.promise();
             }
         });
 

@@ -16,7 +16,7 @@ define([
                 'change @ui.checkbox': 'handleCheckbox'
             },
             handleCheckbox: function() {
-                this.model.set({waitingForCommit: this.ui.checkbox.attr('checked')});
+                this.model.set({waitingForCommit: (this.ui.checkbox.attr('checked') ? true : false)});
             }
         });
 
@@ -24,7 +24,7 @@ define([
             tagName: 'tbody',
             childView: TableItem,
             addChild: function(child, ChildView, index){
-                if (child.has('modifiedContent')) {
+                if (child.get('status') == "new") {
                     Backbone.Marionette.CollectionView.prototype.addChild.apply(this, arguments);
                 }
             }
