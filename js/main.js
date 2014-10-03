@@ -68,35 +68,9 @@ require(
         'Views/Files/sourcecodeView',
         'Views/Files/markdownView',
         'Views/Files/diagramsView',
-     'Modules/Github/Views/githubLayoutView'
+        'Modules/Github/Views/githubLayoutView'
     ],
-function(Framework, Controller, scview, ghView) {
+function(Framework) {
     // Start the framework
     Framework.start();
-
-    Framework.ContentCollection.add({
-        title: 'test', // Content title
-        absPath: '/test', // Absolute path to the content
-        isModified: false, // modified indicator
-        isOwner: true, // Indicates if it is possible to modify content
-        isEditable: true, // Indicates if if framework has corresponding handler
-        sha: null, // Git SHA summ
-        repo: 'umlsynco/umlsync', // GitHub repository name
-        branch: 'master', // Branch name
-        view: 'github', // view identifier - GitHub or something else
-        contentType: 'markdown' // content type uid
-    });
-
-    Framework.ContentCollection.add({
-        title: 'test2', // Content title
-        absPath: '/test2', // Absolute path to the content
-        isModified: false, // modified indicator
-        isOwner: true, // Indicates if it is possible to modify content
-        isEditable: true, // Indicates if if framework has corresponding handler
-        sha: null, // Git SHA summ
-        repo: 'umlsynco/umlsync', // GitHub repository name
-        branch: 'master', // Branch name
-        view: 'github', // view identifier - GitHub or something else
-        contentType: 'sourcecode' // content type uid
-    });
 });
