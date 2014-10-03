@@ -9,7 +9,9 @@ define(['marionette',
                 this.Branch = options.branch;             // head of the changeable branch
                 var that = this;
 
-                $.when(this.start()).then(options.success, options.cancel);
+                $.when(this.start()).then(options.success, options.cancel).always(function() {
+                    that.destroy(); // self-destroy on completion
+                });
             },
             start: function() {
                 var dfd = $.Deferred();

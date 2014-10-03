@@ -124,6 +124,7 @@ define(['marionette',
             //
             // @param options: {closeAll: true} - force all tabs close
             //                 {done: function} - callback on completion
+            //                 {cancel: function} - callback on cancel
             //
             HandleOpenedContent: function(options) {
                 new SyncTabsController($.extend({}, options, {controller:this}));
@@ -137,7 +138,6 @@ define(['marionette',
                 var that = this;
                 this.HandleOpenedContent({
                     done: function () {
-                        that.CommitController =
                             new CommitChangesController($.extend({},options,
                                 {controller: that,
                                  tree: that.TreeModel,
