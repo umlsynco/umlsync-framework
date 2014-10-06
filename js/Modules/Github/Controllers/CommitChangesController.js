@@ -26,15 +26,47 @@ define(['marionette',
                 // 4. provide the list of committed items to the tree via pipe and update tree
                 // 5. pipe-get an updated tree and make a commit
                 // 6. pipe-get a commit object and put it on HEAD of branch
-                // 7. sync-up cache and reload tree
+                // 7. sync-up cache
                 pms
                     .then(_.bind(this.commitDialog, this))
                     .then(_.bind(this.commitBlobs, this))
                     .then(_.bind(this.updateTree, this))
                     .pipe(_.bind(this.makeCommit, this))
-                    .pipe(_.bind(this.changeHead, this));
+                    .pipe(_.bind(this.changeHead, this))
+                    .then(_.bind(this.syncAllChanges, this));
 
                 return pms;
+            },
+            //
+            // COMMIT DIALOG
+            //
+            commitDialog: function(data) {
+                var dfd = $.Deferred();
+                if (!_.some(this.ContentCache.models, function(model) {
+                    return (model.get("status") == "new");
+                })) {
+                    dfd.reject("nothing");
+                    return dfd.promise();
+                }
+
+                var dialog = new CommitDialog({collection:this.ContentCache});
+                var that = this;
+                dialog.on("button:commit", function(data) {
+                    if (that.ContentCache.where({waitingForCommit:true}).length > 0) {
+                        dfd.resolve();
+                    }
+                    else {
+                        dfd.reject("nothing");
+                    }
+                });
+
+                dialog.on("button:cancel", function(data) {
+                    dfd.reject("cancel");
+                });
+
+                Framework.DialogRegion.show(dialog, {forceShow: true});
+
+                return dfd.promise();
             },
             //
             // Make blob for each selected content item
@@ -74,34 +106,22 @@ define(['marionette',
                 return this.Branch.getSavePromise(resultCommit)
             },
             //
-            // COMMIT DIALOG
+            // Resolve changes
             //
-            commitDialog: function(data) {
+            syncAllChanges: function(context) {
                 var dfd = $.Deferred();
-                if (!_.some(this.ContentCache.models, function(model) {
-                    return (model.get("status") == "new");
-                })) {
-                    dfd.reject("nothing");
-                    return dfd.promise();
-                }
 
-                var dialog = new CommitDialog({collection:this.ContentCache});
-                var that = this;
-                dialog.on("button:commit", function(data) {
-                    if (that.ContentCache.where({waitingForCommit:true}).length > 0) {
-                      dfd.resolve();
-                    }
-                    else {
-                      dfd.reject("nothing");
-                    }
+                // Update Cache
+                _.each(this.ContentCache.where({status:"new"}),
+                  function(model) {
+                      if (model.get("waitingForCommit")) {
+                          // change status of the model
+                          model.set({status:"loaded"});
+                      }
+                      // remove attribute
+                      model.unset("waitingForCommit");
                 });
-
-                dialog.on("button:cancel", function(data) {
-                    dfd.reject("cancel");
-                });
-
-                Framework.DialogRegion.show(dialog, {forceShow: true});
-
+                dfd.resolve();
                 return dfd.promise();
             }
         });

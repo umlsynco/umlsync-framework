@@ -15,6 +15,10 @@ define([
             events: {
                 'change @ui.checkbox': 'handleCheckbox'
             },
+            initialize: function() {
+                // Checked by default
+                this.model.set({waitingForCommit: true});
+            },
             handleCheckbox: function() {
                 this.model.set({waitingForCommit: (this.ui.checkbox.attr('checked') ? true : false)});
             }

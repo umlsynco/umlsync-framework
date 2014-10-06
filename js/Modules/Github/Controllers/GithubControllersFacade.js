@@ -135,6 +135,10 @@ define(['marionette',
             // Commit changes controller
             //
             CommitChanges: function(options) {
+                // 1. HandleOpenedContent - close/save all modified items
+                // 2. Check HEAD of the branch and resolve conflicts if any
+                // 3. Make commit
+                // 4. Reload tree/branch
                 var that = this;
                 this.HandleOpenedContent({
                     done: function () {
@@ -147,11 +151,12 @@ define(['marionette',
                     }
                 });
             },
+
             //
             // Rebase tree controller
             //
             Rebase: function(options) {
-                return new RebaseTreeController(($.extend({}, options,
+                return new RebaseController(($.extend({}, options,
                     {controller:this})));
             },
 
