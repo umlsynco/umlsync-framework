@@ -45,7 +45,7 @@ define(['marionette',
                 if (!_.some(this.ContentCache.models, function(model) {
                     return (model.get("status") == "new");
                 })) {
-                    dfd.reject("nothing");
+                    dfd.reject({reason:"cancel", message:'Nothing to commit'});
                     return dfd.promise();
                 }
 
@@ -56,12 +56,12 @@ define(['marionette',
                         dfd.resolve();
                     }
                     else {
-                        dfd.reject("nothing");
+                        dfd.reject({reason:"cancel", message:"Unexpected use-case: Selected nothing to commit!"});
                     }
                 });
 
                 dialog.on("button:cancel", function(data) {
-                    dfd.reject("cancel");
+                    dfd.reject({reason:"cancel", message: "cancel"});
                 });
 
                 Framework.DialogRegion.show(dialog, {forceShow: true});

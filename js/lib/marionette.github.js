@@ -87,7 +87,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 setBranch: function(model, options) {
                     this.Branch = model;
-                    this.reset(); // Drop an existing items
+                    this.reset(options); // Drop an existing items
                 },
                 findNewOrBase: function(data) {
                     var clone = _.pick(data, "absPath", "title");
@@ -184,7 +184,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 parse: function (resp, options) {
                     if (options.data && options.data.parentCid)
-                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid;});
+                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid || null;});
                     return resp.tree;
                 },
                 initialize: function (options, attr) {
@@ -201,6 +201,49 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     this.reset(); // Drop an existing items
                     this.fetch(options);
                 },
+                loadPath: function(absolutePath) {
+                    var absPaths =  absolutePath.split("/");
+                    if (absPaths[0] == "") {
+                        absPaths.shift();
+                    }
+                    return this._loadPath(absPaths, null);
+                },
+                //
+                // load path helper
+                //
+                _loadPath: function(paths, parentCid) {
+                    var dfd = $.Deferred();
+                    var pms = dfd.promise();
+                    var path = paths.shift();
+
+                    var models = this.where({name: path, parentCid:parentCid});
+                    if (models.length > 1 || models.length == 0) {
+                        dfd.reject({reason:"error", message:"Unexpected number of matches of: " + path});
+                    }
+
+                    var model = models[0];
+
+                    if (paths.length > 0) {
+                        dfd.resolve();
+                        if (!model.get("loaded")) {
+                            pms.then(this.fetch({
+                                add: true,
+                                remove:false,
+                                merge: false,
+                                data: {sha:model.get("sha"), parentCid:model.cid}
+                            }));
+                        }
+
+                        pms.then(_.bind(this._loadPath, this, paths));
+                    }
+                    else {
+                        dfd.resolve(model.get("sha"));
+                    }
+
+                    return dfd.promise();
+
+                },
+
                 lazyLoad: function(data) {
                     if (!data.key)
                         return;

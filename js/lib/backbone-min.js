@@ -427,7 +427,7 @@
         // model differs from its current attributes, they will be overridden,
         // triggering a `"change"` event.
         fetch: function(options) {
-            options = options ? _.clone(v) : {};
+            options = options ? _.clone(options) : {};
             if (options.parse === void 0) options.parse = true;
             var model = this;
             var success = options.success;

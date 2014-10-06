@@ -12,7 +12,8 @@ define(['marionette',
         './SyncTabsController',   // Sync tabs controller
         './RepoBranchChangeController',
         './ToolboxController', // Github toolbox icons
-        './CommitChangesController' // Controller to commit changes
+        './CommitChangesController', // Controller to commit changes
+        './RebaseController' // Pull request controller
     ],
     function(// Basic
              Marionette, Framework,
@@ -20,7 +21,7 @@ define(['marionette',
              TreeView, DropdownView,
              // Controllers
              SyncModelController, LoadContentController, SyncTabsController,
-             RBController, ToolboxController, CommitChangesController) {
+             RBController, ToolboxController, CommitChangesController, RebaseController) {
         var Facade = Marionette.Controller.extend({
             initialize: function(options) {
                 this.Regions = options.regions;
@@ -142,12 +143,12 @@ define(['marionette',
                 var that = this;
                 this.HandleOpenedContent({
                     done: function () {
-                            new CommitChangesController($.extend({},options,
-                                {controller: that,
-                                 tree: that.TreeModel,
-                                 branch:that.SyncModelsController.GetActiveBranch(),
-                                 contentCache: that.ContentCache
-                                }));
+                        new CommitChangesController($.extend({},options, {
+                            controller: that,
+                            tree: that.TreeModel,
+                            branch:that.SyncModelsController.GetActiveBranch(),
+                            contentCache: that.ContentCache
+                        }));
                     }
                 });
             },
@@ -156,8 +157,11 @@ define(['marionette',
             // Rebase tree controller
             //
             Rebase: function(options) {
-                return new RebaseController(($.extend({}, options,
-                    {controller:this})));
+                new RebaseController(($.extend({}, options, {
+                    controller:this,
+                    tree: this.TreeModel,
+                    branch:this.SyncModelsController.GetActiveBranch(),
+                    contentCache: this.ContentCache})));
             },
 
             //////////////////////////////////////////// CONTENT API
