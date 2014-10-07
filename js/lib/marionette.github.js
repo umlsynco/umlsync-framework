@@ -122,7 +122,10 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     // Clone model except sha which is equal to id
                     if (model) {
                         var mclone = model.clone();
-                        mclone.set({status:"new", sha:null});
+                        // Set up status new
+                        // Unset sha - because there is no blob for it
+                        // setup base sha which content based on
+                        mclone.set({status:"new", sha:null, baseSha: model.get("sha")});
                         this.add(mclone, {silent:true});
                         return mclone;
                     }
@@ -206,7 +209,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     if (absPaths[0] == "") {
                         absPaths.shift();
                     }
-                    return this._loadPath(absPaths, null);
+                    return this._loadPath(absPaths);
                 },
                 //
                 // load path helper
@@ -216,7 +219,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     var pms = dfd.promise();
                     var path = paths.shift();
 
-                    var models = this.where({name: path, parentCid:parentCid});
+                    var models = this.where({path: path, parentCid:parentCid});
                     if (models.length > 1 || models.length == 0) {
                         dfd.reject({reason:"error", message:"Unexpected number of matches of: " + path});
                     }
