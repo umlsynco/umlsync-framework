@@ -96,9 +96,9 @@ define(['marionette',
                 var that = this;
                 _.each(this.ContentCache.where({status:"new"}), function(model) {
                     var absPath = model.get("absPath");
-                    pms.then(_.bind(that.loadPath, that, absPath)).pipe(function(sha) {
-                        if (model.get("baseSha") != sha) {
-                            alert("GOT CONFLICT with: " + model.get("path"));
+                    pms.then(_.bind(that.loadPath, that, absPath)).pipe(function(treeItem) {
+                        if (model.get("baseSha") == treeItem.get("sha")) {
+                            that.highlightConflict(model, treeItem);
                         }
                     });
                 });
@@ -113,6 +113,12 @@ define(['marionette',
                 return this.TreeModel.loadPath(absolutePath);
             },
 
+            //
+            // Extend tree with
+            //
+            highlightConflict: function(model, treeItem) {
+                treeItem.set({status:"conflict", baseSha: model.get("baseSha")});
+            },
             //
             // Reload all opened items if content sha was changed
             //

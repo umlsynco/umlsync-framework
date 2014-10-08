@@ -187,7 +187,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 },
                 parse: function (resp, options) {
                     if (options.data && options.data.parentCid)
-                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid || null;});
+                        _.each(resp.tree, function(obj) { obj.parentCid = options.data.parentCid || null; obj.parentSha = options.data.sha});
                     return resp.tree;
                 },
                 initialize: function (options, attr) {
@@ -214,12 +214,13 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                 //
                 // load path helper
                 //
-                _loadPath: function(paths, parentCid) {
+                _loadPath: function(paths, parentSha) {
                     var dfd = $.Deferred();
+                    var dfd2 = $.Deferred();
                     var pms = dfd.promise();
                     var path = paths.shift();
 
-                    var models = this.where({path: path, parentCid:parentCid});
+                    var models = this.where({path: path, parentSha:parentSha});
                     if (models.length > 1 || models.length == 0) {
                         dfd.reject({reason:"error", message:"Unexpected number of matches of: " + path});
                     }
@@ -230,21 +231,28 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         dfd.resolve();
                         if (!model.get("loaded")) {
                             pms.then(this.fetch({
-                                add: true,
+                                add:true,
                                 remove:false,
-                                merge: false,
+                                merge:false,
                                 data: {sha:model.get("sha"), parentCid:model.cid}
                             }));
                         }
 
-                        pms.then(_.bind(this._loadPath, this, paths));
+                        var modelSha = model.get("sha");
+                        pms.then(_.bind(this._loadPath, this, paths, modelSha))
+                            .pipe(function(data){
+                                dfd2.resolve(data);
+                            },
+                            function(data) {
+                                dfd2.reject(data);
+                            }
+                        );
                     }
                     else {
-                        dfd.resolve(model.get("sha"));
+                        dfd2.resolve(model);
                     }
 
-                    return dfd.promise();
-
+                    return dfd2.promise();
                 },
 
                 lazyLoad: function(data) {
@@ -263,7 +271,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         add: true,
                         remove:false,
                         merge: false,
-                        data: {sha:sha, parentCid:data.key}
+                        data: {sha:sha, parentCid:data.key, parentSha: sha}
                     });
                 },
                 save: function(commitModels, options) {
