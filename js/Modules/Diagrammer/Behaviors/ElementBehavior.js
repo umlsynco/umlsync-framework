@@ -1,4 +1,4 @@
-define(['backbone', 'jquery-ui'], function (Backbone, ui) {
+define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, ui) {
 
     var WrapDraggableResizable = Marionette.Behavior.extend({
         onRender: function () {
@@ -37,6 +37,7 @@ define(['backbone', 'jquery-ui'], function (Backbone, ui) {
         }
     });
 
+    window.Behaviors = window.Behaviors || {};
     window.Behaviors.ElementBehavior = WrapDraggableResizable;
     return WrapDraggableResizable;
 });

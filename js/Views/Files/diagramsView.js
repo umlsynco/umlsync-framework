@@ -1,9 +1,11 @@
 define(
     ['backbone',
      'Views/framework',
-     'Models/contentModel'
+     'Models/contentModel',
+     'Modules/Diagrammer/Models/Diagram',
+     'Modules/Diagrammer/Views/umldiagram'
     ],
-    function (Backbone, Framework, ContentModel) {
+    function (Backbone, Framework, ContentModel, Diagram, UmlDiagram) {
         var diagramView = Backbone.Marionette.ItemView.extend({
             initialize: function () {
                 this.model.on('change:status', this.render);
@@ -24,7 +26,22 @@ define(
                 this.$el.empty();
                 // And handle them
                 if (this.model.get("status") != "error" && this.model.get("status") != "loading") {
-                    this.$el.append("THIS IS DIAGRAM ?");
+                    this.modelDiagram = new Diagram($.parseJSON(this.model.get("content")));
+
+                    var els = this.modelDiagram.getUmlElements();
+                    var cs = this.modelDiagram.getUmlConnectors();
+                    for (var xxx in els.models) {
+                        var model = els.at(xxx);
+                        if (model.get("type") == "class") {
+                            var operations = model.getUmlOperations();
+                            var attributes = model.getUmlAttributes();
+                        }
+                    }
+
+                    this.UD = new UmlDiagram({model:this.modelDiagram });
+                    this.UD.render();
+                    this.$el.append(this.UD.$el);
+
                 }
                 else {
                    // Use the default method
