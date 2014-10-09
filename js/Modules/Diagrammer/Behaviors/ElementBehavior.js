@@ -1,12 +1,16 @@
 define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, ui) {
 
     var WrapDraggableResizable = Marionette.Behavior.extend({
-        onRender: function () {
+        onAttach: function () {
+            alert("VVVVVVVVVVVVVVVV");
             var model = this.view.model;
             var view = this.view;
             var applyOptions = _.pick(model.attributes, 'height', 'width', 'left', 'top');
-
-            this.$el.resizable({
+var fff = this.$el.parent(); var ggg = fff.length;
+            fff.css({position:'relative'});
+            this.$el
+                .css({'position': 'absolute'}).css(applyOptions)
+                .resizable({
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     'scroll': true,
                     'handles': this.options['resizable_h'] || 'n-u,e-u,s-u,w-u,nw-u,sw-u,ne-u,se-u',
@@ -31,7 +35,7 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                 .bind('contextmenu', function (e) {
                     e.preventDefault();
                 })
-                .css({'position': 'absolute'}).css(applyOptions);
+                ;
 
             this.$el.children(".grElement")
                 .click(self,function(event) {

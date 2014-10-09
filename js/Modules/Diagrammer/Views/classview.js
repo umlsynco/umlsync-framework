@@ -13,6 +13,9 @@ define(['marionette', '../Models/umlclass', 'Modules/Diagrammer/Behaviors/Elemen
             initialize: function() {
                 this.$el.attr("id", this.model.cid + "_Border");
             },
+            onAttach: function() {
+
+            },
             templateHelpers: function() {
                 return {
                     cid: this.model.cid,

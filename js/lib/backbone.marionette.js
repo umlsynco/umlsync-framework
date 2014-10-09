@@ -2115,6 +2115,7 @@
                 // document, which are expensive.
                 collectionView.elBuffer.appendChild(childView.el);
                 collectionView._bufferedChildren.push(childView);
+                Marionette.triggerMethod.call(childView, 'attach');
             }
             else {
                 // If we've already rendered the main collection, append
