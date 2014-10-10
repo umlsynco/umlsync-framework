@@ -1,4 +1,4 @@
-define(['marionette', './umldiagram'],
+define(['marionette', './../umldiagram'],
     function(Marionette) {
         var View = Backbone.Marionette.ElementItemView.extend({
             template: _.template('<div id="<%=cid%>" style="width:100%;height:100%;">\

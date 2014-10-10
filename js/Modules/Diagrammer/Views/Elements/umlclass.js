@@ -1,4 +1,4 @@
-define(['marionette', './umldiagram'],
+define(['marionette', './../umldiagram'],
     function(Marionette) {
         var ClassView = Backbone.Marionette.ElementItemView.extend({
             template: _.template('<div id="<%= cid %>" class="us-class grElement">\

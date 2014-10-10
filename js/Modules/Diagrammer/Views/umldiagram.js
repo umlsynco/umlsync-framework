@@ -39,18 +39,28 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
             onRender: function() {
                 // Draw all elements
 
-                this.model.umlelements
-                this.cv = new (Marionette.CollectionView.extend({
+                this.elementsView = new (Marionette.CollectionView.extend({
                     getChildView: function(model) {
 
                         var type = model.get("type");
-                        var view = require("Modules/Diagrammer/Views/uml"+type);
+                        var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
                         return view;
 
                     }})) // extend collection with a new method
                     ({collection:this.model.umlelements});
-                this.cv.render();
-                this.$el.append(this.cv.$el);
+                this.elementsView.render();
+                this.$el.append(this.elementsView.$el);
+
+                this.connectorsView = new (Marionette.CollectionView.extend({
+                    getChildView: function(model) {
+                        var type = model.get("type");
+                        var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
+                        return view;
+
+                    }})) // extend collection with a new method
+                ({collection:this.model.umlelements});
+
+
                 var that = this;
                 $("#" + this.euid + ".us-diagram").scroll(function() {that.drawConnectors();});
 
