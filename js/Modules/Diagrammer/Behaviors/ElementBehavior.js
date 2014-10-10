@@ -2,14 +2,12 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
 
     var WrapDraggableResizable = Marionette.Behavior.extend({
         onAttach: function () {
-            alert("VVVVVVVVVVVVVVVV");
             var model = this.view.model;
             var view = this.view;
-            var applyOptions = _.pick(model.attributes, 'height', 'width', 'left', 'top');
-var fff = this.$el.parent(); var ggg = fff.length;
-            fff.css({position:'relative'});
+            var applyOptions = _.pick(model.attributes, 'height', 'width');
             this.$el
-                .css({'position': 'absolute'}).css(applyOptions)
+                .css({'position': 'absolute'})
+                .css(applyOptions)
                 .resizable({
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     'scroll': true,
@@ -35,7 +33,8 @@ var fff = this.$el.parent(); var ggg = fff.length;
                 .bind('contextmenu', function (e) {
                     e.preventDefault();
                 })
-                ;
+                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;");
+
 
             this.$el.children(".grElement")
                 .click(self,function(event) {
@@ -64,7 +63,11 @@ var fff = this.$el.parent(); var ggg = fff.length;
 
             // Hide element resize points which was
             // added on the previous step
-            $('#' + model.cid + '_Border ' + ".ui-resizable-handle").css({'visibility': 'hidden'});
+            this.$el.children(".ui-resizable-handle").css({'visibility': 'hidden'});
+
+            if (model.get("color")) {
+                this.$el.find(".grElement").css("background-color", model.get("color"));
+            }
         }
     });
 

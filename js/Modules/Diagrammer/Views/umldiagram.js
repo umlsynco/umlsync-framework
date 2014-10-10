@@ -1,9 +1,29 @@
-define(['marionette', './classview'],
-    function(Marionette, ClassView) {
-        var ElementsView = Backbone.Marionette.CollectionView.extend({
-        });
+define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
+        //'./umlclass', './umlpackage', './umlcomponent', './umlinterface', 'umlport', 'umlinstance'],
+    function(Marionette, EB, ClassView, PackageView, ComponentView, InterfaceView, PortView, InstanceView) {
 
-        var ConnectorsView = Backbone.Marionette.CollectionView.extend({
+        Backbone.Marionette.ElementItemView  =  Backbone.Marionette.ItemView.extend({
+            className: "us-element-border",
+            initialize: function() {
+                this.$el.attr("id", this.model.cid + "_Border");//.attr("style", "left:"+this.left+";top:px"+this.top+"px;");
+                // Call extra init method
+                if (this._init) {
+                    this._init.call(this, arguments);
+                }
+            },
+            templateHelpers: function() {
+                return {
+                    cid: this.model.cid
+                }
+            },
+            behaviors: {
+                ElementBehavior: {
+                    // TODO: extend with sortable behavior
+                }
+            },
+            triggers : {
+                "click editable": "edit"
+            }
         });
 
         var DiagramView = Backbone.Marionette.ItemView.extend({
@@ -14,13 +34,21 @@ define(['marionette', './classview'],
                     // TODO: handle embedded content
                 }
                 this.$el.css({height:"600px"});
+
             },
             onRender: function() {
                 // Draw all elements
-                this.cv = new Marionette.CollectionView({
-                    childView: ClassView,
-                    collection:this.model.umlelements
-                });
+
+                this.model.umlelements
+                this.cv = new (Marionette.CollectionView.extend({
+                    getChildView: function(model) {
+
+                        var type = model.get("type");
+                        var view = require("Modules/Diagrammer/Views/uml"+type);
+                        return view;
+
+                    }})) // extend collection with a new method
+                    ({collection:this.model.umlelements});
                 this.cv.render();
                 this.$el.append(this.cv.$el);
                 var that = this;

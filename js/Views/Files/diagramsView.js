@@ -9,6 +9,8 @@ define(
         var diagramView = Backbone.Marionette.ItemView.extend({
             initialize: function () {
                 this.model.on('change:status', this.render);
+                require(['Modules/Diagrammer/Views/umlclass', 'Modules/Diagrammer/Views/umlpackage', 'Modules/Diagrammer/Views/umlcomponent',
+                    'Modules/Diagrammer/Views/umlinterface', 'Modules/Diagrammer/Views/umlport', 'Modules/Diagrammer/Views/umlinstance']);
             },
             getTemplate: function () {
                 var status = this.model.get("status");
