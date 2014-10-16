@@ -26,6 +26,7 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                     'start': function (event, ui) {
                     },
                     'drag': function (event, ui) {
+                        view.trigger("drag");
                     },
                     'stop': function (event, ui) {
                     }

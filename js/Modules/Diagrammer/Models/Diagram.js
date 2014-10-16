@@ -1,6 +1,6 @@
 // Simplest diagram collection
 
-define(['backbone'], function (Backbone) {
+define(['backbone', 'underscore'], function (Backbone, _) {
     String.prototype.capitalize = function() {
         return this.charAt(0).toUpperCase() + this.slice(1);
     }
