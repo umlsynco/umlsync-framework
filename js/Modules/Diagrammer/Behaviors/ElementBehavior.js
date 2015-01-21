@@ -42,7 +42,7 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                     // Hide previous references
                     //$("#" + element.parrent.euid + " .us-references").hide();
                 })
-                .mouseenter(this, function (event){
+                .mouseenter(view, function (event){
                     var element = event.data;
                     if (!element.options.selected && !element.highlighted) {
                         element.highlighted = true;
@@ -51,7 +51,7 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                         $bw.css({left:'-=' + bw, top:'-='+bw});
                     }
                 })
-                .mouseleave(this, function (event){
+                .mouseleave(view, function (event){
                     var element = event.data;
                     if (!element.options.selected && element.highlighted) {
                         var $bw = $('#' + this.id +'_Border');
