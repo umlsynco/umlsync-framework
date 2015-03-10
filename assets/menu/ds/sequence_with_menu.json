@@ -1,0 +1,99 @@
+[
+  {"type": "sequence",
+   "elements": [
+	{"type": "objinstance",
+	 "title": "Object Instance",
+	 "icon": "./dm/icons/us/es/component/InstanceSpecification.png"
+	},
+	{"type": "llport",
+	 "title": "Port",
+	 "hidden": true
+	},
+	{"type": "message",
+	 "title": "Lost/Found Message",
+	 "icon": "./dm/icons/us/es/common/message.png"
+	},
+	{"type": "lldel",
+	 "title": "Del object",
+	 "options":{"hidden": true},
+	 "icon": "./dm/icons/us/es/common/del.png"
+	},
+	{"type": "llalt",
+	 "title": "Alt",
+	 "icon": "./dm/icons/us/es/common/alt.png"
+	},
+	{"type": "llalt",
+	 "title": "Option",
+	 "icon": "./dm/icons/us/es/common/opt.png"
+	},
+	{"type": "llalt",
+	 "title": "Loop",
+	 "icon": "./dm/icons/us/es/common/loop.png"
+	},
+	{"type": "llalt",
+	 "title": "Break",
+	 "icon": "./dm/icons/us/es/common/break.png"
+	},
+	{"type": "llalt",
+	 "title": "Parallel",
+	 "icon": "./dm/icons/us/es/common/par.png"
+	},
+	{"type": "llalt",
+	 "title": "Strict",
+	 "icon": "./dm/icons/us/es/common/strict.png"
+	},
+	{"type": "actor",
+	 "title": "Actor",
+	 "icon": "./dm/icons/us/es/sequence/Actor.png"
+	},
+	{"type": "note",
+	 "title": "Note",
+	 "icon": "/dm/icons/us/es/common/Note.png"
+	}
+
+    ],
+    "connectors": [
+      {"type":"llsequence",
+	   "title":"Life Line Sequence",
+	   "createObject": true,
+	   "icon": "./dm/icons/us/cs/dependency.png"
+	  },
+      {"type":"llselfcall",
+	   "title":"Self Call",
+	   "icon": "./dm/icons/us/cs/composition.png"
+	  },
+      {"type":"generalization",
+	   "title":"Generalization",
+	   "icon": "./dm/icons/us/cs/generalization.png"
+	  },
+      {"type":"realization",
+	   "title":"Realization",
+	   "icon": "./dm/icons/us/cs/realization.png"
+	  },
+      {"type":"association",
+	   "title":"Association",
+	   "icon": "./dm/icons/us/cs/association.png"
+	  },
+      {"type":"aggregation",
+	   "title":"Aggregation",
+	   "icon": "./dm/icons/us/cs/aggregation.png"
+	  },
+      {"type":"composition",
+	   "title":"Composition",
+	   "icon": "./dm/icons/us/cs/composition.png"
+	  },
+      {"type":"anchor",
+	   "title":"Anchor",
+	   "icon": "./dm/icons/us/cs/AnchorToNote.png"
+	  },
+      {"type":"anchor",
+	   "title":"Constraint",
+	   "icon": "./dm/icons/us/cs/Constrain.png"
+	  },
+      {"type":"nested",
+	   "title":"Containment",
+	   "icon": "./dm/icons/us/cs/nested.png"
+	  }
+    ]
+   }
+]

@@ -1,0 +1,67 @@
+[
+  {
+   "elements": [
+	{"type": "class",
+	 "title": "Class",
+	 "icon": "/dm/icons/us/es/class/Class.png"
+	},
+	{"type": "class",
+	 "title": "Interface",
+	 "options": {
+  	   "aux": "Interface",
+	   "nameTemplate": "Interface"
+	 },
+	 "icon": "/dm/icons/us/es/class/ClassInterface.png"
+	},
+	{"type": "class",
+	 "title": "Enumeration",
+	 "options":{
+	   "aux": "Enumeration"
+	 },
+	 "icon": "/dm/icons/us/es/class/ClassEnumeration.png"
+	},
+	{"type": "class",
+	 "title": "Template",
+	 "options": {
+	   "aux": "Template"
+	 },
+	 "icon": "/dm/icons/us/es/class/ClassTemplate.png"
+	},
+	{"type": "note",
+	 "title": "Note",
+	 "icon": "/dm/icons/us/es/common/Note.png"
+	}
+    ],
+    "connectors": [
+      {"type":"aggregation",
+	   "title":"Aggregation",
+	   "icon": "/dm/icons/us/cs/aggregation.png"
+	  },
+      {"type":"realization",
+	   "title":"Realization",
+	   "icon": "/dm/icons/us/cs/realization.png"
+	  },
+      {"type":"selfassociation",
+	   "title":"Self Association",
+	   "oneway":"true",
+	   "icon": "/dm/icons/us/cs/composition.png"
+	  },
+      {"type":"dependency",
+	   "title":"Dependency",
+	   "icon": "/dm/icons/us/cs/dependency.png"
+	  },
+      {"type":"generalization",
+	   "title":"Generalization",
+	   "icon": "/dm/icons/us/cs/generalization.png"
+	  },
+      {"type":"nested",
+	   "title":"Nested",
+	   "icon": "/dm/icons/us/cs/nested.png"
+	  },
+      {"type":"composition",
+	   "title":"Composition",
+	   "icon": "/dm/icons/us/cs/composition.png"
+	  }
+    ]
+   }
+]

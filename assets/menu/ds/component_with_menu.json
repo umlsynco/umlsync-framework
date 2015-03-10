@@ -1,0 +1,69 @@
+[
+  {
+   "elements": [
+	{"type": "component",
+	 "title": "Component",
+	 "icon": "./dm/icons/us/es/component/Component.png"
+	},
+	{"type": "interface",
+	 "title": "Interface",
+	 "options": {"lable":"true"},
+	 "icon": "./dm/icons/us/es/component/Interface.png"
+	},
+	{"type": "port",
+	 "title": "Port",
+	 "icon": "./dm/icons/us/es/component/Port.png"
+	},
+	{"type": "empty",
+	 "title": "Empty",
+	 "hidden": true
+	},
+	{"type": "instance",
+	 "title": "Instance Specification",
+	 "icon": "./dm/icons/us/es/component/InstanceSpecification.png"
+	},
+	{"type": "note",
+	 "title": "Note",
+	 "icon": "./dm/icons/us/es/common/Note.png"
+	}
+    ],
+    "connectors": [
+      {"type":"dependency",
+	   "title":"Dependency",
+	   "icon": "./dm/icons/us/cs/dependency.png"
+	  },
+      {"type":"arc",
+	   "title":"Interface Observer",
+	   "icon": "./dm/icons/us/cs/interface_required.png"
+	  },
+      {"type":"realization",
+	   "title":"Realization",
+	   "icon": "./dm/icons/us/cs/realization.png"
+	  },
+      {"type":"association",
+	   "title":"Association",
+	   "icon": "./dm/icons/us/cs/association.png"
+	  },
+      {"type":"aggregation",
+	   "title":"Aggregation",
+	   "icon": "./dm/icons/us/cs/aggregation.png"
+	  },
+      {"type":"composition",
+	   "title":"Composition",
+	   "icon": "./dm/icons/us/cs/composition.png"
+	  },
+      {"type":"anchor",
+	   "title":"Anchor",
+	   "icon": "./dm/icons/us/cs/AnchorToNote.png"
+	  },
+      {"type":"anchor",
+	   "title":"Constraint",
+	   "icon": "./dm/icons/us/cs/Constrain.png"
+	  },
+      {"type":"nested",
+	   "title":"Containment",
+	   "icon": "./dm/icons/us/cs/nested.png"
+	  }
+    ]
+   }
+]
