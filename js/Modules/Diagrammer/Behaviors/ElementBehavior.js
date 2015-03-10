@@ -41,6 +41,8 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                 .click(self,function(event) {
                     // Hide previous references
                     //$("#" + element.parrent.euid + " .us-references").hide();
+                    $('#' + this.id +'_Border').parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
+                    $('#' + this.id +'_Border').children("DIV.ui-resizable-handle").css("visibility", "visible");
                 })
                 .mouseenter(view, function (event){
                     var element = event.data;

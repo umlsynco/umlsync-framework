@@ -1,12 +1,26 @@
-define(['marionette', 'Collections/dataProviderCollection'], function(Marionette, DataProviderCollection) {
+define(['marionette', 'Collections/dataProviderCollection',      'Controllers/DiagramMenuController'], function(Marionette, DataProviderCollection, DiagramMenu) {
     var Framework = new Marionette.Application({
         contentTypeViews: {},
         dataProviders: new DataProviderCollection(),
 
         registerContentTypeView : function (options) {
           this.contentTypeViews[options.type] = options;
+          if (this.diagramMenu == undefined) {
+			  this.diagramMenu = new DiagramMenu({});
+			  this.DiagramMenuRegion.show(this.diagramMenu.getDialog(), {forceShow: true});
+			  this.diagramMenu.hide();
+			  this.diagramMenu.on("add:accordion", function(regionId) {
+				  alert("Handle new item added to the diagram menu !!!");
+			  });
+		  }
         },
         getContentTypeView : function (id) {
+		  if (id == "diagram") {
+			  this.diagramMenu.show();
+		  }
+		  else {
+			  this.diagramMenu.hide();
+		  }
           return this.contentTypeViews[id].classPrototype;
         },
 
@@ -65,7 +79,8 @@ define(['marionette', 'Collections/dataProviderCollection'], function(Marionette
             selector: '#content-bottom',
             regionClass: ResizableRegion
         },
-		DialogRegion: '#content-dialog'
+        DialogRegion: '#content-dialog',
+        DiagramMenuRegion: "#diagram-menu"
     });
 
     Framework.addInitializer( function(options){

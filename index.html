@@ -336,6 +336,19 @@
             <div id="umlsync-dropdown-region"></div>
         </div>
     </script>
+    
+    <script id="us-diagram-menu-template" type="text/template">
+		<div aria-labelledby="ui-dialog-title-commit-changes-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1004; outline: 0px none; position: absolute; height: auto; width: 550px; top: 241px; left: 433.5px;">
+            <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+                <span id="ui-dialog-title-commit-changes-dialog" class="ui-dialog-title">Select UML element:</span>
+                <a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#">
+                    <span class="ui-icon ui-icon-closethick">close</span>
+                </a>
+            </div>
+        
+			<div id="us-diagram-menu-accordion">Accordion area</div>
+			</div>
+	</script>
 
     <script id="umlsync-commit-dialog-template" type="text/template">
         <div aria-labelledby="ui-dialog-title-commit-changes-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1004; outline: 0px none; position: absolute; height: auto; width: 550px; top: 241px; left: 433.5px;">
@@ -394,6 +407,8 @@
         <div id="content-left-right-resize"
              style="width:6px;left:200px;height:100%;position:absolute;padding:0;margin:0;border:0px solid gray;background-color:gray;cursor: col-resize;"></div>
         <div id="content-right" style="left:206px;height:100%;position:absolute;padding:0;margin:0;">
+            <div id="diagram-menu">
+            </div>
             <div id="tabs">
                 <ul>
                 </ul>
