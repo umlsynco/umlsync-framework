@@ -49,7 +49,10 @@ function ($, useless, _, Marionette) {
                      </div>');
               }
            });
-       }
+       },
+       addMenu: function(model) {
+		   this.collection.add(model);
+	   }
     });
     return collectionView;
 });

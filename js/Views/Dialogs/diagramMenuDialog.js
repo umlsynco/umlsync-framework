@@ -17,16 +17,17 @@ define([
             events: {
 				"click @ui.closeButton" : "addAccordionItem"
 			},
-			addAccordionItem: function(model) {
+			addAccordionItem: function() {
 				// Extend an accordion structure with a new item
-				model = "XXXX";
-//				if (typeof(model) === "String") {
-
-				  this.accordion.collection.add({title:model});
-//			    }
-//			    else {
-//				  this.accordion.collection.add(model);
-//				}
+				var model = {type: "class", title: "Class"};
+				var that = this;
+				
+				$.ajax({url: "./assets/menu/ds/"+model.type+"_with_menu.json", dataType: "json", success:function(data) {
+					alert(data);
+					model.dataJSON = data;
+					that.accordion.addMenu(model);
+				}
+				});
 			},
             onShow: function() {
 				//if (this.accordion) return;
@@ -35,10 +36,9 @@ define([
 				this.accordion.collection.add({title:"hhhh"});
 				this.getRegion('accordion').show(this.accordion);
 				var that = this;
+
                 this.accordion.on("add:child", function() {
 					  that.trigger("add:accordion", "somthing");
-					  alert("added item !!!");
-					  
 				});
 			}
         });
