@@ -23,9 +23,7 @@ define([
 				var that = this;
 				
 				$.ajax({url: "./assets/menu/ds/"+model.type+"_with_menu.json", dataType: "json", success:function(data) {
-					alert(data);
-					model.dataJSON = data;
-					that.accordion.addMenu(model);
+					that.accordion.addMenu(model, data[0]);
 				}
 				});
 			},
