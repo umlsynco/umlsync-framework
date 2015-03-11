@@ -16,7 +16,8 @@
 	},
 	{"type": "empty",
 	 "title": "Empty",
-	 "hidden": true
+	 "hidden": true,
+	 "icon": "./dm/icons/us/es/common/Note.png"
 	},
 	{"type": "instance",
 	 "title": "Instance Specification",

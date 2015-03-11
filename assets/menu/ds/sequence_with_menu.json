@@ -7,7 +7,8 @@
 	},
 	{"type": "llport",
 	 "title": "Port",
-	 "hidden": true
+	 "hidden": true,
+	 "icon": "./dm/icons/us/es/common/message.png"
 	},
 	{"type": "message",
 	 "title": "Lost/Found Message",
