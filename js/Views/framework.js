@@ -24,9 +24,16 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 				var dlg =  that.newDocController.getDialog(data);
 				that.DialogRegion.show(dlg);
 				dlg.on("dialog:cancel", function() {
+					// Unsubscribe and hide
+					dlg.off("dialog:cancel");
+					dlg.off("dialog:done");
 					that.DialogRegion.show();
 				});
 				dlg.on("dialog:done", function(model) {
+					// Unsubscribe and hide
+					dlg.off("dialog:cancel");
+					dlg.off("dialog:done");
+
 					model = model || {title: "selected nothing"};
  				    that.diagramMenu.getDialog().addAccordionItem(model);
 					// handle new content creation !!!
@@ -93,10 +100,11 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 				  this.currentView = undefined;
 			  }
 
-if (!view) {
-	this.currentView = undefined;
-	return;
-}
+              // View detach when necessary		
+              if (!view) {
+	            this.currentView = undefined;
+                return;
+              }
 
               // Do not re-render view for 
 			  if (view && view.$el && view.$el.length > 0
