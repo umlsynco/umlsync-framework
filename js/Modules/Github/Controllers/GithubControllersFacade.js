@@ -13,7 +13,8 @@ define(['marionette',
         './RepoBranchChangeController',
         './ToolboxController', // Github toolbox icons
         './CommitChangesController', // Controller to commit changes
-        './RebaseController' // Pull request controller
+        './RebaseController', // Pull request controller
+        './NewContentController' // New content dialog
     ],
     function(// Basic
              Marionette, Framework,
@@ -21,7 +22,7 @@ define(['marionette',
              TreeView, DropdownView,
              // Controllers
              SyncModelController, LoadContentController, SyncTabsController,
-             RBController, ToolboxController, CommitChangesController, RebaseController) {
+             RBController, ToolboxController, CommitChangesController, RebaseController, NewController) {
         var Facade = Marionette.Controller.extend({
             initialize: function(options) {
                 this.Regions = options.regions;
@@ -169,7 +170,9 @@ define(['marionette',
             // Trigger new content creation dialog (including path search/load controller)
             //
             NewContent: function() {
-
+              new NewController({
+				  // [TBD] option
+				  });
             },
             //
             // Revert content + dialog

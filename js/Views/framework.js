@@ -1,4 +1,6 @@
-define(['marionette', 'Collections/dataProviderCollection',      'Controllers/DiagramMenuController'], function(Marionette, DataProviderCollection, DiagramMenu) {
+define(['marionette', 'Collections/dataProviderCollection',  'Controllers/DiagramMenuController', 'Controllers/NewDocumentController'],
+    function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog) {
+		
     var Framework = new Marionette.Application({
         contentTypeViews: {},
         dataProviders: new DataProviderCollection(),
@@ -12,6 +14,14 @@ define(['marionette', 'Collections/dataProviderCollection',      'Controllers/Di
 			  this.diagramMenu.on("add:accordion", function(regionId) {
 				  alert("Handle new item added to the diagram menu !!!");
 			  });
+		  }
+		  if (this.newDocController == undefined) {
+			var that = this;
+		    this.newDocController = new NewDocumentDialog({});
+    
+		    this.vent.on('content:new:dialog', function(data) {
+				that.DialogRegion.show(that.newDocController.getDialog(data), {forceShow: true});
+			});
 		  }
         },
         getContentTypeView : function (id) {

@@ -70,10 +70,7 @@ define(['marionette',
                       default:
                           alert("Unexpected operation:" + names[1]);
                           break;
-
                   }
-
-
                 }
             }
         });

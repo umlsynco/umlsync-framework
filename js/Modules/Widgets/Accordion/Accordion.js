@@ -17,7 +17,13 @@ function ($, useless, _, Marionette) {
    var connectorView = Marionette.ItemView.extend({
 	   tagName: 'li',
 	   className: 'connector-selector',
-	   template: _.template("<span style=\"cursor:pointer;list-style-image:url('/dm/icons/us/es/<%= type %>/<%= title %>.png');\"><a><%= title %></a>")
+	   template: _.template("<span style=\"cursor:pointer;list-style-image:url('<%= icon %>');\"><a><%= title %></a>"),
+		// Filter hidden items
+       addChild: function(child, ChildView, index){
+           if (child.has("icon") && child.get("hidden") != true) {
+               Marionette.CollectionView.prototype.addChild.apply(this, arguments);
+           }
+       }
    });
 
    var itemView = Marionette.ItemView.extend({
