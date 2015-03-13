@@ -18,9 +18,19 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 		  if (this.newDocController == undefined) {
 			var that = this;
 		    this.newDocController = new NewDocumentDialog({});
-    
+
+            // Data should describe the storage (github, eclipse etc)   
 		    this.vent.on('content:new:dialog', function(data) {
-				that.DialogRegion.show(that.newDocController.getDialog(data), {forceShow: true});
+				var dlg =  that.newDocController.getDialog(data);
+				that.DialogRegion.show(dlg);
+				dlg.on("dialog:cancel", function() {
+					that.DialogRegion.show(null);
+				});
+				dlg.on("dialog:done", function() {
+					// handle new content creation !!!
+					that.DialogRegion.show(null);
+				});
+
 			});
 		  }
         },
@@ -72,6 +82,26 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
         }
     });
 
+    var DialogRegion = Marionette.Region.extend({
+          show: function(view, options) {
+     		  if (this.currentView && this.currentView.isSingletone) {
+				  // detach child element
+				  this.$el.children().detach();
+				  this.currentView = undefined;
+			  }
+
+              // Do not re-render view for 
+			  if (view.$el && view.$el.length > 0
+			      && view.isSingletone && view.isRendered) {
+				  this.currentView = view;
+				  this.$el.append(view.$el);
+			  }
+			  else {
+			    Marionette.Region.prototype.show.apply(this, arguments);
+			  }
+		  }
+    });
+
     Framework.addRegions({
         HeaderRegion: {
             selector: '#content-header',
@@ -89,7 +119,10 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
             selector: '#content-bottom',
             regionClass: ResizableRegion
         },
-        DialogRegion: '#content-dialog',
+        DialogRegion: {
+			selector: '#content-dialog',
+			regionClass: DialogRegion
+		},
         DiagramMenuRegion: "#diagram-menu"
     });
 

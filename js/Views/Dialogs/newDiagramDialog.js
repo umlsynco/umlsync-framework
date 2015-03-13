@@ -45,9 +45,9 @@ define([
                 buttons: "button.ui-button",
                 closeButton: "span.ui-icon-closethick",
             },
-            trigger: {
+            events: {
 				'click @ui.closeButton' : 'onCancel',
-				'click @ui.closeButton' : 'onButtonClick'
+				'click @ui.buttons' : 'onButtonClick'
 			},
 			initialize: function() {
 				//var collection = this.collection;
@@ -56,12 +56,12 @@ define([
 				//});
 			},
 			onButtonClick: function(button) {
-				alert("ON BUTTON !!!");
 				// handle dialog completion
 				this.trigger("dialog:done");
+				// Detach dialog widget to do not create it again
+				
 			},
 			onCancel: function() {
-				alert("ON CANCEL !!!");
 				// Trigger cancel event
 				this.trigger("dialog:cancel");
 		    },
@@ -82,6 +82,9 @@ define([
             onShow: function() {
               $(this.$el).draggable().resizable();
               $(this.$el).parent().css('visibility', 'visible');
+			},
+			initialize: function() {
+				this.isSingletone = true;
 			}
         });
 
