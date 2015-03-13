@@ -9,7 +9,7 @@ define([
 	        tagName: 'li',
 	        className: 'diagram-selector',
 	        template: _.template("<span style=\"cursor:pointer;list-style-image:url('<%= icon %>');\"><a><%= title %></a>"),
-	        trigger: {
+	        events: {
 				'click': function() {
 					// Change an active element !!!
 					this.model.set("isActive", true);
@@ -19,13 +19,15 @@ define([
 				'change:isActive': 'toggleSelectedClass'
 			},
 			toggleSelectedClass: function (isActive) {
-				if (isActive) {
+				if (this.model.get("isActive")) {
 					this.$el.addClass("selected");
 				}
 				else {
 					this.$el.removeClass("selected");
 				}
-			}
+			},
+			initialize: function() {
+		    }
         });
         // Content menu list
         var contentMenu = Marionette.CollectionView.extend({
@@ -34,32 +36,67 @@ define([
                                  onRender: function() {
 									 // TODO: drop it!!!
 									 this.$el.attr("id", "diagram-menu");
-								 }
-                                 });
+								 },
+   							     initialize: function() {
+									 this.collection.on(
+									   "change:isActive",
+									   function(model) {
+										   // Prevent loop
+										   if (!model.get("isActive")) return;
+
+								           var activeItems = this.where({isActive:true});
+  								           for (var i in activeItems) {
+											if (activeItems[i] != model)
+   									          activeItems[i].set({isActive:false});
+								           }
+							          });
+							     }
+                          });
 
         // Content select dialog
         var DialogView = Marionette.LayoutView.extend({
             template: "#umlsync-new-diagram-dialog-template",
             modal:true,
             ui: {
-                buttons: "button.ui-button",
-                closeButton: "span.ui-icon-closethick",
+                createButton: "button.ui-button-create",
+                cancelButton: "button.ui-button-cancel",
+                closeButton: "span.ui-icon-closethick"
             },
             events: {
 				'click @ui.closeButton' : 'onCancel',
-				'click @ui.buttons' : 'onButtonClick'
+				'click @ui.cancelButton' : 'onCancel',
+				'click @ui.createButton' : 'onCreateButtonClick'
+			},
+			regions: {
+				ContentList : "#selectable-list"
 			},
 			initialize: function() {
+				// Prevent multiple render
+				this.isSingletone = true;
+
+				// Download the content list
+				var that = this;
+				this.contentTypeList = new contentMenu({collection: new Backbone.Collection()});
+				$.ajax({
+					url: "./assets/menu/main.json",
+					dataType: 'json',
+					success: function(data) {
+						that.contentTypeList.collection.add(data);
+					},
+					error: function() {
+						alert("TODO: HANDLE CONTENT MENUS LIST DOWNLOAD FAILED !!!");
+					}
+				});
 				//var collection = this.collection;
 				//this.collection.on("change:isActive", function(model) {
                 //   // collection.each(
 				//});
 			},
-			onButtonClick: function(button) {
+			onCreateButtonClick: function(button) {
 				// handle dialog completion
-				this.trigger("dialog:done");
-				// Detach dialog widget to do not create it again
-				
+				var active = this.contentTypeList.collection.where({isActive:true})
+				if (active.length > 0)
+				  this.trigger("dialog:done", active[0]);
 			},
 			onCancel: function() {
 				// Trigger cancel event
@@ -80,11 +117,12 @@ define([
 				// 3. Snippet bubbles
 			},
             onShow: function() {
-              $(this.$el).draggable().resizable();
+              $(this.$el).draggable({cancel:".ui-not-draggable"}).resizable();
               $(this.$el).parent().css('visibility', 'visible');
 			},
-			initialize: function() {
-				this.isSingletone = true;
+			onRender: function() {
+			  if (this.ContentList)
+			      this.ContentList.show(this.contentTypeList);
 			}
         });
 

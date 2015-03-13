@@ -24,11 +24,13 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 				var dlg =  that.newDocController.getDialog(data);
 				that.DialogRegion.show(dlg);
 				dlg.on("dialog:cancel", function() {
-					that.DialogRegion.show(null);
+					that.DialogRegion.show();
 				});
-				dlg.on("dialog:done", function() {
+				dlg.on("dialog:done", function(model) {
+					model = model || {title: "selected nothing"};
+ 				    that.diagramMenu.getDialog().addAccordionItem(model);
 					// handle new content creation !!!
-					that.DialogRegion.show(null);
+					that.DialogRegion.show();
 				});
 
 			});
@@ -84,17 +86,37 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 
     var DialogRegion = Marionette.Region.extend({
           show: function(view, options) {
+
      		  if (this.currentView && this.currentView.isSingletone) {
 				  // detach child element
 				  this.$el.children().detach();
 				  this.currentView = undefined;
 			  }
 
+if (!view) {
+	this.currentView = undefined;
+	return;
+}
+
               // Do not re-render view for 
-			  if (view.$el && view.$el.length > 0
-			      && view.isSingletone && view.isRendered) {
+			  if (view && view.$el && view.$el.length > 0
+			      && view.isSingletone) {
+				  // Destroy previous dialog
+				  if (this.currentView) {
+					  this.reset();
+				  }
+				  // Set incomming view as default !
 				  this.currentView = view;
 				  this.$el.append(view.$el);
+				  // Trigger method
+				  this.triggerMethod('show', view);
+
+                  if (_.isFunction(view.triggerMethod)) {
+                    view.triggerMethod('show');
+                  } else {
+                    this.triggerMethod.call(view, 'show');
+                  }
+                  return this;
 			  }
 			  else {
 			    Marionette.Region.prototype.show.apply(this, arguments);

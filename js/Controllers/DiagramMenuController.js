@@ -12,8 +12,6 @@ define(['marionette',
 				});
             },
             getDialog: function() {
-				this.dialog.render();
-				$(this.dialog.$el).draggable();
 				return this.dialog;
 			},
 			show: function() {

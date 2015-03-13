@@ -204,11 +204,11 @@
                     <span id="ui-dialog-title-new-diagram-dialog" class="ui-dialog-title">Creating new diagram   [<span>umlsynco/diagrams</span>]</span>
                     <a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span class="ui-icon ui-icon-closethick">close</span></a>
                 </div>
-                <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 60.4px; height: auto;" class="ui-dialog-content ui-widget-content" id="new-diagram-dialog">
+                <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 60.4px; height: auto;" class="ui-dialog-content ui-widget-content ui-not-draggable" id="new-diagram-dialog">
 					<form id="us-dialog-newdiagram">
 						<fieldset>
 							<div id="selectable-list" style="scroll:auto;">
-								<ul id="diagram-menu">
+								<!-- ul id="diagram-menu">
 									<li id="0" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/classDiagram.png');">
 										<a>UML class diagram</a>
 									</li>
@@ -227,7 +227,7 @@
 									<li id="5" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/snippets.png');">
 										<a>Snippet bubbles</a>
 									</li>
-								</ul>
+								</ul -->
 							</div>
 							<br>
 							<p id="us-new-diagram-dialog-readio" class="ui-widget-header ui-corner-all">
@@ -248,10 +248,10 @@
 				</div>
 				<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
 					<div class="ui-dialog-buttonset">
-						<button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button">
+						<button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-not-draggable ui-button-create" type="button">
 							<span class="ui-button-text">Create</span>
 						</button>
-						<button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" type="button">
+						<button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-not-draggable ui-button-cancel" type="button">
 							<span class="ui-button-text">Cancel</span>
 						</button>
 					</div>
