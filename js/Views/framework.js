@@ -1,5 +1,9 @@
-define(['marionette', 'Collections/dataProviderCollection',  'Controllers/DiagramMenuController', 'Controllers/NewDocumentController'],
-    function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog) {
+define(['marionette',
+        'Collections/dataProviderCollection',
+        'Controllers/DiagramMenuController',
+        'Controllers/NewDocumentController',
+        'Controllers/ContextMenuRegistry'],
+    function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog, ContextMenuRegistry) {
 		
     var Framework = new Marionette.Application({
         contentTypeViews: {},
@@ -11,8 +15,10 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 			  this.diagramMenu = new DiagramMenu({});
 			  this.DiagramMenuRegion.show(this.diagramMenu.getDialog(), {forceShow: true});
 			  this.diagramMenu.hide();
+			  
+			  // TODO: Think if we really need this callback !!!
 			  this.diagramMenu.on("add:accordion", function(regionId) {
-				  alert("Handle new item added to the diagram menu !!!");
+				  //alert("Handle new item added to the diagram menu !!!");
 			  });
 		  }
 		  if (this.newDocController == undefined) {
@@ -30,12 +36,16 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 					that.DialogRegion.show();
 				});
 				dlg.on("dialog:done", function(model) {
+					
 					// Unsubscribe and hide
 					dlg.off("dialog:cancel");
 					dlg.off("dialog:done");
 
 					model = model || {title: "selected nothing"};
  				    that.diagramMenu.getDialog().addAccordionItem(model);
+ 				    
+ 				    that.vent.trigger("content:focus", {title:'New docuemnt', contentType: 'diagram', content: {base_type:'base', type:"class", elements:[], connectors:[]}});
+
 					// handle new content creation !!!
 					that.DialogRegion.show();
 				});
@@ -153,6 +163,10 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
 			selector: '#content-dialog',
 			regionClass: DialogRegion
 		},
+		ContextMenuRegion: {
+			selector: '#context-menu-region',
+			regionClass: DialogRegion // Singletone and disconnect without destroy !
+		},
         DiagramMenuRegion: "#diagram-menu"
     });
 
@@ -163,7 +177,17 @@ define(['marionette', 'Collections/dataProviderCollection',  'Controllers/Diagra
             that.vent.trigger('app:resize', e);
         });
 
+        // [TODO]: Path for each diagram ?
         if (Backbone.history){ Backbone.history.start(); }
+
+        // Context menu region handler !!!
+        this.ContextMenuRegistry = new ContextMenuRegistry({region:this.ContextMenuRegion});
+
+        // context menu is global feature
+        this.vent.on("contextmenu:show", function(data) {
+			that.ContextMenuRegistry.show(data);
+		});
+        
     });
 
 	Marionette.Behaviors.behaviorsLookup = function() {

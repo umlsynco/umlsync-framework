@@ -38,6 +38,8 @@ define(
                 if (this.model.get("status") != "error" && this.model.get("status") != "loading") {
                     this.modelDiagram = new Diagram($.parseJSON(this.model.get("content")));
 
+// Methods become available if elements and connectors are not empty
+if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                     var els = this.modelDiagram.getUmlElements();
                     var cs = this.modelDiagram.getUmlConnectors();
                     for (var xxx in els.models) {
@@ -47,6 +49,7 @@ define(
                             var attributes = model.getUmlAttributes();
                         }
                     }
+}
 
                     this.UD = new UmlDiagram({model:this.modelDiagram });
                     this.UD.render();

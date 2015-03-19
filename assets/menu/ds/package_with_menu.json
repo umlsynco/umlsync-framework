@@ -3,42 +3,42 @@
    "elements": [
 	{"type": "package",
 	 "title": "Package",
-	 "icon": "./dm/icons/us/es/package/Package.png"
+	 "icon": "./assets/icons/us/es/package/Package.png"
 	},
 	{"type": "package",
 	 "title": "Subsystem",
 	 "options": {"aux": "subsystem","dropable":"package"},
- 	 "icon": "./dm/icons/us/es/package/Subsystem.png"
+ 	 "icon": "./assets/icons/us/es/package/Subsystem.png"
 	},
 	{"type": "note",
 	 "title": "Note",
-	 "icon": "./dm/icons/us/es/common/note.png"
+	 "icon": "./assets/icons/us/es/common/note.png"
 	}
     ],
     "connectors": [
       {"type":"dependency",
 	   "title":"Dependency",
-	   "icon": "./dm/icons/us/cs/dependency.png"
+	   "icon": "./assets/icons/us/cs/dependency.png"
 	  },
       {"type":"dependency",
 	   "title":"Import",
-	   "icon": "./dm/icons/us/cs/Import.png"
+	   "icon": "./assets/icons/us/cs/Import.png"
 	  },
       {"type":"dependency",
 	   "title":"Access",
-	   "icon": "./dm/icons/us/cs/Access.png"
+	   "icon": "./assets/icons/us/cs/Access.png"
 	  },
       {"type":"generalization",
 	   "title":"Generalization",
-	   "icon": "./dm/icons/us/cs/generalization.png"
+	   "icon": "./assets/icons/us/cs/generalization.png"
 	  },
       {"type":"dependency",
 	   "title":"Merge",
-	   "icon": "./dm/icons/us/cs/Merge.png"
+	   "icon": "./assets/icons/us/cs/Merge.png"
 	  },
       {"type":"nested",
 	   "title":"Containment",
-	   "icon": "./dm/icons/us/cs/nested.png"
+	   "icon": "./assets/icons/us/cs/nested.png"
 	  }
     ]
    }

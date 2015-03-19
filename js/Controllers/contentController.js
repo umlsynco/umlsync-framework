@@ -114,12 +114,15 @@ define(['marionette',
 			     models[0].set("isActive", true); // Or trigger click ???
 			   }
 			   else {
-                   var ext = data.title.split('.').pop().toUpperCase();
-                   data.contentType = Framework.getContentType(ext);
+				   // Extract the cotent type if not available
+				   if (!data.contentType) {
+                     var ext = data.title.split('.').pop().toUpperCase();
+                     data.contentType = Framework.getContentType(ext);
+				   }
 
                    // Add data if we know how to handle it only
                    if (data.contentType) {
-                       data.status = 'loading';
+                       data.status = data.content ? 'loaded' : 'loading'; // Do nothing if content was loaded before !!!
                        // Add file to collection with "loading" status
                        // as a result loading view will be added to the
                        // area
