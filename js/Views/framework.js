@@ -2,17 +2,18 @@ define(['marionette',
         'Collections/dataProviderCollection',
         'Controllers/DiagramMenuController',
         'Controllers/NewDocumentController',
-        'Controllers/ContextMenuRegistry'],
-    function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog, ContextMenuRegistry) {
+        'Controllers/ContextMenuRegistry',
+        'Modules/Diagrammer/Views/contextmenu'
+        ],
+    function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog, ContextMenuRegistry, DiagramCtxMenu) {
 		
     var Framework = new Marionette.Application({
         contentTypeViews: {},
         dataProviders: new DataProviderCollection(),
-
         registerContentTypeView : function (options) {
           this.contentTypeViews[options.type] = options;
           if (this.diagramMenu == undefined) {
-			  this.diagramMenu = new DiagramMenu({});
+			  this.diagramMenu = new DiagramMenu({Framework:this});
 			  this.DiagramMenuRegion.show(this.diagramMenu.getDialog(), {forceShow: true});
 			  this.diagramMenu.hide();
 			  
@@ -56,6 +57,9 @@ define(['marionette',
         getContentTypeView : function (id) {
 		  if (id == "diagram") {
 			  this.diagramMenu.show();
+			  if (!this.dctx) {
+				  this.dctx = new DiagramCtxMenu({registry:this.ContextMenuRegistry});
+			  }
 		  }
 		  else {
 			  this.diagramMenu.hide();

@@ -5,7 +5,13 @@ define(['marionette',
         var Controller = Marionette.Controller.extend({
 
             initialize: function (options) {
-                this.dialog = new dialog({});
+                this.dialog = new dialog({Framework:options.Framework});
+                if (options.Framework)
+                    options.Framework.vent.on("diagram:element:create", function(model) {
+						// [TODO]: Get diagram content handler -> focus diagram -> create element !!!
+						alert("Create something !!!!");
+					});
+                
                 var that = this;
                 this.dialog.on("add:accordion", function(somthing) {
 					that.trigger("add:accordion", somthing);					

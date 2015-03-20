@@ -60,7 +60,23 @@ if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                    // Use the default method
                    return Backbone.Marionette.ItemView.prototype.render.apply(this, arguments);
                 }
-            }
+            },
+            handlePast: function(data) {
+				// Create a new element !!!
+				if (data.source == "diagram-menu") {
+					if (this.modelDiagram.getUmlElements) {
+						var elements = this.modelDiagram.getUmlElements();
+						elements.add({type:"class", name: "Test", top:100, left:200, pageY:100, pageX:200, elements:[], connectors:[]});
+					}
+
+				}
+				// Copy-past between diagrams !!!
+				else if (data.source == "clipboard") {
+				}
+				else {
+					alert("Unknown source of PAST event: " + data.source);
+				}				
+			}
         });
 
         Framework.registerContentTypeView({

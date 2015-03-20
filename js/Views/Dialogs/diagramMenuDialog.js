@@ -44,8 +44,9 @@ define([
 					  that.trigger("add:accordion", "somthing");
 				});
 			},
-			initialize: function() {
-				this.accordion = new Accordion({collection: new Backbone.Collection()});
+			initialize: function(options) {
+				this.accordion = new Accordion({collection: new Backbone.Collection(), Framework:options.Framework});
+				
 			}
         });
 

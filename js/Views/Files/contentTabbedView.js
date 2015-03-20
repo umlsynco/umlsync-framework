@@ -1,11 +1,12 @@
 define(
     ['jquery',
      'jquery-ui',
+     'underscore',
      'scrolltab',
      'marionette',
      'Views/framework',
      'Collections/contentCollection'],
-    function ($, useless, useless2,  Marionette, Framework, ContentCollection) {
+    function ($, useless, _, useless2,  Marionette, Framework, ContentCollection) {
         var contentCollectionView = Marionette.CollectionView.extend({
             collectionEvents: {
               'change:isModified': 'isModified',
@@ -42,6 +43,8 @@ define(
             // Initialize tabs and subscribe on collection's callbacks
             //
             initialize : function () {
+				this.kids = [];
+
                 var contentManager = this;
                 this.$el.tabs(this, {
                         'scrollable': true,
@@ -57,12 +60,24 @@ define(
                           }
                         }
                     });
+                    
+                 // Copy-Cut-Past operations !!!
+                 Framework.vent.on("content:past", _.bind(this.onPastCall, this));
             },
+            onPastCall: function(data) {
+				if (this.activeView && this.activeView.handlePast) {
+					this.activeView.handlePast(data);
+				}
+			},
             //
             // Append tab item for View rendering
             //
             onBeforeAddChild: function (childViewInstance) {
                 if (!childViewInstance.model.get('parentSelector')) {
+
+                    // work-around to track active child !!!
+					this.kids[childViewInstance.model.cid] = childViewInstance;
+
                     var parentSelector = this.tabPrefix + childViewInstance.model.cid;
                     this.$el.tabs("add", '#' + parentSelector, childViewInstance.model.get('title'));
                     childViewInstance.model.set('parentSelector', '#' + parentSelector);
@@ -84,6 +99,19 @@ define(
 			//
 			onBeforeRemoveChild: function(view) {
 			  if (view) {
+                if (this.kids[view.model.cid]) {
+					// reset active view before child remove !!!
+					if (this.kids[view.model.cid] == this.activeView)
+					   this.activeView = null;
+
+                   // clean-up views cache !!!
+                   this.kids[view.model.cid] = null;
+                   delete this.kids[view.model.cid];
+				}
+				else {
+				  alert("Trying to remove not existing child !!!");
+				}
+
 			    var parent = view.model.get("parentSelector");
 				var that = this;
 				view.on('destroy', function() {
@@ -92,15 +120,22 @@ define(
 					// trigger remove tabs for scrollable tabs
 					// to re-calculate scroll options
 					that.$el.trigger('tabsremove');
+					
 				});
 			  }
 			},
             //
             // Handle trigger event for tab activation
             //
-            isActive: function(model, something) {
+            isActive: function(model, something, view) {
                if (model.get("isActive")) {
                 this.$el.tabs('select', model.get("parentSelector"));
+                if (this.kids[model.cid]) {
+                  this.activeView = this.kids[model.cid];
+			    }
+			    else {
+				  this.activeView = null;
+				}
               }
             },
             //

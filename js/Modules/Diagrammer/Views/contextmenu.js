@@ -1,7 +1,7 @@
 define([
         'jquery',
         'marionette',
-        'framework'
+        'Views/framework'
         ],
     function ($, Marionette, Framework) {
 		// Content menu item
@@ -60,20 +60,22 @@ define([
 			regions: {
 				ContentList : "#selectable-list"
 			},
-			initialize: function() {
+			initialize: function(options) {
 				// Prevent multiple render
 				this.isSingletone = true;
 				// Initialize an empty context menu
-				this.contentTypeList = new contentMenu({collection: new Backbone.Collection()});
+				this.contentTypeList = new contextMenu({collection: new Backbone.Collection()});
 				// handle all element's context menu calls
-				Framework.ContextMenuRegestry.addContextMenu("diagram", this);
+				if (options.registryregistry) {
+				    options.registry.addContextMenuHandler("diagram", this);
+				}
             },
-            update: function(data) {
+            getDataView: function(data) {
 				// Download the content list
 				var that = this;
 alert("PATH TO THE CONTEXT MENU QQQQQ");
 				$.ajax({
-					url: "./assets/menu/main.json",
+					url: "./assets/menu/description.json",
 					dataType: 'json',
 					success: function(data) {
 						that.contentTypeList.collection.add(data);

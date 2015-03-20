@@ -6,9 +6,9 @@ define(['marionette'],
 				this.handler = {};
 			},
 			addContextMenuHandler: function(type, handlerView) {
-				if (!type || !handler) return;
-				if (!handlerView.update) { alert("You should declare handlerView::update"); return;}
-
+				if (!type || !handlerView) return;
+				if (!handlerView.getDataView) { alert("You should declare handlerView::getDataView"); return;}
+alert("addContextMenuHandler: " + type);
 				this.handlers[type] = handlerView;
 		    },
 		    removeContextMenuHandler: function(type, handler) {
@@ -24,8 +24,9 @@ define(['marionette'],
 			show:function(data) {
 				if (!data || data.type) return false;
 				if (!this.handlers[data.type]) return false;
+
 				// Initialize handler 
-				this.handlers[type].update(data);
+				this.handlers[type].getDataView(data);
 			}
 		});
 		return Controller;

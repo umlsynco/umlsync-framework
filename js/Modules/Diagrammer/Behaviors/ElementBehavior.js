@@ -1,7 +1,7 @@
-define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, ui) {
+define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Backbone, Marionette, ui, Framework) {
 
     var WrapDraggableResizable = Marionette.Behavior.extend({
-        onAttach: function () {
+        onRender: function () {
             var model = this.view.model;
             var view = this.view;
             var applyOptions = _.pick(model.attributes, 'height', 'width');
@@ -33,6 +33,9 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                 })
                 .bind('contextmenu', function (e) {
                     e.preventDefault();
+                    // Load and show the context menu for the diagram
+                    // [TODO]: Do we need to split "edit/view" states ?
+                    Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:this}});
                 })
                 .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;");
 

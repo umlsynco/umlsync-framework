@@ -4,11 +4,22 @@ define([
         'underscore',
         'marionette'],
 function ($, useless, _, Marionette) {
+	var Framework;
    // <li id="0" class="element-selector" style="cursor:pointer;list-style-image:url('././/dm/icons/us/es/class/Class.png');"><a>Class</a></li>
    var elementView = Marionette.ItemView.extend({
 	   tagName: 'li',
 	   className: 'element-selector',
-	   template: _.template("<a style=\"cursor:pointer;background-image:url('<%= icon %>');\"><%= title %></a>")
+	   template: _.template("<a style=\"cursor:pointer;background-image:url('<%= icon %>');\"><%= title %></a>"),
+       events: {
+           'click': 'onSelectMenuItem'
+       },
+       onSelectMenuItem: function() {
+		   if (Framework && Framework.vent) {
+			   Framework.vent.trigger("content:past", {source: "diagram-menu", context: this.model});
+		   } else {
+			   alert("FRAMEWORK IS NOT DEFINED FOR DIAGRAM MENU ITEM !!!");
+		   }
+	   }
    });
    // Collection of the elements icons
    var elementsCollection = Marionette.CollectionView.extend({
@@ -79,6 +90,9 @@ function ($, useless, _, Marionette) {
 			   return true;
 		   }
 		   return false;
+	   },
+	   initialize: function(options) {
+		   Framework = options.Framework
 	   }
     });
     return collectionView;

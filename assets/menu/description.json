@@ -1,0 +1,93 @@
+[
+  {
+    type:'instance',
+    require: 'instance.js',
+    fields: [
+        {
+			title: 'Remove',
+            command: 'diagram:common:remove'
+        },
+        {
+			title: 'Add stereotype',
+            command: 'diagram:instance:addstereotype'
+        },
+        {
+			title: 'Add specification field',
+			command: 'diagram:instance:addfield'
+        },
+    ]
+  },
+  {
+    type:'class',
+    require: 'class.js',
+    fields: [
+        {
+			title: 'Remove',
+            command: 'diagram:common:remove'
+        },
+        {
+			title: 'Add method',
+            command: 'diagram:class:addmethod'
+        },
+        {
+			title: 'Add field',
+			command: 'diagram:class:addfield'
+        },
+    ]
+  },
+  {
+    type:'stereotype',
+    require: 'stereotype.js',
+    fields: [
+        {
+			title: 'Remove',
+            command: 'diagram:common:remove'
+        },
+        {
+			title: 'Add tagged value',
+            command: 'diagram:stype:addtaggedvalue'
+        }
+    ]
+  },
+
+  {
+    type:'connector',
+    require: 'connector.js',
+    fields: [
+        {
+			title: 'Remove',
+            command: 'diagram:common:remove'
+        },
+        {
+			title: 'Add Label',
+            command: 'diagram:connector:addlabel'
+        },
+        {
+			title: 'Edit',
+			command: 'diagram:common:edit'
+        },
+    ]
+  },
+  {
+    type:'default',
+    require: 'default.js',
+    fields: [
+        {
+			title: 'Copy Ctrl-C',
+            command: 'diagram:common:copy'
+        },
+        {
+			title: 'Cut Ctrl-X',
+            command: 'diagram:common:cut'
+        },
+        {
+			title: 'Past Ctrl-V',
+            command: 'diagram:common:past'
+        },
+        {
+			title: 'Remove Del',
+			command: 'diagram:common:remove'
+        },
+    ]
+  }
+]
