@@ -1,7 +1,7 @@
 define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
     function(Marionette, EB, ClassView, PackageView, ComponentView, InterfaceView, PortView, InstanceView) {
 
-        Backbone.Marionette.ElementItemView  =  Backbone.Marionette.ItemView.extend({
+        Backbone.Marionette.ElementItemView  =  Backbone.Marionette.CompositeView.extend({
             className: "us-element-border",
             initialize: function() {
                 this.$el.attr("id", this.model.cid + "_Border");//.attr("style", "left:"+this.left+";top:px"+this.top+"px;");
@@ -17,7 +17,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
             },
             behaviors: {
                 ElementBehavior: {
-                    // TODO: extend with sortable behavior
+                    // [TODO]: extend with sortable behavior
                 }
             },
             triggers : {

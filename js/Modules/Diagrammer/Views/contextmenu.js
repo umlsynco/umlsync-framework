@@ -6,91 +6,98 @@ define([
     function ($, Marionette, Framework) {
 		// Content menu item
 		// <li id="0" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/classDiagram.png');"><a>UML class diagram</a></li>
-		var contentView =    Marionette.ItemView.extend({
+		var contextItemView =    Marionette.ItemView.extend({
 	        tagName: 'li',
 	        className: 'diagram-selector',
-	        template: _.template("<span style=\"cursor:pointer;list-style-image:url('<%= icon %>');\"><a><%= title %></a>"),
-	        events: {
-				'click': function() {
-					// Change an active element !!!
-					this.model.set("isActive", true);
-				}
-			},
-			modelEvents: {
-				'change:isActive': 'toggleSelectedClass'
-			},
-			toggleSelectedClass: function (isActive) {
-				if (this.model.get("isActive")) {
-					this.$el.addClass("selected");
-				}
-				else {
-					this.$el.removeClass("selected");
-				}
-			},
-			initialize: function() {
-		    }
+	        template: _.template("<span style=\"cursor:pointer;list-style-image:url('');\"><a><%= title %></a></span>"),
+	        triggers: {
+				'click': "itemclick"
+			}
         });
         // Context menu list
         var contextMenu = Marionette.CollectionView.extend({
 					             tagName: 'ul',
-                                 childView: contentView,
-                                 onRender: function() {
-									 // TODO: drop it!!!
-									 this.$el.attr("id", "diagram-menu");
+                                 childView: contextItemView,
+                                 childEvents: {
+									 "itemclick": function(view, vm) {
+										 if (!Framework) Framework = require('Views/framework');
+										 if (vm.model.get("command"))
+										   Framework.vent.trigger(vm.model.get("command"), this.options.controller.cachedData);
+										 $(document).trigger("click");
+									 }
 								 },
-   							     initialize: function() {
-									 this.collection.on(
-									   "change:isActive",
-									   function(model) {
-										   // Prevent loop
-										   if (!model.get("isActive")) return;
-
-								           var activeItems = this.where({isActive:true});
-  								           for (var i in activeItems) {
-											if (activeItems[i] != model)
-   									          activeItems[i].set({isActive:false});
-								           }
-							          });
-							     }
+                                 className: 'context-menu',
+                                 onRender: function() {
+									 this.$el.show();
+								 }
                           });
 
         // Content select dialog
-        var ContextMenuView = Marionette.LayoutView.extend({
-            template: _.template(""),
-			regions: {
-				ContentList : "#selectable-list"
-			},
+        var ContextMenuView = Marionette.Controller.extend({
 			initialize: function(options) {
-				// Prevent multiple render
-				this.isSingletone = true;
-				// Initialize an empty context menu
-				this.contentTypeList = new contextMenu({collection: new Backbone.Collection()});
+  			    // List of handlers
+				this.subtypes = {};
+
+				// Descrpition of the context menu items
+				this.contentTypeList = {};
+
 				// handle all element's context menu calls
-				if (options.registryregistry) {
+				if (options.registry) {
 				    options.registry.addContextMenuHandler("diagram", this);
 				}
+
+                this.initalizeJSON();
             },
-            getDataView: function(data) {
-				// Download the content list
+            initalizeJSON: function() {
+				// Prevent multiple load of the same data
+				if (this.loading) return;
+
 				var that = this;
-alert("PATH TO THE CONTEXT MENU QQQQQ");
+				this.loading = true;
 				$.ajax({
 					url: "./assets/menu/description.json",
 					dataType: 'json',
 					success: function(data) {
-						that.contentTypeList.collection.add(data);
+						that.contentTypeList = data;
+						that.loading = false;
 					},
 					error: function() {
-						alert("TODO: HANDLE the CONTExt MENUS LIST DOWNLOAD FAILED !!!");
+						alert("Context menu desctiption dowload failed !!!");
+						that.loadfailed = true;
+						that.loading = false;
 					}
 				});
 			},
-            onShow: function() {
-              $(this.$el).parent().css('visibility', 'visible');
-			},
-			onRender: function() {
-			  if (this.ContentList)
-			      this.ContentList.show(this.contentTypeList);
+            getDataView: function(data) {
+				// Download the content list
+				var that = this;
+				if (this.loading || this.loadfailed) {
+					return;
+				}
+
+				// get element type from model
+				// or select subtype directly for the fieds ctx menu
+				var subtype = data.subtype;
+				if (!subtype && data.context && data.context.view && data.context.view.model) {
+					subtype = data.context.view.model.get("type");
+			    } 
+                // can not detect the subtype of the element !!!
+			    if (!subtype) return;
+			    
+			    // load handler if it was not load
+			    if (!this.subtypes[subtype]) {
+					require(['Modules/Diagrammer/Menus/' + subtype], function(handler) {
+						that.subtypes[subtype] = new handler({Framework:require('Views/framework')});
+					});
+				}
+
+				for (var r=0; r < this.contentTypeList.length; ++r) {
+					if (this.contentTypeList[r].type == subtype) {
+						this.cachedData = data;
+						return new contextMenu({collection: new Backbone.Collection(this.contentTypeList[r].fields), controller:this});
+					}
+				}
+				return;
 			}
         });
 

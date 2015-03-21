@@ -749,8 +749,7 @@ outline: medium none;
 padding: 1px 5px 1px 28px;
 }
 
-
-.ui-accordion-content ul LI A.hover {
+.ui-accordion-content ul LI A:hover {
     color: #FFF;
     background-color: #39F;
     text-decoration: underline;

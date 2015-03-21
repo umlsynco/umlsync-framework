@@ -4,6 +4,15 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
         onRender: function () {
             var model = this.view.model;
             var view = this.view;
+
+            // [TODO]: drop it !!!
+            if (view.wasInitialized) {
+				alert("DOUBLE CALL OF THE BEHAVIOR HANDLER !!!");
+			}
+			else {
+				view.wasInitialized = true;
+			}
+
             var applyOptions = _.pick(model.attributes, 'height', 'width');
             this.$el
                 .css({'position': 'absolute'})
@@ -26,7 +35,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     'start': function (event, ui) {
                     },
                     'drag': function (event, ui) {
-                        view.trigger("drag");
+                        //view.trigger("drag");
                     },
                     'stop': function (event, ui) {
                     }
@@ -35,13 +44,13 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     e.preventDefault();
                     // Load and show the context menu for the diagram
                     // [TODO]: Do we need to split "edit/view" states ?
-                    Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:this}});
+                    Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view}});
                 })
                 .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;");
 
 
             this.$el.children(".grElement")
-                .click(self,function(event) {
+                .click(view, function(event) {
                     // Hide previous references
                     //$("#" + element.parrent.euid + " .us-references").hide();
                     $('#' + this.id +'_Border').parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
@@ -51,17 +60,14 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     var element = event.data;
                     if (!element.options.selected && !element.highlighted) {
                         element.highlighted = true;
-                        var $bw = $('#' + this.id +'_Border').css({'border-width':'3px'});
-                        var bw = $bw.css('border-left-width');
-                        $bw.css({left:'-=' + bw, top:'-='+bw});
+                        var $bw = $('#' + this.id +'_Border').css('border-color', '#97F7A1').css({'border-width':'3px'});
                     }
                 })
                 .mouseleave(view, function (event){
                     var element = event.data;
                     if (!element.options.selected && element.highlighted) {
                         var $bw = $('#' + this.id +'_Border');
-                        var bw = $bw.css('border-left-width');
-                        $bw.css({'border-width':'0px'}).css({left:'+=' + bw, top:'+='+bw});
+                        $bw.css('border-color', 'rgba(255, 255, 255, 0.3)').css({'border-width':'3px'});
                         element.highlighted = false;
                     }
                 })

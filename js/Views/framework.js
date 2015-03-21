@@ -185,13 +185,23 @@ define(['marionette',
         if (Backbone.history){ Backbone.history.start(); }
 
         // Context menu region handler !!!
-        this.ContextMenuRegistry = new ContextMenuRegistry({region:this.ContextMenuRegion});
+        if (!this.ContextMenuRegistry)
+           this.ContextMenuRegistry = new ContextMenuRegistry({region:this.ContextMenuRegion, Framework: this});
 
         // context menu is global feature
         this.vent.on("contextmenu:show", function(data) {
 			that.ContextMenuRegistry.show(data);
+			that.ContextMenuActive = true;
 		});
-        
+		
+		// Hide the context menu on each click
+		$(document).click(function(){
+			if (that.ContextMenuActive && that.ContextMenuRegion.$el) {
+			  that.ContextMenuRegion.$el.hide();
+			  that.ContextMenuActive = false;
+		    }
+		});
+
     });
 
 	Marionette.Behaviors.behaviorsLookup = function() {

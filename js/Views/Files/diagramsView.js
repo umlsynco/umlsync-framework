@@ -36,7 +36,10 @@ define(
                 this.$el.empty();
                 // And handle them
                 if (this.model.get("status") != "error" && this.model.get("status") != "loading") {
-                    this.modelDiagram = new Diagram($.parseJSON(this.model.get("content")));
+					var simpleContent  = this.model.get("content");
+					simpleContent = (simpleContent instanceof  String) ? $.parseJSON(simpleContent) : simpleContent;
+
+                    this.modelDiagram = new Diagram(simpleContent);
 
 // Methods become available if elements and connectors are not empty
 if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
@@ -66,7 +69,7 @@ if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
 				if (data.source == "diagram-menu") {
 					if (this.modelDiagram.getUmlElements) {
 						var elements = this.modelDiagram.getUmlElements();
-						elements.add({type:"class", name: "Test", top:100, left:200, pageY:100, pageX:200, elements:[], connectors:[]});
+						elements.add({type:"class", name: "Test", top:100, left:200, pageY:100, pageX:200, operations:[], attributes:[]});
 					}
 
 				}

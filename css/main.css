@@ -98,11 +98,11 @@ a {
     border: 1px solid #555555;
     background-color: #eee;
     box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
-    display: none;
     margin: 0;
     padding: 0;
     position: absolute;
     z-index: 1003;
+    width:150px;
 }
 
 .context-menu LI {
@@ -121,6 +121,10 @@ a {
     outline: medium none;
     padding: 1px 5px 1px 28px;
     text-decoration: none;
+}
+
+.context-menu LI A:hover {
+  background-color: #43EC28;
 }
 
 .hover {

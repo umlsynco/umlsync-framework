@@ -1,5 +1,24 @@
 define(['marionette', './../umldiagram'],
-    function(Marionette) {
+    function(Marionette, diagram) {
+		var opiv = Backbone.Marionette.ItemView.extend({
+			tagName: 'li',
+			template: _.template("<a class='editablefield operation'><%= name %></a>")
+		});
+
+		var operationsView = Backbone.Marionette.CollectionView.extend({
+			childView : opiv
+		});
+
+
+		var ativ = Backbone.Marionette.ItemView.extend({
+			tagName: 'li',
+			template: _.template("<a class='editablefield attribute'><%= name %></a>")
+		});
+
+		var attributesView = Backbone.Marionette.CollectionView.extend({
+			childView : ativ
+		});
+		
         var ClassView = Backbone.Marionette.ElementItemView.extend({
             template: _.template('<div id="<%= cid %>" class="us-class grElement">\
                                     <div class="us-class-header">\
@@ -16,7 +35,13 @@ define(['marionette', './../umldiagram'],
                     getMethods: function() {return ""},
                     getFields: function() {return ""}
                 }
-            }
+            },
+            onRender: function() {
+				if (this.model.getAttributes)
+				  this.attributesView = new attributesView(this.model.getAttributes());
+				if (this.model.getOperations)
+				this.operationsView = new operationsView(this.model.getOperations());
+			}
         });
         return ClassView;
     });
