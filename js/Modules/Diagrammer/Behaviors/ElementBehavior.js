@@ -55,6 +55,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     //$("#" + element.parrent.euid + " .us-references").hide();
                     $('#' + this.id +'_Border').parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
                     $('#' + this.id +'_Border').children("DIV.ui-resizable-handle").css("visibility", "visible");
+                    Framework.vent.trigger("diagram:iconmenu:show", view);
                 })
                 .mouseenter(view, function (event){
                     var element = event.data;

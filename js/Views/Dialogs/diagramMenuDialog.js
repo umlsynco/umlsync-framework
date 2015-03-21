@@ -1,9 +1,11 @@
 define([
         'jquery',
         'marionette',
-        'Modules/Widgets/Accordion/Accordion'
+        'Modules/Widgets/Accordion/Accordion',
+        'Modules/Widgets/IconMenu'
         ],
-    function ($, Marionette, Accordion) {
+    function ($, Marionette, Accordion, IconMenu) {
+		var Framework;
         var CommitView = Marionette.LayoutView.extend({
             template: "#us-diagram-menu-template",
             modal:false,
@@ -31,9 +33,18 @@ define([
 						   // TODO: Prototyped for the multiple descriptions
 						   // download, but uses sinlgle description for a while
 						   that.accordion.addMenu(model, data[0]);
+						   that.extendIconMenus(data[0].menus);
 						}
 					});
 				}
+			},
+			// Is icon menu is some kind of the context menu ???
+			extendIconMenus: function(menus) {
+				var that = this;
+				_.each(menus, function(menuItem){
+					that.menus.push(menuItem);
+				})
+				
 			},
             onShow: function() {
 				this.$el.draggable({cancel:"#us-diagram-menu-accordion"});
@@ -44,9 +55,27 @@ define([
 					  that.trigger("add:accordion", "somthing");
 				});
 			},
+			showIconMenu: function(data) {
+				if (data.model) {
+					var lookingFor = data.model.get("type") + "-menu";
+					for (var r=0; r< this.menus.length; ++r) {
+						var currentItem = this.menus[r];
+						if (currentItem.id == lookingFor) {
+							var diagram = data.$el.parent().parent();
+							var icons = currentItem.items[0];
+							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.cs)});
+							iconMenuView.render();
+							// [TODO]: Diagram region show view !!!
+							diagram.append(iconMenuView.$el);
+						}
+					}
+				}
+			},
 			initialize: function(options) {
 				this.accordion = new Accordion({collection: new Backbone.Collection(), Framework:options.Framework});
-				
+				Framework = options.Framework;
+				this.menus = new Array();
+				Framework.vent.on("diagram:iconmenu:show", _.bind(this.showIconMenu, this));
 			}
         });
 
