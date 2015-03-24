@@ -69,28 +69,28 @@
 				{"el":"Class",
 				 "cs":[
 						{"connector":"association",
-						 "image":"./assets/icons/cs/class/class/vp-association.png"
+						 "image":"./assets/icons/cs/class/class/association.png"
 						},
 						{"connector":"aggregation",
-						 "image":"./assets/icons/cs/class/class/vp-aggregation.png"
+						 "image":"./assets/icons/cs/class/class/aggregation.png"
 						},
 						{"connector":"composition",
-						 "image":"./assets/icons/cs/class/class/vp-composition.png"
+						 "image":"./assets/icons/cs/class/class/composition.png"
 						},
 						{"connector":"Self Association",
-						 "image":"./assets/icons/cs/class/class/vp-self-association.png"
+						 "image":"./assets/icons/cs/class/class/self-association.png"
 						},
 						{"connector":"dependency",
-						 "image":"./assets/icons/cs/class/class/vp-dependency.png"
+						 "image":"./assets/icons/cs/class/class/dependency.png"
 						},
 						{"connector":"realization",
-						 "image":"./assets/icons/cs/class/class/vp-realization.png"
+						 "image":"./assets/icons/cs/class/class/realization.png"
 						},
 						{"connector":"generalization",
-						 "image":"./assets/icons/cs/class/class/vp-generalization.png"
+						 "image":"./assets/icons/cs/class/class/generalization.png"
 						},
 						{"connector":"nested",
-						 "image":"./assets/icons/cs/class/class/vp-nested.png"
+						 "image":"./assets/icons/cs/class/class/nested.png"
 						}
 					  ]
 				},

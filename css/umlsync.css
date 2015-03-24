@@ -823,3 +823,9 @@ border: 0px;
     color: #000;
     text-decoration: none;
 }
+
+
+#diagram-iconmenu-region {
+position: absolute;
+z-index:5000;
+}

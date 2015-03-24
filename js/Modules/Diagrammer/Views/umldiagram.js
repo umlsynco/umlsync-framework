@@ -22,7 +22,13 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
             },
             triggers : {
                 "click editable": "edit"
-            }
+            },
+            modelEvents: {
+               "change": "modelChanged"
+            },
+            modelChanged: function() {
+				this.$el.css({left:this.model.get("left"), top:this.model.get("top")});
+			}
         });
 
         Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.ItemView.extend({

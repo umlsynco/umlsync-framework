@@ -61,12 +61,11 @@ define([
 					for (var r=0; r< this.menus.length; ++r) {
 						var currentItem = this.menus[r];
 						if (currentItem.id == lookingFor) {
-							var diagram = data.$el.parent().parent();
 							var icons = currentItem.items[0];
 							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.cs)});
-							iconMenuView.render();
-							// [TODO]: Diagram region show view !!!
-							diagram.append(iconMenuView.$el);
+							Framework.IconMenuRegion.show(iconMenuView);
+							var pos = data.$el.position()
+							Framework.IconMenuRegion.$el.css({top:pos.top, left:pos.left});
 						}
 					}
 				}

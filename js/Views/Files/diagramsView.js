@@ -36,13 +36,14 @@ define(
                 this.$el.empty();
                 // And handle them
                 if (this.model.get("status") != "error" && this.model.get("status") != "loading") {
-					var simpleContent  = this.model.get("content");
-					simpleContent = (simpleContent instanceof  String) ? $.parseJSON(simpleContent) : simpleContent;
+                    var simpleContent  = this.model.get("content");
+                    simpleContent = (simpleContent instanceof  String) ? $.parseJSON(simpleContent) : simpleContent;
+                    simpleContent = (simpleContent instanceof  Object) ? simpleContent : $.parseJSON(simpleContent);
 
                     this.modelDiagram = new Diagram(simpleContent);
 
 // Methods become available if elements and connectors are not empty
-if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
+    if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                     var els = this.modelDiagram.getUmlElements();
                     var cs = this.modelDiagram.getUmlConnectors();
                     for (var xxx in els.models) {
@@ -65,21 +66,29 @@ if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                 }
             },
             handlePast: function(data) {
-				// Create a new element !!!
-				if (data.source == "diagram-menu") {
-					if (this.modelDiagram.getUmlElements) {
-						var elements = this.modelDiagram.getUmlElements();
-						elements.add({type:"class", name: "Test", top:100, left:200, pageY:100, pageX:200, operations:[], attributes:[]});
-					}
+                // Create a new element !!!
+                if (data.source == "diagram-menu") {
+                    if (this.modelDiagram.getUmlElements) {
+                        var elements = this.modelDiagram.getUmlElements();
+                        elements.add({type:"class", name: "Test", top:100, left:200, pageY:100, pageX:200, operations:[], attributes:[]});
+                    }
 
-				}
-				// Copy-past between diagrams !!!
-				else if (data.source == "clipboard") {
-				}
-				else {
-					alert("Unknown source of PAST event: " + data.source);
-				}				
-			}
+                }
+                else if (data.source == "diagram-icon-menu") {
+                    if (this.modelDiagram.getUmlElements) {
+                        var elements = this.modelDiagram.getUmlElements();
+                        data.context.model.set({type:"class", name: "Test", operations:[], attributes:[]});
+                        elements.add(data.context.model);
+                    }
+
+                }
+                // Copy-past between diagrams !!!
+                else if (data.source == "clipboard") {
+                }
+                else {
+                    alert("Unknown source of PAST event: " + data.source);
+                }                
+            }
         });
 
         Framework.registerContentTypeView({

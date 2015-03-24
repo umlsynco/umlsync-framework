@@ -171,7 +171,9 @@ define(['marionette',
 			selector: '#context-menu-region',
 			regionClass: DialogRegion // Singletone and disconnect without destroy !
 		},
-        DiagramMenuRegion: "#diagram-menu"
+        DiagramMenuRegion: "#diagram-menu",
+
+        IconMenuRegion : "#diagram-iconmenu-region"
     });
 
     Framework.addInitializer( function(options){
