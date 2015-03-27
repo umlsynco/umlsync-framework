@@ -2,9 +2,10 @@
   {
     "type":"instance",
     "require":"instance.js",
-    "fields":[{"title": "Remove", "command":"diagram:common:remove"},
-            {"title": "Add stereotype", "command":"diagram:instance:addstereotype"},
-            {"title": "Add specification field", "command": "diagram:instance:addfield"}
+    "fields":[
+        {"title": "Remove", "command":"diagram:common:remove"},
+        {"title": "Add stereotype", "command":"diagram:instance:addstereotype"},
+        {"title": "Add specification field", "command": "diagram:instance:addfield"}
     ]
   },
   {

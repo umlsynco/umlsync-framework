@@ -35,7 +35,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     'start': function (event, ui) {
                     },
                     'drag': function (event, ui) {
-                        //view.trigger("drag");
+                        view.trigger("drag");
                     },
                     'stop': function (event, ui) {
                     }
@@ -56,6 +56,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     $('#' + this.id +'_Border').parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
                     $('#' + this.id +'_Border').children("DIV.ui-resizable-handle").css("visibility", "visible");
                     Framework.vent.trigger("diagram:iconmenu:show", view);
+                    event.stopPropagation();
                 })
                 .mouseenter(view, function (event){
                     var element = event.data;

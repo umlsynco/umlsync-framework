@@ -202,6 +202,10 @@ define(['marionette',
 			  that.ContextMenuRegion.$el.hide();
 			  that.ContextMenuActive = false;
 		    }
+		    
+		    // hide the icon menu
+		    if (that.IconMenuRegion.isActive) 
+		      that.vent.trigger("diagram:iconmenu:show", null);
 		});
 
     });

@@ -3,19 +3,27 @@
    "elements": [
 	{"type": "class",
 	 "title": "Class",
-	 "icon": "./assets/icons/us/es/class/Class.png"
+	 "icon": "./assets/icons/us/es/class/Class.png",
+         "options":{
+            "attributes": [],
+            "operations": []
+         }
 	},
 	{"type": "class",
 	 "title": "Interface",
 	 "options": {
   	   "aux": "Interface",
-	   "nameTemplate": "Interface"
+	   "nameTemplate": "Interface",
+           "attributes": [],
+           "operations": []
 	 },
 	 "icon": "./assets/icons/us/es/class/ClassInterface.png"
 	},
 	{"type": "class",
 	 "title": "Enumeration",
 	 "options":{
+            "attributes": [],
+            "operations": [],
 	   "aux": "Enumeration"
 	 },
 	 "icon": "./assets/icons/us/es/class/ClassEnumeration.png"
@@ -23,13 +31,18 @@
 	{"type": "class",
 	 "title": "Template",
 	 "options": {
-	   "aux": "Template"
+            "attributes": [],
+            "operations": [],
+            "aux": "Template"
 	 },
 	 "icon": "./assets/icons/us/es/class/ClassTemplate.png"
 	},
 	{"type": "note",
 	 "title": "Note",
-	 "icon": "./assets/icons/us/es/common/Note.png"
+	 "icon": "./assets/icons/us/es/common/Note.png",
+         "options": {
+           "description": "Please! Add some note here!!!"
+         }
 	}
     ],
     "connectors": [

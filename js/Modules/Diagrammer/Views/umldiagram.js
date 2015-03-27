@@ -30,6 +30,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 				this.$el.css({left:this.model.get("left"), top:this.model.get("top")});
 			}
         });
+        
+        var helperItemView = Backbone.Marionette.ItemView.extend({
+            el: ".us-icon-menu-connection-helper",
+            render: function() {}
+            
+        });
 
         Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.ItemView.extend({
             template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%></div>'),
@@ -151,7 +157,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     var x2 = this._getRValue(p2.left + p21.left, p1.left + p11.left, $('#' + toId).width());
                     var y2 = this._getRValue(p2.top + p21.top, p1.top + p11.top,  $('#' + toId).height());
 
-                    if (this.parrent.options.multicanvas) {
+                    if (false) { //this.parrent.options.multicanvas) {
                         var newpoints = [[x1 + scrollLeft,y1 + scrollTop], [x2 + scrollLeft,y2 + scrollTop]];
                         return newpoints;
                     }
@@ -269,8 +275,11 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     getChildView: function(model) {
 
                         var type = model.get("type");
-                        var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
-                        return view;
+                        if (type != "helper") {
+                          var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
+                          return view;
+					    }
+					    return helperItemView;
 
                     }})) // extend collection with a new method
                 ({collection:this.model.umlelements});

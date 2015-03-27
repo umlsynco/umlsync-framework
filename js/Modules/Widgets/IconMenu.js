@@ -12,33 +12,42 @@ function(Marionette, diagram) {
             childView : itemView,
             className: 'elmenu-us-class-menu',
             template: _.template(""),
+            initialize: function(options) {
+				this.dataProvider = options.diagramMenu;
+			},
             onShow: function() {
-			  var helperModel = new Backbone.Model({left:0, top:0});
+			  var helperModel = new Backbone.Model({left:0, top:0, type:"helper", temporary:true});
+			  var that = this;
               $("#tabs .elmenu-us-class-menu img").draggable({
                 'appendTo': "#tabs",
                 'helper': function(event) {
                    // Use the double wrapper because of element's structrure
-                   return $("<div id='ConnectionHelper_Border' style='border:solid black;border-width:1px;'>" + 
-                            "<div id='ConnectionHelper' style='border:solid yellow;border-width:1px;'> [ x ]</div></div>");
+                   return $("<div id='"+ helperModel.cid +"_Border' style='border:solid black;border-width:1px;' class='us-icon-menu-connection-helper'>" + 
+                            "<div id='"+ helperModel.cid +"' style='border:solid yellow;border-width:1px;'> [ x ]</div></div>");
                  },
                  'start': function(event) {
 					 helperModel.set({left:event.pageX,top:event.pageY});
 					 var Framework = require('Views/framework');
-					 Framework.vent.trigger("content:past", {source:"diagram-icon-menu", context: {connectorType: "aggregation", model:helperModel}});
+					 Framework.vent.trigger("content:past", {source:"diagram-icon-menu", context: {connectorType: "aggregation", model:helperModel}, initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
                  },
                  'drag': function(event, ui) {
-					 helperModel.set({left:event.pageX,top:event.pageY});
+					 if (that.dataProvider && that.dataProvider.IconMenuData) {
+						 that.dataProvider.IconMenuData.trigger("drag");
+					 }
                  },
                  'stop': function(event, ui) {
-					 //Framework.vent.trigger("content:past", {source:"diagram-icon-menu", context: {connectorType: "aggregation", model:{, remove:helperModel}});
+					 var Framework = require('Views/framework');
+					 Framework.vent.trigger("content:past", {source:"diagram-icon-menu", context: {connectorType: "aggregation"}});
                  } // stop
              }) // draggale
             .parent()
             .mouseenter(function() {
-                $(this).stop().animate({opacity:"1"});
+				// Framework.IconMenuRegion
+                $(this).parent().stop().animate({opacity:"1"});
             })
             .mouseleave(
-               function() {$(this).stop().animate({opacity:"0"});});
+               // Framework.IconMenuRegion
+               function() {$(this).parent().stop().animate({opacity:"0"});});
           } // onRender
         });
         

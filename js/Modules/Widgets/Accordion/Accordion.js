@@ -15,7 +15,13 @@ function ($, useless, _, Marionette) {
        },
        onSelectMenuItem: function() {
 		   if (Framework && Framework.vent) {
-			   Framework.vent.trigger("content:past", {source: "diagram-menu", context: this.model});
+			   var opt = this.model.get("options");
+
+			   if (opt) {
+			     opt.type = this.model.get("type");
+			     opt.name = this.model.get("title");
+			     Framework.vent.trigger("content:past", {source: "diagram-menu", context: new Backbone.Model(opt)});
+			   }
 		   } else {
 			   alert("FRAMEWORK IS NOT DEFINED FOR DIAGRAM MENU ITEM !!!");
 		   }

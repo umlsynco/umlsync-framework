@@ -56,16 +56,45 @@ define([
 				});
 			},
 			showIconMenu: function(data) {
+				// Hide menu
+				if (!data) {
+					if (Framework.IconMenuRegion.$el)
+					  Framework.IconMenuRegion.isActive = false;
+					  Framework.IconMenuRegion.$el.hide();
+					return;
+				}
+				
+				// Cache an icon menu data
+				this.IconMenuData = data;
+				
 				if (data.model) {
 					var lookingFor = data.model.get("type") + "-menu";
+					if (this.activeIconMenu == lookingFor) {
+						Framework.IconMenuRegion.isActive = true;
+					    var pos = data.$el.position()
+						Framework.IconMenuRegion.$el.css({top:pos.top + 20, left:pos.left +25, opacity:"1"});
+						Framework.IconMenuRegion.$el.show();
+						return;
+					}
+
+					Framework.IconMenuRegion.reset();
+
 					for (var r=0; r< this.menus.length; ++r) {
 						var currentItem = this.menus[r];
 						if (currentItem.id == lookingFor) {
 							var icons = currentItem.items[0];
-							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.cs)});
+							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.cs), diagramMenu:this});
 							Framework.IconMenuRegion.show(iconMenuView);
+							// Change the position on the element !!!
 							var pos = data.$el.position()
-							Framework.IconMenuRegion.$el.css({top:pos.top, left:pos.left});
+							Framework.IconMenuRegion.$el.css({top:pos.top + 20, left:pos.left +25, opacity:"1"});
+							Framework.IconMenuRegion.$el.show();
+							
+							this.activeIconMenu = lookingFor;
+							Framework.IconMenuRegion.isActive = true;
+
+							// There is no multiple views for the current menu, so we can return
+							return;
 						}
 					}
 				}
