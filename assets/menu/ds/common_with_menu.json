@@ -3,20 +3,24 @@
    "elements": [
 	{"type": "rectangle",
 	 "title": "Rectangle",
+         "options": {},
 	 "icon": "./assets/icons/us/es/component/Component.png"
 	},
 	{"type": "circle",
 	 "title": "Circle",
 	 "lable":"true",
+         "options": {},
 	 "icon": "./assets/icons/us/es/component/Interface.png"
 	},
 	{"type": "port",
 	 "title": "Squere",
 	 "menu":"us-component-menu",
+         "options": {},
 	 "icon": "./assets/icons/us/es/component/Port.png"
 	},
 	{"type": "note",
 	 "title": "Text Lable",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/Note.png"
 	}
     ],

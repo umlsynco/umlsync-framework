@@ -3,7 +3,8 @@
    "elements": [
 	{"type": "component",
 	 "title": "Component",
-	 "icon": "./assets/icons/us/es/component/Component.png"
+	 "icon": "./assets/icons/us/es/component/Component.png",
+         "options": {}
 	},
 	{"type": "interface",
 	 "title": "Interface",
@@ -12,18 +13,22 @@
 	},
 	{"type": "port",
 	 "title": "Port",
+         "options": {},
 	 "icon": "./assets/icons/us/es/component/Port.png"
 	},
 	{"type": "empty",
 	 "title": "Empty",
+         "options": {},
 	 "hidden": true
 	},
 	{"type": "instance",
 	 "title": "Instance Specification",
+         "options": {},
 	 "icon": "./assets/icons/us/es/component/InstanceSpecification.png"
 	},
 	{"type": "note",
 	 "title": "Note",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/Note.png"
 	}
     ],

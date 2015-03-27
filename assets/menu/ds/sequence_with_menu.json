@@ -3,10 +3,12 @@
    "elements": [
 	{"type": "objinstance",
 	 "title": "Object Instance",
+         "options": {},
 	 "icon": "./assets/icons/us/es/component/InstanceSpecification.png"
 	},
 	{"type": "llport",
 	 "title": "Port",
+         "options": {},
 	 "hidden": true
 	},
 	{"type": "message",
@@ -20,34 +22,42 @@
 	},
 	{"type": "llalt",
 	 "title": "Alt",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/alt.png"
 	},
 	{"type": "llalt",
 	 "title": "Option",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/opt.png"
 	},
 	{"type": "llalt",
 	 "title": "Loop",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/loop.png"
 	},
 	{"type": "llalt",
 	 "title": "Break",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/break.png"
 	},
 	{"type": "llalt",
 	 "title": "Parallel",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/par.png"
 	},
 	{"type": "llalt",
 	 "title": "Strict",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/strict.png"
 	},
 	{"type": "actor",
 	 "title": "Actor",
+         "options": {},
 	 "icon": "./assets/icons/us/es/sequence/Actor.png"
 	},
 	{"type": "note",
 	 "title": "Note",
+         "options": {},
 	 "icon": "/dm/icons/us/es/common/Note.png"
 	}
 

@@ -3,6 +3,7 @@
    "elements": [
 	{"type": "package",
 	 "title": "Package",
+         "options": {},
 	 "icon": "./assets/icons/us/es/package/Package.png"
 	},
 	{"type": "package",
@@ -12,6 +13,7 @@
 	},
 	{"type": "note",
 	 "title": "Note",
+         "options": {},
 	 "icon": "./assets/icons/us/es/common/note.png"
 	}
     ],
