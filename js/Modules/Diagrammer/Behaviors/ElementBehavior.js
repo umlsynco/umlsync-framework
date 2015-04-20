@@ -53,8 +53,12 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                 .click(view, function(event) {
                     // Hide previous references
                     //$("#" + element.parrent.euid + " .us-references").hide();
+
+                    // [TODO]: Check for Ctrl-pressed event.CtrlKey == true ?
                     $('#' + this.id +'_Border').parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
                     $('#' + this.id +'_Border').children("DIV.ui-resizable-handle").css("visibility", "visible");
+
+                    // Trigger show or hide icon menu !!!
                     Framework.vent.trigger("diagram:iconmenu:show", view);
                     event.stopPropagation();
                 })
