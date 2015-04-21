@@ -30,8 +30,8 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     }
                 })
                 .draggable({
-                    'grid': [2, 2],
-                    'scroll': true,
+//                    'grid': [2, 2],
+//                    'scroll': true,
                     'start': function (event, ui) {
                     },
                     'drag': function (event, ui) {

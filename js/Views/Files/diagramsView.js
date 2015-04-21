@@ -43,18 +43,18 @@ define(
 
                     this.modelDiagram = new Diagram(simpleContent);
 
-// Methods become available if elements and connectors are not empty
-    if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
-                    var els = this.modelDiagram.getUmlElements();
-                    var cs = this.modelDiagram.getUmlConnectors();
-                    for (var xxx in els.models) {
-                        var model = els.at(xxx);
-                        if (model.get("type") == "class") {
-                            var operations = model.getUmlOperations();
-                            var attributes = model.getUmlAttributes();
+                    // Methods become available if elements and connectors are not empty
+                    if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
+                        var els = this.modelDiagram.getUmlElements();
+                        var cs = this.modelDiagram.getUmlConnectors();
+                        for (var xxx in els.models) {
+                            var model = els.at(xxx);
+                            if (model.get("type") == "class") {
+                                var operations = model.getUmlOperations();
+                                var attributes = model.getUmlAttributes();
+                            }
                         }
                     }
-}
 
                     this.UD = new UmlDiagram({model:this.modelDiagram });
                     this.UD.render();
@@ -90,24 +90,55 @@ define(
                                var fromId = data.initialContext.model.get("id");
 
                                // Do nothing if initial element doesn't exist or has wrong value !!!
-                               if (!fromId) { return; }
+                               if (!fromId || !data.context.connectorType) { return; }
 
+                               this._iconMenuStarted = true;
                                data.context.model.set("id", "ConnectionHelper");
+                               data.context.model.set("temporary", true);
                                elements.add(data.context.model);
 
-                               connectors.add(new Backbone.Model({type:"aggregation", fromId:fromId, toId:"ConnectionHelper", temporary:true}));
+                               connectors.add(new Backbone.Model({type:data.context.connectorType, fromId:fromId, toId:"ConnectionHelper", temporary:true}));
                            }
                         }
                         else {
-                           //data.context.model.set({type:"class", name: "Test", operations:[], attributes:[]});
+                           // Expected the icon menu to work through the helper ui element only
+                           if (!this._iconMenuStarted) {
+                                return;
+                           }
+                           this._iconMenuStarted = false;
+
+                           // Dropped temporary connector
+                           // It is easier to drop it neither re-assign it for a new element !!!
                            var rmConnectors = connectors.findWhere({temporary:true});
                            connectors.remove(rmConnectors);
 
+                           // Drag and Drop helper element which it not UML element at all
                            var rmElements = elements.findWhere({temporary:true});
                            elements.remove(rmElements);
 
-                           //elements.add(data.context.model);
-                           alert("elements: " + elements.length + "   connectors: " + connectors.length);
+                           // Do nothing if initial element doesn't exist or has wrong value !!!
+                           var fromId = data.initialContext.model.get("id");
+                           if (!fromId || !data.context.connectorType) { return; }
+
+                           // TODO: Get the model descriptor from the IconMenu element
+                           // TODO: Check if connector helper was dropped on some element an use it if possible !!!
+                           var mmm = new Backbone.Model({type:"class", name: "Test" + fromId, left: data.context.left, top:data.context.top, operations:[], attributes:[]});
+
+                           // Add new element for a while, but we have to check if it was dropped over
+                           // an existing element
+                           elements.add(mmm);
+                           if (!mmm.get("id")) {
+							   alert("Unexpected error: uml element didn't get 'id' before connector creation !");
+						   }
+                           connectors.add(new Backbone.Model({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id")}));
+
+                           // TODO: Drop debug output one day
+                           /*alert("elements: " + elements.length + "   connectors: " + connectors.length);
+                           if (elements.length == 5) {
+							    for (var r =0 ; r< elements.length; ++r) {
+									alert("Element[" + r + "] = "  + elements.at(r).get("id"));
+								}
+						   }*/
                         }
                         
                     }
