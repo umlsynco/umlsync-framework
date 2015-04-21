@@ -16,7 +16,7 @@ function(Marionette, diagram) {
 				this.dataProvider = options.diagramMenu;
 			},
             onShow: function() {
-			  var helperModel = new Backbone.Model({left:0, top:0, type:"helper", temporary:true});
+			  var helperModel = new Backbone.Model({left:0, top:0, type:"helper", temporary:true, id:0});
 			  var that = this;
               $("#tabs .elmenu-us-class-menu img").draggable({
                 'appendTo': "#tabs",
@@ -27,8 +27,15 @@ function(Marionette, diagram) {
                  },
                  'start': function(event) {
 					 helperModel.set({left:event.pageX,top:event.pageY});
+                                         // [TODO] Looks really stuipid to request framework here !!!
 					 var Framework = require('Views/framework');
-					 Framework.vent.trigger("content:past", {source:"diagram-icon-menu", context: {connectorType: "aggregation", model:helperModel}, initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
+
+					 Framework.vent.trigger("content:past", 
+                                             {source:"diagram-icon-menu",
+                                              context: {
+                                                  connectorType: "aggregation",
+                                                  model:helperModel},
+                                              initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
                  },
                  'drag': function(event, ui) {
 					 if (that.dataProvider && that.dataProvider.IconMenuData) {

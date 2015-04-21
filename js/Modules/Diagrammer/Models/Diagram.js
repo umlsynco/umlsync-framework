@@ -51,6 +51,12 @@ define(['backbone', 'underscore'], function (Backbone, _) {
                                   }
                               });
                           }
+                          that.umlelements.on("add", function(model) {
+                              if (!model.get("id")) {
+                                model.set("id", that.idCounter);
+                                that.idCounter++;
+                              }
+                          });
                         }
                     }
                 }

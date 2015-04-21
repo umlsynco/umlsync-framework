@@ -66,6 +66,10 @@ define(
                    return Backbone.Marionette.ItemView.prototype.render.apply(this, arguments);
                 }
             },
+            //
+            // Handle content past from different sources:
+            // Clipboard, main-elements-menu or icon-menu
+            //
             handlePast: function(data) {
                 // Create a new element !!!
                 if (data.source == "diagram-menu") {
@@ -77,30 +81,34 @@ define(
                 }
                 else if (data.source == "diagram-icon-menu") {
                     if (this.modelDiagram.getUmlElements) {
+
                         var elements = this.modelDiagram.getUmlElements();
-					    var connectors = this.modelDiagram.getUmlConnectors();
+                        var connectors = this.modelDiagram.getUmlConnectors();
+
                         if (data.context.model && data.context.model.get("type") == "helper") {
                            if (data.initialContext && data.initialContext.model) {
-							   var fromId = data.initialContext.model.get("id");
-							   if (!fromId) {
-								   fromId = 111;
-								   data.initialContext.model.set("id", fromId);
-							   }
-							   data.context.model.set("id", "ConnectionHelper");
-							   elements.add(data.context.model);
+                               var fromId = data.initialContext.model.get("id");
 
-							   connectors.add(new Backbone.Model({type:"aggregation", fromId:111, toId:"ConnectionHelper", temporary:true}));
-						   }
-						}
-						else {
+                               // Do nothing if initial element doesn't exist or has wrong value !!!
+                               if (!fromId) { return; }
+
+                               data.context.model.set("id", "ConnectionHelper");
+                               elements.add(data.context.model);
+
+                               connectors.add(new Backbone.Model({type:"aggregation", fromId:fromId, toId:"ConnectionHelper", temporary:true}));
+                           }
+                        }
+                        else {
                            //data.context.model.set({type:"class", name: "Test", operations:[], attributes:[]});
                            var rmConnectors = connectors.findWhere({temporary:true});
                            connectors.remove(rmConnectors);
+
                            var rmElements = elements.findWhere({temporary:true});
                            elements.remove(rmElements);
+
                            //elements.add(data.context.model);
                            alert("elements: " + elements.length + "   connectors: " + connectors.length);
-					    }
+                        }
                         
                     }
 
