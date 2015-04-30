@@ -44,9 +44,9 @@ function(Marionette, diagram) {
                  },
                  'stop': function(event, ui) {
 					 var Framework = require('Views/framework');
-					 Framework.vent.trigger("content:past", {source:"diagram-icon-menu",
-						                                     context: {connectorType: this.title || "aggregation", left: ui.position.left, top: ui.position.top},
-						                                     initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
+					 Framework.vent.trigger("content:past", { source:"diagram-icon-menu",
+						                                      context: {connectorType: this.title || "aggregation", left: ui.position.left, top: ui.position.top},
+						                                      initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
 				     // TODO: Force connectors re-draw, but looks really ugly
                      if (that.dataProvider && that.dataProvider.IconMenuData) {
 						 that.dataProvider.IconMenuData.trigger("drag");

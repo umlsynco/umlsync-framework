@@ -122,7 +122,7 @@ define(
 
                            // TODO: Get the model descriptor from the IconMenu element
                            // TODO: Check if connector helper was dropped on some element an use it if possible !!!
-                           var mmm = new Backbone.Model({type:"class", name: "Test" + fromId, left: data.context.left, top:data.context.top, operations:[], attributes:[]});
+                           var mmm = new Backbone.DiagramModel({type:"class", name: "Test" + fromId, left: data.context.left, top:data.context.top, operations:[], attributes:[]});
 
                            // Add new element for a while, but we have to check if it was dropped over
                            // an existing element
@@ -130,7 +130,7 @@ define(
                            if (!mmm.get("id")) {
 							   alert("Unexpected error: uml element didn't get 'id' before connector creation !");
 						   }
-                           connectors.add(new Backbone.Model({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id")}));
+                           connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id")}));
 
                            // TODO: Drop debug output one day
                            /*alert("elements: " + elements.length + "   connectors: " + connectors.length);

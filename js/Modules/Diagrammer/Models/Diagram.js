@@ -14,7 +14,7 @@ define(['backbone', 'underscore'], function (Backbone, _) {
                 if (key[key.length -1] == 's') {
                     if (key != "multicanvas") {
                         that["getUml" + key.capitalize()] = function() {
-                            return this['uml' + key];
+                            return that['uml' + key];
                         }
                         that['uml' + key] = new Backbone.DiagramCollection(options[key]);
                         // TODO: sync up on change
