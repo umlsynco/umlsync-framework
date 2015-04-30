@@ -97,7 +97,7 @@ define(
                                data.context.model.set("temporary", true);
                                elements.add(data.context.model);
 
-                               connectors.add(new Backbone.Model({type:data.context.connectorType, fromId:fromId, toId:"ConnectionHelper", temporary:true}));
+                               connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:"ConnectionHelper", temporary:true}));
                            }
                         }
                         else {

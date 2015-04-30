@@ -6,6 +6,10 @@ define(['marionette',
         'Modules/Diagrammer/Views/contextmenu'
         ],
     function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog, ContextMenuRegistry, DiagramCtxMenu) {
+
+$.log = function(message) {
+	if (window.console) console.log(message);
+};
 		
     var Framework = new Marionette.Application({
         contentTypeViews: {},

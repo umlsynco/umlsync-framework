@@ -27,8 +27,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                "change": "modelChanged"
             },
             modelChanged: function() {
-				this.$el.css({left:this.model.get("left"), top:this.model.get("top")});
-			}
+                this.$el.css({left:this.model.get("left"), top:this.model.get("top")});
+            }
         });
         
         var helperItemView = Backbone.Marionette.ItemView.extend({
@@ -52,11 +52,13 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 'redraw':'redraw'
             },
             onRedraw: function(ctx) {
+              this.ctx = this.ctx || ctx;
               this.redraw(ctx);
             },
             initialize: function(opt, attr) {
                 var that = this;
             //    this.on("redraw", _.bind(this.redraw, this));
+                this.epoints = this.model.get("epoints") || [];
 
                 var elements = opt.elements;
                 this.fromModel = elements.findWhere({id:this.model.get("fromId")});
@@ -66,10 +68,13 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
             redraw: function(ctx, color) {
                 var context = ctx;
                 var col = color || "rgba(0,0,0,1)";
+
+                col = this.isMouseOver == true ? "#43EC28" : col; // Re-draw connector with specific color on mouse over
+
                 if (ctx == undefined) {
                     return;
                 }
-                this.points = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.model.get("epoints"));
+                this.points = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.epoints);
                 this.gip = [];
                 for (var i=0;i<this.points.length-1;++i) {
                     var dy = this.points[i][1] - this.points[i+1][1],
@@ -98,7 +103,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
                  }
                  */
-                this['draw'](context, this.points, col);
+
+                 this['draw'](context, this.points, col);
             },
             dashedLine: function(p1,p2, c) {
                 var x2 = p2[0],
@@ -208,11 +214,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 if (this.points == undefined)
                     return false;
 
+
                 // Check if mouse is near to some extra point ?
                 for (var c=0; c<this.epoints.length; ++c) {
                     if ((this.epoints[c][0] - 12 < x) && (this.epoints[c][0] + 12 > x)
                         && (this.epoints[c][1] - 12 < y) && (this.epoints[c][1] + 12> y)) {
-                        dm.at.cs.mouseover = {euid:this.euid,idx:c};
+                     //   dm.at.cs.mouseover = {euid:this.euid,idx:c};
                         return true;
                     }
                 }
@@ -226,7 +233,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                         gip = Math.sqrt(dx*dx + dy*dy);
 
                     if (((gip1 + gip) - this.gip[i]) < 0.2 ) {
-                        dm.at.cs.mouseover = {euid:this.euid};
+                   //     dm.at.cs.mouseover = {euid:this.euid};
                         return true;
                     }
                 }
@@ -249,13 +256,299 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 if (((gip1 + gip2) - gip) < 0.5)
                     return true;
                 return false;
-            }
+            },
+            startTransform: function(x1,y1) {
+				$.log("START TRANSFORM !! " + x1 + " Y " + y1);
+//              if (!this.parrent.options.editable)
+//                return;
+
+//              var opman = this.parrent.opman;
+//              opman.startTransaction();
+
+              // Clena extra point position
+              this.eppos = undefined;
+
+              // Some scrolling stuff, do not take in account
+              var x =  x1 + this.$el.parent().scrollLeft(),
+              y = y1 + this.$el.parent().scrollTop();
+
+              // cleanOnNextTransform allow us to move vertical and horizontal
+              //                      lines between elements.
+              //                      It is single extra point which should be removed on next DND
+              if ((this.cleanOnNextTransform) && (this.epoints.length == 1)) {
+				  $.log("START TRANSFORM !! clean point on next transformation");
+                this.cleanOnNextTransform = false;
+                this.epoints.splice(0, 1);
+              }
+
+              // Check if mouse is near to some extra point ?
+              for (var c=0; c<this.epoints.length; ++c) {
+                if ((this.epoints[c][0] - 12 < x) && (this.epoints[c][0] + 12 > x)
+                    && (this.epoints[c][1] - 12 < y) && (this.epoints[c][1] + 12> y)) {
+                  this.eppos = c;
+                  $.log("START TRANSFORM !! epoint at " + c);
+                  break;
+                }
+              }
+
+              if (this.epoints.length == 0) {  // Don't need to identify position
+				  $.log("START TRANSFORM !! no points at all");
+                // in array for the first element
+                this.eppos = 0;
+                this.epoints[this.eppos] = [];
+//                this.report = "+epoint";
+              } else {
+                // means that it is not move on existing point
+                //            it is not first point of replaced first point
+                if (this.eppos == undefined) {
+
+                  // Get the list of connection points
+                  this.points = this['_getConnectionPoints'](this.fromModel.cid, this.toModel.cid, this.epoints);
+                  newPoint = [];
+                  newPoint[0] = x1; newPoint[1] = y1;
+                  var zi=0;
+                  for (;zi<this.points.length-1;++zi) {
+                    if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
+                      this.eppos = zi;
+                      this.epoints.splice(zi, 0, newPoint);
+                      $.log("START TRANSFORM !! new point at " + zi);
+                      break;
+                    }
+                  }
+//                  this.report = "+epoint";
+                } else {
+//                  this.report = "#epoint";
+                   $.log("START TRANSFORM !! epossed " + this.eppos);
+                  this.epoints[this.eppos] = [];
+                }
+              }
+
+//              opman.reportStart(this.report, this.euid, {idx: this.eppos, value: [x,y]});
+
+if (this.eppos == undefined) return false;
+
+              this.epoints[this.eppos][0] = x;
+              this.epoints[this.eppos][1] = y;
+
+
+
+//              if (this.onStartTransform != undefined)
+//                this.onStartTransform(x,y);
+
+return true; 
+            },
+            
+            stopTransform: function(x1,y1) {
+				$.log("STOP TRANSFORM !! " + x1 + " Y " + y1);
+              if (this.eppos == undefined) {
+                return;
+              }
+              var x = x1 + this.$el.parent().scrollLeft(),
+              y = y1 + this.$el.parent().scrollTop();
+
+//              this.parrent.opman.reportStop(this.report, this.euid, {idx: this.eppos, value:[x,y]});
+
+              this.epoints[this.eppos][0] = x;
+              this.epoints[this.eppos][1] = y;
+
+              var isEqualPoint = function(p1, p2) {
+                if ( (p1[0] - 12 < p2[0])
+                    && (p1[0] + 12 > p2[0])
+                    && (p1[1] - 12 < p2[1])
+                    && (p1[1] + 12 > p2[1])) {
+                  return true;
+                }
+                return false;
+              };
+
+              if (this.eppos < this.epoints.length - 1) {
+                if (isEqualPoint(this.epoints[this.eppos], this.epoints[this.eppos + 1])) {
+                  $.log("REPORT             1 ");
+//                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos +1, value:this.epoints[this.eppos+1]});
+                  this.epoints.splice(this.eppos +1, 1);
+                }
+              }
+
+              if (this.eppos > 0) {
+                if (isEqualPoint(this.epoints[this.eppos], this.epoints[this.eppos -1])) {
+                  this.eppos--;
+                  $.log("REPORT             2 ");
+//                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos, value:this.epoints[this.eppos]});
+                  this.epoints.splice(this.eppos, 1);
+
+                }
+              }
+
+              if (this.canRemovePoint(this.points[this.eppos], this.points[this.eppos+2], this.points[this.eppos+1])){
+                if (this.epoints.length > 1) {
+                  $.log("REPORT             3:  " + this.eppos + "   COUNT: " + this.epoints.length);
+//                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos, value:this.epoints[this.eppos]});
+                  this.epoints.splice(this.eppos, 1);
+                  $.log("REPORT AFTER       3:  " + this.eppos + "   COUNT: " + this.epoints.length);
+
+                } else {
+                  this.cleanOnNextTransform = true;
+                }
+              }
+
+              this.eppos = undefined;
+
+              // [TODO] Think about subscribers !!!
+//              if ($.isFunction(this.onStopTransform))
+//                this.onStopTransform(x,y);
+
+//              this.parrent.opman.stopTransaction();
+//              delete this.report; // remove the value
+
+            },
+            
+            TransformTo: function(x1,y1) {
+				$.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
+              if (this.eppos != undefined) {
+                var x =  x1 + this.$el.parent().scrollLeft(),
+                y = y1 + this.$el.parent().scrollTop();
+                this.epoints[this.eppos][0] = x;
+                this.epoints[this.eppos][1] = y;
+
+                // On Transform callback caller
+                //if ($.isFunction(this.onTransform))
+                //  this.onTransform(x,y);
+              }
+            },
+        });
+
+
+        Backbone.Marionette.ConnectorsView = Marionette.CollectionView.extend({
+                    className: "us-canvas-bg",
+                    getChildView: function(model) {
+                        var type = model.get("type");
+                        var view = require("Modules/Diagrammer/Views/Connectors/uml"+type);
+                        return view;
+
+                    },
+                    triggerCustomEvent: function(method, arg){
+                        this.children.each(function(child){
+                            if (_.isFunction(child.triggerMethod)) {
+                                child.triggerMethod(method, arg);
+                            } else {
+                                Marionette.triggerMethod.call(child, method, arg);
+                            }
+                        });
+                    },
+                    startConnectorTransform: function(x,y) {
+                        var diag = this;
+                        this.children.each(function(child) {
+                            if (child.isMouseOver == true) {
+                                if (child.startTransform(x,y)) {
+									diag.selectedConnector = child;
+								};
+                            }
+                        }); // each
+                    }, 
+                    stopConnectorTransform: function(x,y) {
+                        if (this.selectedConnector != undefined) {
+                            this.selectedConnector.stopTransform(x,y);
+                            this.selectedConnector = undefined;
+                        }
+                    },
+                    isPointOnLine: function(x, y) {
+                        var diag = this;
+                        var shouldRedraw = false;
+                        // Check of transformat has been started
+                        if (diag.selectedConnector && this.selectedConnector != undefined) {
+                            diag.selectedConnector.TransformTo(x,y);
+                            // force re-draw of connectors
+                            diag.trigger("connector:changed");
+                            // Return true to prevent further propagation of mousemove event !
+                            return true;
+                        }
+                        
+                        this.children.each(function(child) {
+                            if (_.isFunction(child.isPointOnLine)) {
+                                var result = child.isPointOnLine(x,y);
+                                if (result == true) {
+                                    child.isMouseOver = true;
+                                    diag.trigger("connector:changed");
+                                    return true;
+                                }
+                                else if (child.isMouseOver) {
+                                    child.isMouseOver = false;
+                                    // re-draw if mouse left this connector
+                                    shouldRedraw = true;
+                                }
+                            }
+                        });
+                        if (shouldRedraw == true) {
+                            diag.trigger("connector:changed");
+                        }
+                        return false;
+                    },
+                    //
+                    // Handle the connectors behavior
+                    // 1. Select connector
+                    // 2. Mouse over
+                    // 3. Add extra points for the connectors
+                    // 4. Context menu
+                    //
+                    onRender: function() {
+                       var diag = this;
+                       this.$el
+                       .mousemove(function(e) {  // DEBUG FUNCTIONALITY.
+                          var p = $(this).offset(),
+                          x = e.pageX - p.left,
+                          y = e.pageY - p.top;
+                          var status = diag.isPointOnLine(x,y);
+                          if (status) {
+//                            dm.at.mouse = dm.at.mouse || {};
+//                            dm.at.mouse.x = x;
+//                            dm.at.mouse.y = y;
+                            e.stopPropagation();
+                          }
+                        })
+                        .mouseup(function(e) {
+                          var p = $(this).offset(),
+                          x = e.pageX - p.left,
+                          y = e.pageY - p.top;
+                          diag.stopConnectorTransform(x,y);
+                        })
+                        .mousedown(function(e) {
+
+                          var p = $(this).offset(),
+                          x = e.pageX - p.left,
+                          y = e.pageY - p.top;
+
+// [TODO:Testing] Selenium test suite helper
+                          // Selenium can't clickAndHold at concreate position
+                          //if (x<1 && y<1) {
+                        //    x = dm.at.mouse.x;
+//                            y = dm.at.mouse.y;
+//                          }
+
+                          if (e.which != 3) {
+                            diag.startConnectorTransform(x,y);
+                          }
+
+                          if ((diag.selectedconntector)
+                              && (!dm['dm']['fw']['CtrlDown'])) {
+                            diag.selectedconntector._setOption("selected", true);
+                            e.stopPropagation();
+                          }
+                        })
+                        .bind('contextmenu', function(e) {
+                          $.log("CONTEXT MENU PRESSED !!!");
+                          if (diag.selectedconntector && diag.menuCtx) {
+                            diag.menuCtx['hideAll']();
+                            diag.menuCtx['visit'](diag.selectedconntector, e.pageX , e.pageY);
+                            e.preventDefault();
+                            diag.multipleSelection = true; // work around to hide connector selection on click
+                          }
+                        });
+                    }
         });
 
         var DiagramView = Backbone.Marionette.ItemView.extend({
             className: "us-diagram",
-            template: _.template('<div class="us-canvas-bg" style="width:100%;height:100%;">' +
-                '<canvas id="<%=cid%>_Canvas" class="us-canvas" width="1500px" height="800px"></canvas></div>'),
+            template: _.template('<canvas id="<%=cid%>_Canvas" class="us-canvas" width="1500px" height="800px"></canvas>'),
             templateHelpers: function() {
                 return {
                     cid: this.model.cid
@@ -278,8 +571,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                         if (type != "helper") {
                           var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
                           return view;
-					    }
-					    return helperItemView;
+                        }
+                        return helperItemView;
 
                     }})) // extend collection with a new method
                 ({collection:this.model.umlelements});
@@ -289,36 +582,23 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 // Trigger connectors re-draw on DND
                 // TODO: skip mouseover events on dragstart and finish to ignore them dragstop
                 this.elementsView.on("element:drag", _.bind(this.drawConnectors, this));
+                this.elementsView.on("element:resize", _.bind(this.drawConnectors, this));
 
-                // Draw all connectors
-                this.connectorsView = new (Marionette.CollectionView.extend({
+                // Draw all connectors + wrapped div for the mouse move handling !!!
+                this.connectorsView = new Backbone.Marionette.ConnectorsView({collection:this.model.umlconnectors,
                     childViewOptions: {
-                       elements:this.model.umlelements
-                    },
-                    getChildView: function(model) {
-                        var type = model.get("type");
-                        var view = require("Modules/Diagrammer/Views/Connectors/uml"+type);
-                        return view;
-
-                    },
-                    triggerCustomEvent: function(method, arg){
-                        this.children.each(function(child){
-                            if (_.isFunction(child.triggerMethod)) {
-                                child.triggerMethod(method, arg);
-                            } else {
-                                Marionette.triggerMethod.call(child, method, arg);
-                            }
-                        });
+                        elements:this.model.umlelements
                     }
-                })) // extend collection with a new method
-                ({collection:this.model.umlconnectors});
+                });
 
                 this.connectorsView.render();
                 this.$el.append(this.connectorsView.$el);
+                
+                this.connectorsView.on("connector:changed", _.bind(this.drawConnectors, this));
 
                 // Initialize canvas
                 this.canvasEuid = this.model.cid+'_Canvas';
-                this.canvas = (this.el.childNodes[0]).childNodes[0];
+                this.canvas = (this.el.childNodes[0]);// .childNodes[0];
             },
 
             //
@@ -334,6 +614,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
                 var views = this.connectorsView.children._views;
+                this.connectorsView.ctx = this.ctx;
                 this.connectorsView.triggerCustomEvent("redraw", this.ctx);
             }
         });
