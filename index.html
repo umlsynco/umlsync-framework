@@ -198,6 +198,67 @@
         </div>
     </script>
 
+    <script id="umlsync-new-diagram-dialog-template" type="text/template">
+            <div tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1002; outline: 0px none; position: absolute; height: auto; width: 300px; top: 75.5px; left: 409px;">
+                <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+                    <span id="ui-dialog-title-new-diagram-dialog" class="ui-dialog-title">Creating new diagram   [<span>umlsynco/diagrams</span>]</span>
+                    <a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span class="ui-icon ui-icon-closethick">close</span></a>
+                </div>
+                <div scrollleft="0" scrolltop="0" style="width: auto; min-height: 60.4px; height: auto;" class="ui-dialog-content ui-widget-content ui-not-draggable" id="new-diagram-dialog">
+					<form id="us-dialog-newdiagram">
+						<fieldset>
+							<div id="selectable-list" style="scroll:auto;">
+								<!-- ul id="diagram-menu">
+									<li id="0" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/classDiagram.png');">
+										<a>UML class diagram</a>
+									</li>
+									<li id="1" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/componentDiagram.png');">
+										<a>UML component diagram</a>
+									</li>
+									<li id="2" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/packageDiagram.png');">
+										<a>UML package diagram</a>
+									</li>
+									<li id="3" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/sequenceDiagram.png');">
+										<a>UML sequence diagram</a>
+									</li>
+									<li id="4" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/markDown.png');">
+										<a>Markdown text document</a>
+									</li>
+									<li id="5" class="diagram-selector" style="cursor:pointer;list-style-image:url('././dm/icons/us/dss/snippets.png');">
+										<a>Snippet bubbles</a>
+									</li>
+								</ul -->
+							</div>
+							<br>
+							<p id="us-new-diagram-dialog-readio" class="ui-widget-header ui-corner-all">
+								<input value="umlsync" name="type" checked="true" type="radio">JSON      
+								<input value="us.svg" name="type" style="margin-left:25px;" type="radio">SVG      
+								<input value="text" name="type" style="margin-left:25px;" disabled="true" type="radio">PlantUML
+							</p>
+							<p><label id="VP_error" style="margin-top:0px;float:left;font-color:red;">Select the name of the new file:</label></p>
+							<br>
+							<p class="ui-widget-header ui-corner-all">
+								<input id="us-new-diagram-dialog-input" checked="checked" class="left" style="margin: 4px 0px 4px 4px;" type="checkbox">
+								<span class="left2">
+									<input aria-haspopup="true" aria-autocomplete="list" role="textbox" autocomplete="off" class="ui-autocomplete-input" id="VP_inputselector" value="/" maxlength="256" pattern="[a-zA-Z ]{5,}" name="name" type="text">
+								</span>
+							</p>
+						</fieldset>
+					</form>
+				</div>
+				<div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+					<div class="ui-dialog-buttonset">
+						<button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-not-draggable ui-button-create" type="button">
+							<span class="ui-button-text">Create</span>
+						</button>
+						<button aria-disabled="false" role="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only ui-not-draggable ui-button-cancel" type="button">
+							<span class="ui-button-text">Cancel</span>
+						</button>
+					</div>
+				</div>
+			</div>
+    </script>
+
     <script id="umlsync-diagram-view-template" type="text/template">
         <span class="us-diagram-toolbox">
             <a id="us-link"><span id="us-getlink">Get link</span></a>
@@ -336,6 +397,19 @@
             <div id="umlsync-dropdown-region"></div>
         </div>
     </script>
+    
+    <script id="us-diagram-menu-template" type="text/template">
+		<div aria-labelledby="ui-dialog-title-commit-changes-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1004; outline: 0px none; position: absolute; height: auto; width: 150px;">
+            <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+                <span id="ui-dialog-title-commit-changes-dialog" class="ui-dialog-title">Select UML element:</span>
+                <a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#">
+                    <span class="ui-icon ui-icon-closethick">close</span>
+                </a>
+            </div>
+        
+			<div id="us-diagram-menu-accordion">Accordion area</div>
+			</div>
+	</script>
 
     <script id="umlsync-commit-dialog-template" type="text/template">
         <div aria-labelledby="ui-dialog-title-commit-changes-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1004; outline: 0px none; position: absolute; height: auto; width: 550px; top: 241px; left: 433.5px;">
@@ -394,15 +468,19 @@
         <div id="content-left-right-resize"
              style="width:6px;left:200px;height:100%;position:absolute;padding:0;margin:0;border:0px solid gray;background-color:gray;cursor: col-resize;"></div>
         <div id="content-right" style="left:206px;height:100%;position:absolute;padding:0;margin:0;">
+            <div id="diagram-menu">
+            </div>
             <div id="tabs">
                 <ul>
                 </ul>
+                <div id="diagram-iconmenu-region"></div>
             </div>
         </div>
 
     </div>
     <div id="content-bottom" style="clear:both;">bottom</div>
     <div id="content-dialog" style="position:absolute;visibility:hidden;"></div>
+    <div id="context-menu-region" style="position:absolute;visibility:hidden;"></div>
 </div>
     <script type="text/javascript" src="js/lib/require.js" data-main="js/main.js"></script>
   <div style="width: 1455px; height: 353px; z-index: 1001; display:none;" class="ui-widget-overlay"></div>

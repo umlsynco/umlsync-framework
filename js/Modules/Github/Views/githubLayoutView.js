@@ -3,10 +3,9 @@ define(['jquery',
         'github',
         'Views/framework',
         'Modules/Github/backend',
-        'Views/Dialogs/commitDialog',
         'Modules/Github/Controllers/GithubControllersFacade'
     ],
-    function ($, Marionette, Github, Framework, GHB, CommitDialog, Facade) {
+    function ($, Marionette, Github, Framework, GHB,  Facade) {
         var githubLayout = Marionette.LayoutView.extend({
             template: "#github-content-layout",
             regions: {

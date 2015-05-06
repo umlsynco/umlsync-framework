@@ -5,7 +5,7 @@ define(['marionette',
     function (Marionette, Framework, Github) {
         Framework.module('Backend', function(Backend) {
             Backend.Github = {};
-            Backend.Github = new Github({username:'umlsynco', token:'dd1e16fc2d796f9dbb4cf7a628b2028a4194e821', singleton: true});
+            Backend.Github = new Github({username:'umlsynco', token:"f77fc059d80d497f32ebf8fab30ae27f56a60bba", singleton: true});
         });
         return Framework.Backend.Github;
     });

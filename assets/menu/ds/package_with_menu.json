@@ -1,0 +1,47 @@
+[
+  {
+   "elements": [
+	{"type": "package",
+	 "title": "Package",
+         "options": {},
+	 "icon": "./assets/icons/us/es/package/Package.png"
+	},
+	{"type": "package",
+	 "title": "Subsystem",
+	 "options": {"aux": "subsystem","dropable":"package"},
+ 	 "icon": "./assets/icons/us/es/package/Subsystem.png"
+	},
+	{"type": "note",
+	 "title": "Note",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/note.png"
+	}
+    ],
+    "connectors": [
+      {"type":"dependency",
+	   "title":"Dependency",
+	   "icon": "./assets/icons/us/cs/dependency.png"
+	  },
+      {"type":"dependency",
+	   "title":"Import",
+	   "icon": "./assets/icons/us/cs/Import.png"
+	  },
+      {"type":"dependency",
+	   "title":"Access",
+	   "icon": "./assets/icons/us/cs/Access.png"
+	  },
+      {"type":"generalization",
+	   "title":"Generalization",
+	   "icon": "./assets/icons/us/cs/generalization.png"
+	  },
+      {"type":"dependency",
+	   "title":"Merge",
+	   "icon": "./assets/icons/us/cs/Merge.png"
+	  },
+      {"type":"nested",
+	   "title":"Containment",
+	   "icon": "./assets/icons/us/cs/nested.png"
+	  }
+    ]
+   }
+]

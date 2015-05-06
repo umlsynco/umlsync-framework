@@ -1,0 +1,109 @@
+[
+  {"type": "sequence",
+   "elements": [
+	{"type": "objinstance",
+	 "title": "Object Instance",
+         "options": {},
+	 "icon": "./assets/icons/us/es/component/InstanceSpecification.png"
+	},
+	{"type": "llport",
+	 "title": "Port",
+         "options": {},
+	 "hidden": true
+	},
+	{"type": "message",
+	 "title": "Lost/Found Message",
+	 "icon": "./assets/icons/us/es/common/message.png"
+	},
+	{"type": "lldel",
+	 "title": "Del object",
+	 "options":{"hidden": true},
+	 "icon": "./assets/icons/us/es/common/del.png"
+	},
+	{"type": "llalt",
+	 "title": "Alt",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/alt.png"
+	},
+	{"type": "llalt",
+	 "title": "Option",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/opt.png"
+	},
+	{"type": "llalt",
+	 "title": "Loop",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/loop.png"
+	},
+	{"type": "llalt",
+	 "title": "Break",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/break.png"
+	},
+	{"type": "llalt",
+	 "title": "Parallel",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/par.png"
+	},
+	{"type": "llalt",
+	 "title": "Strict",
+         "options": {},
+	 "icon": "./assets/icons/us/es/common/strict.png"
+	},
+	{"type": "actor",
+	 "title": "Actor",
+         "options": {},
+	 "icon": "./assets/icons/us/es/sequence/Actor.png"
+	},
+	{"type": "note",
+	 "title": "Note",
+         "options": {},
+	 "icon": "/dm/icons/us/es/common/Note.png"
+	}
+
+    ],
+    "connectors": [
+      {"type":"llsequence",
+	   "title":"Life Line Sequence",
+	   "createObject": true,
+	   "icon": "./assets/icons/us/cs/dependency.png"
+	  },
+      {"type":"llselfcall",
+	   "title":"Self Call",
+	   "icon": "./assets/icons/us/cs/composition.png"
+	  },
+      {"type":"generalization",
+	   "title":"Generalization",
+	   "icon": "./assets/icons/us/cs/generalization.png"
+	  },
+      {"type":"realization",
+	   "title":"Realization",
+	   "icon": "./assets/icons/us/cs/realization.png"
+	  },
+      {"type":"association",
+	   "title":"Association",
+	   "icon": "./assets/icons/us/cs/association.png"
+	  },
+      {"type":"aggregation",
+	   "title":"Aggregation",
+	   "icon": "./assets/icons/us/cs/aggregation.png"
+	  },
+      {"type":"composition",
+	   "title":"Composition",
+	   "icon": "./assets/icons/us/cs/composition.png"
+	  },
+      {"type":"anchor",
+	   "title":"Anchor",
+	   "icon": "./assets/icons/us/cs/AnchorToNote.png"
+	  },
+      {"type":"anchor",
+	   "title":"Constraint",
+	   "icon": "./assets/icons/us/cs/Constrain.png"
+	  },
+      {"type":"nested",
+	   "title":"Containment",
+	   "icon": "./assets/icons/us/cs/nested.png"
+	  }
+    ]
+   }
+]
