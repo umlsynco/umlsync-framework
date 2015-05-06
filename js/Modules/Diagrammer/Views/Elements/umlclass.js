@@ -9,7 +9,7 @@ define(['marionette', './../umldiagram'],
             editElement: function() {
 				this.$el.children().hide();
 				var that = this;
-                var xxx = that.$el.children("a").html();
+                        var xxx = that.$el.children("a").html();
 				this.$el.append("<input type='text' value='"+ xxx +"' style='width:100%;'>");
 
 				that.$el.children("input").blur(function() {
@@ -17,9 +17,10 @@ define(['marionette', './../umldiagram'],
 					var val = inp.val();
 					inp.remove();
 					that.$el.children("a").html(val).show();
+                                        that.model.set("name", val); // SyncUp Model: Class opertations
 				})
 				.on('keyup', function(e){
-                     if (e.which == 27) { 
+                                       if (e.which == 27) { 
 						//$('#status').html("cancel");
 						$(this).off('blur').remove();
 						that.$el.children("A").show();
@@ -27,6 +28,7 @@ define(['marionette', './../umldiagram'],
 					else if (e.which == 13) { 
 						$(this).trigger("blur");
 					}
+
 				})
 				.focus();
 			}

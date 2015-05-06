@@ -22,6 +22,7 @@ define(
                     "Modules/Diagrammer/Views/Connectors/umlrealization"]);
             },
             getTemplate: function () {
+// TODO: move these code into the separate calss like viewmanager or base class for all views
                 var status = this.model.get("status");
                 // use the default templates for loading and load failed use-cases
                 if (status == 'loading') {
@@ -43,10 +44,23 @@ define(
 
                     this.modelDiagram = new Diagram(simpleContent);
 
+var ContentView = this;
+
                     // Methods become available if elements and connectors are not empty
                     if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                         var els = this.modelDiagram.getUmlElements();
                         var cs = this.modelDiagram.getUmlConnectors();
+
+// TODO: replace on operation manager
+// which should be based on collection and model change events. 
+els.on("change", function() {
+ContentView.model.set("isModified", true);
+});
+cs.on("change", function() {
+ContentView.model.set("isModified", true);
+});
+
+
                         for (var xxx in els.models) {
                             var model = els.at(xxx);
                             if (model.get("type") == "class") {
