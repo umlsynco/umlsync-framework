@@ -17,6 +17,33 @@ define(['backbone', 'underscore'], function (Backbone, _) {
                             return that['uml' + key];
                         }
                         that['uml' + key] = new Backbone.DiagramCollection(options[key]);
+
+                        that['uml' + key].on("update", function(context) {
+							context.push({key:key, cid:that.cid});
+                            that.trigger("update" , context);
+                        });
+                        
+                        that['uml' + key].on("change", function(model, fields, something) {
+							var context = new Array();
+							context.push({action:"change", cid:model.cid});
+                            that.trigger("update" , context);
+                        });
+
+                        that['uml' + key].on("add", function(model) {
+							var context = new Array();
+							 // [TODO]: Is cid enough for this action ?
+							 // Use-case: some action with element change and "remove and revert" after that? 
+							context.push({action:"add", cid:model.cid, key:key});
+							that.trigger("update" , context);
+                        });
+
+                        that['uml' + key].on("remove", function(model) {
+							var context = new Array();
+							context.push({action:"remove", cid:model.cid, key:key});
+                            that.trigger("update" , context);
+                        });
+
+
                         // TODO: sync up on change
                         // that['uml' + key].on("change", )
 
@@ -41,6 +68,7 @@ define(['backbone', 'underscore'], function (Backbone, _) {
                                 }
                               }
                           }); // each model
+
                           // handle items without id !!!
                           if (hasWrongItems) {
                               that.umlelements.each(function(model) {
@@ -61,7 +89,13 @@ define(['backbone', 'underscore'], function (Backbone, _) {
                     }
                 }
             }); // each option
-        }
+        },
+        //
+        // Get JSON or SVG description
+        //
+        getDescription: function() {
+			return "[{}]";
+		}
     });
 
     Backbone.DiagramCollection = Backbone.Collection.extend({

@@ -3,6 +3,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
     var WrapDraggableResizable = Marionette.Behavior.extend({
         onRender: function () {
             var model = this.view.model;
+            //var operationManager = model.getOperationManager();
             var view = this.view;
 
             // [TODO]: drop it !!!
@@ -24,10 +25,15 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     'alsoResize': '#' + model.cid + '_Border .us-element-resizable-area',
                     'start': function () {
                     },
-                    'stop': function () {
+                    'resize': function () {
                     },
-                    'resize': function (event, ui) {
+                    'stop': function (event, ui) {
+						var pos = view.$el.position();
+						//operationManager.startReport();
+						model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
+						//operationManager.stopReport();
                     }
+
                 })
                 .draggable({
 //                    'grid': [2, 2],
@@ -38,6 +44,10 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                         view.trigger("drag");
                     },
                     'stop': function (event, ui) {
+						var pos = view.$el.position();
+						//operationManager.startReport();
+						model.set({left:pos.left, top:pos.top});
+						//operationManager.stopReport();
                     }
                 })
                 .bind('contextmenu', function (e) {

@@ -133,8 +133,9 @@ define(['marionette',
                    }
 			   }
 			},
-			
-			// content:before:close
+			//
+			// content:before:close 
+			//
 			onContentBeforeClose: function(options) {
 			  if (options.model.get("isModified")) {
 				require(['Views/Dialogs/saveOnCloseDialog'], function(saveOnCloseDialog) {

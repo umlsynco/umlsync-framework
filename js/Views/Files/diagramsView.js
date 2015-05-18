@@ -3,9 +3,10 @@ define(
      'Views/framework',
      'Models/contentModel',
      'Modules/Diagrammer/Models/Diagram',
+     'Modules/Diagrammer/Controllers/OperationManager',
      'Modules/Diagrammer/Views/umldiagram'
     ],
-    function (Backbone, Framework, ContentModel, Diagram, UmlDiagram) {
+    function (Backbone, Framework, ContentModel, Diagram, OperationManager, UmlDiagram) {
         var diagramView = Backbone.Marionette.ItemView.extend({
             initialize: function () {
                 this.model.on('change:status', this.render);
@@ -43,22 +44,51 @@ define(
                     simpleContent = (simpleContent instanceof  Object) ? simpleContent : $.parseJSON(simpleContent);
 
                     this.modelDiagram = new Diagram(simpleContent);
+                    this.operationManager = new OperationManager({diagram:this.modelDiagram});
+                    
 
-var ContentView = this;
+                    var ContentView = this;
+                    
+                    // Only operation manager knows about real status of diagram (on Ctrl-Z/Y or Ctrl+S)
+                    this.operationManager.on("modified", function(value) {
+                        ContentView.model.set("isModified", value);                       
+                    });
 
                     // Methods become available if elements and connectors are not empty
                     if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                         var els = this.modelDiagram.getUmlElements();
                         var cs = this.modelDiagram.getUmlConnectors();
+var JSON = {};
+
+JSON.stringify = JSON.stringify || function (obj) {
+    var t = typeof (obj);
+    if (t != "object" || obj === null) {
+        // simple data type
+        if (t == "string") obj = '"'+obj+'"';
+        return String(obj);
+    }
+    else {
+        // recurse array or object
+        var n, v, json = [], arr = (obj && obj.constructor == Array);
+        for (n in obj) {
+            v = obj[n]; t = typeof(v);
+            if (t == "string") v = '"'+v+'"';
+            else if (t == "object" && v !== null) v = JSON.stringify(v);
+            json.push((arr ? "" : '"' + n + '":') + String(v));
+        }
+        return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
+    }
+};
 
 // TODO: replace on operation manager
 // which should be based on collection and model change events. 
-els.on("change", function() {
-ContentView.model.set("isModified", true);
+this.modelDiagram.on("update", function(context) {
+
+//alert("MODIFIED: " + JSON.stringify(context));
 });
-cs.on("change", function() {
-ContentView.model.set("isModified", true);
-});
+//cs.on("change", function() {
+//ContentView.model.set("isModified", true);
+//});
 
 
                         for (var xxx in els.models) {
@@ -70,7 +100,7 @@ ContentView.model.set("isModified", true);
                         }
                     }
 
-                    this.UD = new UmlDiagram({model:this.modelDiagram });
+                    this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager});
                     this.UD.render();
                     this.$el.append(this.UD.$el);
 
@@ -164,7 +194,14 @@ ContentView.model.set("isModified", true);
                 else {
                     alert("Unknown source of PAST event: " + data.source);
                 }                
-            }
+            },
+            //
+            //  Sync-up diagram model and content tracker
+            //
+            syncUpBeforeClose: function() {
+				if (this.model.get("isModified"))
+				  this.model.set("modifiedContent", this.modelDiagram.getDescription());
+			}
         });
 
         Framework.registerContentTypeView({
