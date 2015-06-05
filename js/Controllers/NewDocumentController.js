@@ -5,10 +5,11 @@ define(['marionette',
         var Controller = Marionette.Controller.extend({
 
             initialize: function (options) {
-                this.dialog = new dialog({});
+                this.dialog = new dialog(options);
                 this.dialog.render();
             },
-            getDialog: function() {
+            getDialog: function(options) {
+                this.dialog.dataProvider = options.dataprovider;
 				return this.dialog;
 			},
 			show: function() {

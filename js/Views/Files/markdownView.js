@@ -122,7 +122,20 @@ define(
 			    this.bindUIElements();
 				// trigger render complete
                 this.triggerMethod('render', this);
-            }
+            },
+                        //
+            // Ctrl-Z
+            //
+            handleUndoOperation: function() {
+				// Should be handled by default textarea component
+			},
+
+            //
+            // Ctrl-Y
+            //
+            handleRedoOperation: function() {
+				// Should be handled by default textarea component
+			},
         });
 
         Framework.registerContentTypeView({type: 'markdown', classPrototype: view, extensions: "MD"});

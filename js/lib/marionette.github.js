@@ -204,6 +204,41 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     this.reset(); // Drop an existing items
                     this.fetch(options);
                 },
+                //
+                // Check if we need to load path
+                //
+                isPathLoaded: function(absolutePath) {
+                    var absPaths =  absolutePath.split("/");
+                    if (absPaths[0] == "") {
+                        absPaths.shift();
+                    }
+                    if (absPaths.length == 0)
+                      return "root";
+
+                    return this._isPathLoadedInternal(absPaths);
+                },
+                //
+                // Helper recursive method
+                //
+                _isPathLoadedInternal: function(paths, parentSha) {
+                    var path = paths.shift();
+                    var models = this.where({path: path, type: 'blob', parentSha:parentSha});
+                    if (models.length == 1) {
+                        if (models[0].get("loaded")) {
+                            if (paths.length == 0)
+                               return models[0]; // got loaded path
+                            return this._isPathLoadedInternal(paths, models[0].get("sha"));
+                        }
+
+                        return "loading"; // Not loaded at all
+                    }
+                    if (models.length == 0) {
+                       return "wrong"; // wrong path
+                    }
+
+                    return "internal_error";
+                },
+
                 loadPath: function(absolutePath) {
                     var absPaths =  absolutePath.split("/");
                     if (absPaths[0] == "") {

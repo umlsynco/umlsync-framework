@@ -28,9 +28,8 @@ define(
               
               // trigger with content information
               if (models.length == 1) {
-				if (models[0].syncUpBeforeClose) {
-				    models[0].syncUpBeforeClose();
-				}
+				models[0].trigger("syncup", "later");
+
                 Framework.vent.trigger("content:before:close", {model:models[0], action: "close"});
               }
             },

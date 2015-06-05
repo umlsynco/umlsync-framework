@@ -60,19 +60,26 @@ define([
             ui: {
                 createButton: "button.ui-button-create",
                 cancelButton: "button.ui-button-cancel",
-                closeButton: "span.ui-icon-closethick"
+                closeButton: "span.ui-icon-closethick",
+                checkbox: "input[type=checkbox]",
+                abspath: "input[type=text]"
             },
             events: {
 				'click @ui.closeButton' : 'onCancel',
 				'click @ui.cancelButton' : 'onCancel',
-				'click @ui.createButton' : 'onCreateButtonClick'
+				'click @ui.createButton' : 'onCreateButtonClick',
+                'change @ui.checkbox': 'onNameChecked',
+                'keyup @ui.abspath': 'onPathChanged'
 			},
 			regions: {
 				ContentList : "#selectable-list"
 			},
-			initialize: function() {
+			initialize: function(options) {
 				// Prevent multiple render
 				this.isSingletone = true;
+
+                // Github tree for example
+                this.dataProvider = options.dataprovider;
 
 				// Download the content list
 				var that = this;
@@ -116,6 +123,33 @@ define([
 				// 2. Markdown
 				// 3. Snippet bubbles
 			},
+            onPathChanged: function() {
+                this.contentAbsPath = this.ui.abspath.val();
+                var status = this.dataProvider.getPathStatus(this.contentAbsPath, _.bind(this.onPathChanged, this));
+
+                this.ui.createButton.prop('disabled', true);
+                if (status == "invalid") {
+                    this.ui.statusLine.value("Invalid path: " + this.contentAbsPath);
+                }
+                else if (status == "error") {
+                    this.ui.statusLine.value("Network error while loading path: " + this.contentAbsPath);
+                }
+                else if (status == "file") {
+                    this.ui.statusLine.value("File already exist: " + this.contentAbsPath);
+                }
+                if (status == "loading") {
+                    this.ui.statusLine.value("Loading: " + this.contentAbsPath);
+                }
+                else if (status == "valid" ){
+                    this.ui.statusLine.value("");
+                    this.autocompletionList = this.dataProvider.getPathAutocompletion(this.contentAbsPath);
+                    this.ui.createButton.prop('disabled', false);
+                }
+            },
+            onNameChecked: function(event) {
+                this.isNameEnabled = this.ui.checkbox.is(":checked");
+                this.ui.abspath.prop("disabled", this.isNameEnabled);
+            },
             onShow: function() {
               $(this.$el).draggable({cancel:".ui-not-draggable"}).resizable();
               $(this.$el).parent().css('visibility', 'visible');

@@ -75,17 +75,11 @@ define(['marionette', './../umldiagram'],
 			},
             onRender: function() {
 				if (this.model.getUmlAttributes) {
-                    this.model.getUmlAttributes().add(new Backbone.DiagramModel({name:"field_1"}));
-                    this.model.getUmlAttributes().add(new Backbone.DiagramModel({name:"field_2"}));
-                    this.model.getUmlAttributes().add(new Backbone.DiagramModel({name:"field_3"}));
  				    this.attributesView = new attributesView({collection:this.model.getUmlAttributes()});
 					this.attributesView.render();
 					this.$el.find("DIV#" + this.model.cid + " div.us-class-attributes").append(this.attributesView.$el);
 			     }
 				if (this.model.getUmlOperations) {
-		           this.model.getUmlOperations().add(new Backbone.DiagramModel({name:"method_1()"}));
-		           this.model.getUmlOperations().add(new Backbone.DiagramModel({name:"method_12)"}));
-		           this.model.getUmlOperations().add(new Backbone.DiagramModel({name:"method_3()"}));
 				   this.operationsView = new operationsView({collection:this.model.getUmlOperations()});
                    this.operationsView.render();
 				   this.$el.find("DIV#" + this.model.cid + " div.us-class-operations").append(this.operationsView.$el);

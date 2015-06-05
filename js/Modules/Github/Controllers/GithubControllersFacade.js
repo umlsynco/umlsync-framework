@@ -171,7 +171,9 @@ define(['marionette',
             //
             NewContent: function() {
               new NewController({
-				  // [TBD] option
+				     tree: this.TreeModel,
+                     branch:this.SyncModelsController.GetActiveBranch(),
+                     contentCache: this.ContentCache
 				  });
             },
             //

@@ -46,10 +46,6 @@ define(['marionette',
                     this.DataProviderSwitcher = new DataProviderView();
                     this.LeftRegion.show(this.DataProviderSwitcher);
 
-                    this.DataProviderSwitcher.on("toolbox:click", function() {alert("clicled")});
-
-                    this.DataProviderSwitcher.on("switcher:toolbox:click", function() {alert("clicled")});
-
                     this.vent.on('app:resize', function(e,u) {
                         controller.handleWidowResize(e,u);
                     });
@@ -91,8 +87,11 @@ define(['marionette',
                 var models = Framework.ContentCollection.where({key:data.key});
 
                 // Unexpected us-case
-                if (models.length != 1) {
-                    alert("Probably content tab was closed before load completed!");
+                if (models.length == 0) {
+                    alert("Probably content tab was closed before load completed! : key = " + data.key);
+                }
+                else if (models.length > 1) {
+                    alert("Found more than 1 content with key: " + data.key);
                 }
                 // Activate tab if it was loaded before
                 else {
@@ -138,6 +137,30 @@ define(['marionette',
 			//
 			onContentBeforeClose: function(options) {
 			  if (options.model.get("isModified")) {
+
+                  if (!options.model.get("absPath")) {
+                      require(['Views/Dialogs/saveAsDialog'], function(saveAsDialog) {
+                          var dialog = saveAsDialog.extend({
+                              onButtonYes: function () {
+                                  // Get path and save it !!!
+                                  Framework.vent.trigger('content:save', options);
+
+                                  if (options.action == "close")
+                                      Framework.vent.trigger('content:close', this.model);
+                              },
+                              onButtonNo: function() {
+                                  if (options.action == "close")
+                                      Framework.vent.trigger('content:close', this.model);
+                              },
+                              onButtonCancel: function() {
+
+                              }
+                          });
+                          Framework.DialogRegion.show(new dialog({model:options.model}))
+                      });
+                      return;
+                  }
+
 				require(['Views/Dialogs/saveOnCloseDialog'], function(saveOnCloseDialog) {
 				  var dialog = saveOnCloseDialog.extend({
 					onButtonYes: function() {

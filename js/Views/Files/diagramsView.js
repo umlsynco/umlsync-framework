@@ -8,6 +8,9 @@ define(
     ],
     function (Backbone, Framework, ContentModel, Diagram, OperationManager, UmlDiagram) {
         var diagramView = Backbone.Marionette.ItemView.extend({
+			//
+			// Pre-load of elements
+			//
             initialize: function () {
                 this.model.on('change:status', this.render);
                 // TODO: handle the lazy load of these modules
@@ -21,9 +24,16 @@ define(
                     "Modules/Diagrammer/Views/Connectors/umlassociation", "Modules/Diagrammer/Views/Connectors/umlanchor",
                     "Modules/Diagrammer/Views/Connectors/umlnested", "Modules/Diagrammer/Views/Connectors/umlgeneralization",
                     "Modules/Diagrammer/Views/Connectors/umlrealization"]);
+                //    
+                // Sync-up content on model save
+                //
+                this.model.on("syncup", this.syncUpBeforeClose, this);
             },
+            //
+            // Loading -> Render or Error 
+            //
             getTemplate: function () {
-// TODO: move these code into the separate calss like viewmanager or base class for all views
+               // TODO: move these code into the separate calss like viewmanager or base class for all views
                 var status = this.model.get("status");
                 // use the default templates for loading and load failed use-cases
                 if (status == 'loading') {
@@ -34,6 +44,9 @@ define(
                 // Check if content is in edit mode
                 return "#umlsync-sourcecode-view-template";
             },
+            //
+            // Render an internal items
+            //
             render: function() {
                 // Empty element of the current array
                 this.$el.empty();
@@ -45,7 +58,6 @@ define(
 
                     this.modelDiagram = new Diagram(simpleContent);
                     this.operationManager = new OperationManager({diagram:this.modelDiagram});
-                    
 
                     var ContentView = this;
                     
@@ -58,6 +70,9 @@ define(
                     if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
                         var els = this.modelDiagram.getUmlElements();
                         var cs = this.modelDiagram.getUmlConnectors();
+
+////////////////////////////////////////////////// DROP IT !!!
+/*
 var JSON = {};
 
 JSON.stringify = JSON.stringify || function (obj) {
@@ -79,25 +94,7 @@ JSON.stringify = JSON.stringify || function (obj) {
         return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
     }
 };
-
-// TODO: replace on operation manager
-// which should be based on collection and model change events. 
-this.modelDiagram.on("update", function(context) {
-
-//alert("MODIFIED: " + JSON.stringify(context));
-});
-//cs.on("change", function() {
-//ContentView.model.set("isModified", true);
-//});
-
-
-                        for (var xxx in els.models) {
-                            var model = els.at(xxx);
-                            if (model.get("type") == "class") {
-                                var operations = model.getUmlOperations();
-                                var attributes = model.getUmlAttributes();
-                            }
-                        }
+*/
                     }
 
                     this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager});
@@ -110,6 +107,23 @@ this.modelDiagram.on("update", function(context) {
                    return Backbone.Marionette.ItemView.prototype.render.apply(this, arguments);
                 }
             },
+
+            //
+            // Ctrl-Z
+            //
+            handleUndoOperation: function() {
+				if (this.operationManager)
+				  this.operationManager.undo();
+			},
+
+            //
+            // Ctrl-Y
+            //
+            handleRedoOperation: function() {
+				if (this.operationManager)
+				  this.operationManager.redo();
+			},
+
             //
             // Handle content past from different sources:
             // Clipboard, main-elements-menu or icon-menu
@@ -199,8 +213,11 @@ this.modelDiagram.on("update", function(context) {
             //  Sync-up diagram model and content tracker
             //
             syncUpBeforeClose: function() {
-				if (this.model.get("isModified"))
-				  this.model.set("modifiedContent", this.modelDiagram.getDescription());
+				if (this.model.get("isModified")) {
+					var text = this.modelDiagram.getDescription("");
+					alert(text);
+					this.model.set("modifiedContent", text);
+			    }
 			}
         });
 

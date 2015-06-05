@@ -16,6 +16,7 @@ $.log = function(message) {
         dataProviders: new DataProviderCollection(),
         registerContentTypeView : function (options) {
           this.contentTypeViews[options.type] = options;
+
           if (this.diagramMenu == undefined) {
 			  this.diagramMenu = new DiagramMenu({Framework:this});
 			  this.DiagramMenuRegion.show(this.diagramMenu.getDialog(), {forceShow: true});
@@ -26,13 +27,14 @@ $.log = function(message) {
 				  //alert("Handle new item added to the diagram menu !!!");
 			  });
 		  }
+
 		  if (this.newDocController == undefined) {
 			var that = this;
 		    this.newDocController = new NewDocumentDialog({});
 
             // Data should describe the storage (github, eclipse etc)   
 		    this.vent.on('content:new:dialog', function(data) {
-				var dlg =  that.newDocController.getDialog(data);
+				var dlg =  that.newDocController.getDialog({dataprovider: data, contentTypeViews: that.contentTypeViews});
 				that.DialogRegion.show(dlg);
 				dlg.on("dialog:cancel", function() {
 					// Unsubscribe and hide
@@ -46,10 +48,21 @@ $.log = function(message) {
 					dlg.off("dialog:cancel");
 					dlg.off("dialog:done");
 
-					model = model || {title: "selected nothing"};
- 				    that.diagramMenu.getDialog().addAccordionItem(model);
- 				    
- 				    that.vent.trigger("content:focus", {title:'New docuemnt', contentType: 'diagram', content: {base_type:'base', type:"class", elements:[], connectors:[]}});
+                    // if model is empty then something wrong happened
+                    // if model has absPath then github:content:new (save) -> content:focus (loaded) from data provider
+                    // if no model abs path then "New {%content type%}" title
+
+                    var model2 = model || {title: "selected nothing"};
+ 				    that.diagramMenu.getDialog().addAccordionItem(model2);
+
+                    // Trigger github:content:new -> content:focus (pre-loaded)
+ 				    that.vent.trigger("content:focus",
+                        {
+                            title:'New docuemnt',
+                            contentType: 'diagram',
+                            content: {base_type:'base', type:"class", elements:[], connectors:[]}
+                        }
+                    );
 
 					// handle new content creation !!!
 					that.DialogRegion.show();

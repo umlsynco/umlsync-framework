@@ -93,13 +93,42 @@ define(['backbone', 'underscore'], function (Backbone, _) {
         //
         // Get JSON or SVG description
         //
-        getDescription: function() {
-			return "[{}]";
+        getDescription: function(indent) {
+			var result = indent + "{\n";
+			var that = this;
+
+			_.each(this.attributes, function(opt, key) {
+				if (key[key.length -1] == 's' && key != "multicanvas"  && key != "subdiagrams") {
+					if (that["uml" + key]
+					    && that["uml" + key].getDescription) {
+						// Extend
+					    result += indent + '"'+ key + '": ' + that["uml" + key].getDescription(indent + "    ") + ",\n";
+				    }
+				    else {
+						alert("CCC" + key + "   LLL " + opt);
+					}
+				}
+				else {
+					result += indent + '"' + key + '":"' + opt + '",\n';
+				}
+			});
+			result = result.substring(0, result.length-2) + '\n'; // remove ",\n" for the last items
+			result += indent + "}\n";
+			return result;
 		}
     });
 
     Backbone.DiagramCollection = Backbone.Collection.extend({
-        model:Backbone.DiagramModel
+        model:Backbone.DiagramModel,
+        getDescription: function(indent) {
+			var result = indent + "[";
+			this.each(function(model, index, ctx) {
+				if (model.getDescription)
+				    result += indent + model.getDescription(indent + "    ") + (index != ctx.length-1 ? ",\n" : "\n");
+			});
+			result += indent + "]\n";
+			return result;
+		}
     });
 
     var Diagram = Backbone.DiagramModel.extend({
@@ -111,7 +140,7 @@ define(['backbone', 'underscore'], function (Backbone, _) {
         },
         repeatOperation: function() {
 
-        }
+        }        
     });
     return Diagram;
 });
