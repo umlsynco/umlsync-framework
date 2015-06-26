@@ -161,6 +161,12 @@
         <div id="us-treetabs" style="height: 370px;"></div>
     </script>
 
+    <script id="localhost-content-layout" type="text/template">
+        <div id="us-toolbox"></div>
+        <div id="us-treetabs" style="height: 370px;"></div>
+    </script>
+
+
     <script id="us-toolbox-template" type="text/template">
         <ul id="us-github-list" style="list-style:none;"></ul>
     </script>
@@ -240,9 +246,12 @@
 							<p class="ui-widget-header ui-corner-all">
 								<input id="us-new-diagram-dialog-input" checked="checked" class="left" style="margin: 4px 0px 4px 4px;" type="checkbox">
 								<span class="left2">
-									<input aria-haspopup="true" aria-autocomplete="list" role="textbox" autocomplete="off" class="ui-autocomplete-input" id="VP_inputselector" value="/" maxlength="256" pattern="[a-zA-Z ]{5,}" name="name" type="text">
+									<input aria-haspopup="true" aria-autocomplete="list" role="textbox" autocomplete="off" class="ui-autocomplete-input" id="VP_inputselector" value="/" maxlength="256" pattern="[a-zA-Z ]{5,}" name="name" type="text" list="umlsync-path-datalist">
+                                    <datalist id="umlsync-path-datalist">
+                                    </datalist>
 								</span>
 							</p>
+                            <p><label id='us-status-line'></label></p>
 						</fieldset>
 					</form>
 				</div>
@@ -417,6 +426,35 @@
             </div>
             <div id="umlsync-dropdown-region"></div>
         </div>
+    </script>
+
+    <script id="us-snippets-template" type="text/template">
+       <div aria-labelledby="ui-dialog-title-snippet-navigator-dialog" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1012; outline: 0px none; position: absolute; height: 169.6px; width: 349.6px; top: 215.5px; left: 262px;">
+		   <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
+				<span style="display: block;" id="ui-dialog-title-snippet-navigator-dialog" class="ui-dialog-title">Snippet.us.snippet</span>
+				<a style="display: none;" role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#">
+					<span class="ui-icon ui-icon-closethick">close</span>
+				</a>
+				<div id="us-snippets-toolbox">
+					<ul class="ui-widget ui-helper-clearfix">
+						<li class="ui-state-default ui-corner-all" title="First Comment"><span class="ui-icon ui-icon-seek-first"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Previous Comment"><span class="ui-icon ui-icon-seek-prev"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Stop and Save snippets"><span class="ui-icon ui-icon-stop"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Stop and Save snippets"><span class="ui-icon ui-icon-pause"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Start Snippet"><span class="ui-icon ui-icon-comment"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Next Comment"><span class="ui-icon ui-icon-seek-next"></span></li>
+						<li class="ui-state-default ui-corner-all" title="Switch to the final Comment"><span class="ui-icon ui-icon-seek-end"></span></li>
+					</ul>
+				</div>
+			</div>
+			<div scrollleft="0" scrolltop="0" style="width: auto; min-height: 0px; height: 117.4px; display: block;" class="ui-dialog-content ui-widget-content" id="snippet-navigator-dialog">
+				<div id="snippets" style="width: 100%; height: 100%;">
+					<div id="selectable-list" style="scroll:auto;">
+						<ul class="ui-sortable" id="snippets-list"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
     </script>
     
     <script id="us-diagram-menu-template" type="text/template">

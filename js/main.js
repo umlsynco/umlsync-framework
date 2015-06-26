@@ -64,11 +64,17 @@ require.config({
 
 require(
     ['Views/framework',
-     'Controllers/contentController',
+        // content tabs controller
+        'Controllers/contentController',
+
+        // Formats handlers
         'Views/Files/sourcecodeView',
         'Views/Files/markdownView',
         'Views/Files/diagramsView',
-        'Modules/Github/Views/githubLayoutView'
+
+        // Data providers Github Bitbucket localhost etc
+        'Modules/Github/Views/githubLayoutView', // load and register github layout
+        'Modules/Localhost/Views/localhostLayoutView' // load and register Localhost layout
     ],
 function(Framework) {
     // Start the framework

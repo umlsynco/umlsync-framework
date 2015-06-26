@@ -13,9 +13,10 @@ define(['marionette',
                 Framework.vent.trigger('content:new:dialog', this);
             },
             getPathStatus: function(path) {
+                return "valid";
                 var splittedPath = path.split('/');
                 // Check if it is root ?
-                if ((splittedPath.length <= 1) || (path[0] == '/' && splittedPath.length == 2)) {
+                if ((splittedPath.length <= 1) || (path[0] == '/' && splittedPath.length == 1)) {
                     return "valid";
                 }
                 var status = this.tree.isPathLoaded(path.substr(0, path.lastIndexOf("/")-1));

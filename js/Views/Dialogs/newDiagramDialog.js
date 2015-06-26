@@ -62,7 +62,9 @@ define([
                 cancelButton: "button.ui-button-cancel",
                 closeButton: "span.ui-icon-closethick",
                 checkbox: "input[type=checkbox]",
-                abspath: "input[type=text]"
+                abspath: "input[type=text]",
+				statusLine: "label#us-status-line",
+				datalist: "datalist#umlsync-path-datalist"
             },
             events: {
 				'click @ui.closeButton' : 'onCancel',
@@ -129,21 +131,25 @@ define([
 
                 this.ui.createButton.prop('disabled', true);
                 if (status == "invalid") {
-                    this.ui.statusLine.value("Invalid path: " + this.contentAbsPath);
+                    this.ui.statusLine.text("Invalid path: " + this.contentAbsPath);
                 }
                 else if (status == "error") {
-                    this.ui.statusLine.value("Network error while loading path: " + this.contentAbsPath);
+                    this.ui.statusLine.text("Network error while loading path: " + this.contentAbsPath);
                 }
                 else if (status == "file") {
-                    this.ui.statusLine.value("File already exist: " + this.contentAbsPath);
+                    this.ui.statusLine.text("File already exist: " + this.contentAbsPath);
                 }
                 if (status == "loading") {
-                    this.ui.statusLine.value("Loading: " + this.contentAbsPath);
+                    this.ui.statusLine.text("Loading: " + this.contentAbsPath);
                 }
                 else if (status == "valid" ){
-                    this.ui.statusLine.value("");
+                    this.ui.statusLine.text("ok");
                     this.autocompletionList = this.dataProvider.getPathAutocompletion(this.contentAbsPath);
                     this.ui.createButton.prop('disabled', false);
+					for (var f in this.autocompletionList) {
+						var txt = this.autocompletionList[f];
+						this.ui.datalist.append("<option value='/" + txt + "'>");
+					}
                 }
             },
             onNameChecked: function(event) {
