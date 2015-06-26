@@ -23,7 +23,7 @@ define(['marionette',
 
             },
             getPathAutocompletion: function(absPath) {
-                return ["xxx", "uuuu"];
+                return [absPath + "xxx", absPath + "uuuu"];
             },
             onBeforeDestroy: function() {
                 Framework.vent.off("content:search:path");

@@ -126,8 +126,17 @@ define([
 				// 3. Snippet bubbles
 			},
             onPathChanged: function() {
-                this.contentAbsPath = this.ui.abspath.val();
+                var value = this.ui.abspath.val();
+                var abspath = value.substring(0, value.lastIndexOf("/")+1);
+
+                // prevent multiple requests of the same path
+                if (this.contentAbsPath == abspath && this.lastStatus == "valid") {
+                    return;
+                }
+                this.contentAbsPath = abspath;
+
                 var status = this.dataProvider.getPathStatus(this.contentAbsPath, _.bind(this.onPathChanged, this));
+                this.lastStatus = status;
 
                 this.ui.createButton.prop('disabled', true);
                 if (status == "invalid") {
@@ -146,9 +155,12 @@ define([
                     this.ui.statusLine.text("ok");
                     this.autocompletionList = this.dataProvider.getPathAutocompletion(this.contentAbsPath);
                     this.ui.createButton.prop('disabled', false);
+                    // remove the previous values
+                    this.ui.datalist.empty();
+                    // add a new one
 					for (var f in this.autocompletionList) {
 						var txt = this.autocompletionList[f];
-						this.ui.datalist.append("<option value='/" + txt + "'>");
+						this.ui.datalist.append("<option value='" + txt + "'>");
 					}
                 }
             },
