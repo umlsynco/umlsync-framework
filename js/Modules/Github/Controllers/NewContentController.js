@@ -13,7 +13,6 @@ define(['marionette',
                 Framework.vent.trigger('content:new:dialog', this);
             },
             getPathStatus: function(path) {
-                return "valid";
                 var splittedPath = path.split('/');
                 // Check if it is root ?
                 if ((splittedPath.length <= 1) || (path[0] == '/' && splittedPath.length == 1)) {
@@ -21,6 +20,8 @@ define(['marionette',
                 }
                 var status = this.tree.isPathLoaded(path.substr(0, path.lastIndexOf("/")-1));
 
+                // TODO some magic here!!! which depends on status
+                return status;
             },
             getPathAutocompletion: function(absPath) {
                 return [absPath + "xxx", absPath + "uuuu"];
