@@ -179,7 +179,27 @@ define(['marionette', 'dynatree'],
                 return false;
             },
             getAbsolutePath: function(model) {
+                try {
+                    return this._getBaseModelPath(model) + "/" + model.get("path");
+                }
+                catch (e) {
+                    alert("Catch exception:" + e);
+                }
+                return null;
 
+            },
+            _getBaseModelPath: function(model) {
+                var cid = model.get("parentCid");
+                if (cid) {
+                    var parent = model.collection.get({cid:cid});
+                    if (parent) {
+                        return this._getBaseModelPath(parent) + "/" + parent.get("path");
+                    }
+                    else {
+                        throw "Wrong path";
+                    }
+                }
+                return "";
             },
             loadPath: function(absPath, callback) {
 
@@ -188,6 +208,9 @@ define(['marionette', 'dynatree'],
 
             },
             onBeforeDestroy: function() {
+                this.treeView.off("childview:on:lazyload");
+                this.treeView.off("childview:on:focus");
+                this.treeView.off("childview:on:activate");
             }
 
         });

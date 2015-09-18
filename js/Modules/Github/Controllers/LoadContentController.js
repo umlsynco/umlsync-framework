@@ -20,6 +20,7 @@ define(['marionette',
                     if (view.model.get("type") == "tree")
                       return;
                     var data = view.model.getDynatreeData();
+                    data["absPath"] = that.TreeViewController.getAbsolutePath(view.model);
                     that.contentInFocus(data);
                 });
 
