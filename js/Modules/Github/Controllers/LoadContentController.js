@@ -10,13 +10,16 @@ define(['marionette',
     function(Marionette, Framework) {
         var LoadContentController = Marionette.Controller.extend({
             initialize: function (options) {
-                this.TreeView = options.treeView;
+                this.TreeViewController = options.treeViewController;
                 this.ContentCache = options.cache;
                 this.GithubController = options.controller;
 
                 var that = this;
                 // Subscribe on local tree events
-                this.TreeView.on("file:focus", function (data) {
+                this.TreeViewController.on("activate", function (view) {
+                    if (view.model.get("type") == "tree")
+                      return;
+                    var data = view.model.getDynatreeData();
                     that.contentInFocus(data);
                 });
 

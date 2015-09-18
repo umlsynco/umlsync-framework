@@ -631,11 +631,11 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             };
 
             this.getTree = function (branch) {
-                return new TreeCollection({branch:branch});
+                return new TreeCollection([], {branch:branch});
             };
 
             this.getContentCache= function (branch) {
-                return new ContentCollection({branch:branch});
+                return new ContentCollection([], {branch:branch});
             };
         }
     });

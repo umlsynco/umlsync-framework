@@ -19,7 +19,7 @@ define(['marionette',
     function(// Basic
              Marionette, Framework,
              // Views
-             TreeView, DropdownView,
+             TreeViewController, DropdownView,
              // Controllers
              SyncModelController, LoadContentController, SyncTabsController,
              RBController, ToolboxController, CommitChangesController, RebaseController, NewController) {
@@ -70,8 +70,12 @@ define(['marionette',
 
                 //////////////////////////////// TREE
                 this.TreeModel = Framework.Backend.Github.getTree();
-                this.TreeView = new TreeView({collection: this.TreeModel});
-                this.Regions.tree.show(this.TreeView);
+                this.TreeViewController = new TreeViewController({tree: this.TreeModel});
+                this.TreeViewController.on("lazyload", function(view, onSuccess) {
+                    view.model.collection.lazyLoad(view.model.getDynatreeData());
+                    onSuccess(view, true);
+                });
+                this.Regions.tree.show(this.TreeViewController.getView());
 
                 //////////////////////////////// CONTENT CACHE
                 this.ContentCache = Framework.Backend.Github.getContentCache();
@@ -96,7 +100,7 @@ define(['marionette',
                 // Load content in focus and implement the content cache
                 // functionality (priority queue, number of references etc).
                 this.LoadContentController = new LoadContentController({
-                    treeView: this.TreeView, // Tree view
+                    treeViewController: this.TreeViewController, // Tree view
                     cache: this.ContentCache, // Cache model
                     controller: this // To provide actual data on getViewInfo()
                 });

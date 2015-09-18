@@ -249,12 +249,12 @@ span.dynatree-icon /* Default icon */
 /*    background-position: 0px -16px; */
 }
 
-.dynatree-ico-cf span.dynatree-icon  /* Collapsed Folder */
+.dynatree-ico-cf>span.dynatree-icon  /* Collapsed Folder */
 {
 	background-position: 0px -16px;
 }
 
-.dynatree-ico-ef span.dynatree-icon  /* Expanded Folder */
+.dynatree-ico-ef>span.dynatree-icon  /* Expanded Folder */
 {
 	background-position: -64px -16px;
 }
