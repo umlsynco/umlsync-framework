@@ -71,9 +71,16 @@ define(['marionette',
                 //////////////////////////////// TREE
                 this.TreeModel = Framework.Backend.Github.getTree();
                 this.TreeViewController = new TreeViewController({tree: this.TreeModel});
-                this.TreeViewController.on("lazyload", function(view, onSuccess) {
-                    view.model.collection.lazyLoad(view.model.getDynatreeData());
-                    onSuccess(view, true);
+                this.TreeViewController.on("lazyload", function(model, onSuccess) {
+                    model.collection.lazyLoad(model.getDynatreeData()).then(
+                        function() {
+                            onSuccess(model, true);
+                        },
+                        function() {
+                            onSuccess(model, false);
+                        }
+                    );
+
                 });
                 this.Regions.tree.show(this.TreeViewController.getView());
 
@@ -176,6 +183,7 @@ define(['marionette',
             NewContent: function() {
               new NewController({
 				     tree: this.TreeModel,
+                     treeController: this.TreeViewController,
                      branch:this.SyncModelsController.GetActiveBranch(),
                      contentCache: this.ContentCache
 				  });

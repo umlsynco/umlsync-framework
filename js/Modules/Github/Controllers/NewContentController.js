@@ -6,25 +6,29 @@ define(['marionette',
             initialize: function (options) {
                 var that = this;
                 this.tree = options.tree;
+                this.treeController = options.treeController;
                 // Listeners of content manager
                 Framework.vent.on("content:search:path", function (data) {
                 });
                 
                 Framework.vent.trigger('content:new:dialog', this);
             },
-            getPathStatus: function(path) {
-                var splittedPath = path.split('/');
-                // Check if it is root ?
-                if ((splittedPath.length <= 1) || (path[0] == '/' && splittedPath.length == 1)) {
-                    return "valid";
-                }
-                var status = this.tree.isPathLoaded(path.substr(0, path.lastIndexOf("/")-1));
-
-                // TODO some magic here!!! which depends on status
-                return status;
-            },
-            getPathAutocompletion: function(absPath) {
-                return [absPath + "xxx", absPath + "uuuu"];
+            //
+            // @param path - path to load
+            // @param callback - callback method arguments:
+            //     @param data {
+            //         "path": "%path which is loading%",
+            //         "status" : "error|ok|invalid|loading",
+            //         "loadedPath" : "path which is corresponding to status report",
+            //         "reason" : "The cause of error"
+            //      }
+            //     @param subpaths - subpaths in case of status == "ok"
+            //
+            getPathStatus: function(path, callback) {
+                var status = this.treeController.getSubPaths(path.substr(0, path.lastIndexOf("/")), function(data, x ,y) {
+                    data.path = path;
+                    callback(data, x, y);
+                });
             },
             onBeforeDestroy: function() {
                 Framework.vent.off("content:search:path");

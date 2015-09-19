@@ -79,6 +79,7 @@ define([
 			initialize: function(options) {
 				// Prevent multiple render
 				this.isSingletone = true;
+				this.cachedPaths = {};
 
                 // Github tree for example
                 this.dataProvider = options.dataprovider;
@@ -126,46 +127,73 @@ define([
 				// 3. Snippet bubbles
 			},
             onPathChanged: function() {
+				var value = this.ui.abspath.val(); // get an updated value
+				var abspath = value.substring(0, value.lastIndexOf("/")+1); // abspath value
+				// prevent multiple requests of the same path
+				if (this.contentAbsPath == abspath) {
+					return;
+				}
+				this.contentAbsPath = abspath;
+				if (this.cachedPaths[this.contentAbsPath]) {
+					//  Update auto completion options
+					return;
+				}
+
+				this.dataProvider.getPathStatus(this.contentAbsPath, _.bind(this._onPathChanged, this));
+			},
+			//
+			// Callback method:
+			// @param data {
+			//    "path": "%path which is loading%",
+			//    "status" : "error|ok|invalid|loading",
+			//    "loadedPath" : "path which is corresponding to status report",
+			//    "reason" : "The cause of error"
+			//    }
+			// @param subpaths - subpaths in case of status == "ok"
+			//
+			_onPathChanged: function(data, subpaths, files) {
 				var uiStatus = true; // ui button status
                 var value = this.ui.abspath.val(); // get an updated value
                 var abspath = value.substring(0, value.lastIndexOf("/")+1); // abspath value
 
-                // prevent multiple requests of the same path
-                if (this.contentAbsPath == abspath && this.lastStatus == "valid") {
-                    return;
-                }
-                this.contentAbsPath = abspath;
+				this.lastStatus = undefined;
+				// keep the current status to cache in case of path change:
+                if (this.contentAbsPath != data.path) {
+					// update status of an abandoned path
+					this.cachedPaths[data.path] = data;
+					return;
+				}
 
-                var status = this.dataProvider.getPathStatus(this.contentAbsPath, _.bind(this.onPathChanged, this));
-                this.lastStatus = status;
+                this.lastStatus = data.status;
 
 
 
-                if (status == "invalid") {
+                if (data.status == "invalid") {
                     this.ui.statusLine.text("Invalid path: " + this.contentAbsPath);
                 }
-                else if (status == "error") {
+                else if (data.status == "error") {
                     this.ui.statusLine.text("Network error while loading path: " + this.contentAbsPath);
                 }
-                else if (status == "file") {
+                else if (data.status == "file") {
                     this.ui.statusLine.text("File already exist: " + this.contentAbsPath);
                 }
-                if (status == "loading") {
+                if (data.status == "loading") {
                     this.ui.statusLine.text("Loading: " + this.contentAbsPath);
                 }
-                else if (status == "valid" ){
+                else if (data.status == "valid" ){
 					uiStatus = false;
 
                     this.ui.statusLine.text("ok");
-                    this.autocompletionList = this.dataProvider.getPathAutocompletion(this.contentAbsPath);
+                    this.autocompletionList = subpaths;
+					this.files = files;
 
                     // remove the previous values
                     this.ui.datalist.empty();
                     // add a new one
-					for (var f in this.autocompletionList) {
-						var txt = this.autocompletionList[f];
-						this.ui.datalist.append("<option value='" + txt + "'>");
-					}
+					var that = this;
+					_.each(this.autocompletionList, function(txt) {
+						that.ui.datalist.append("<option value='" + that.contentAbsPath  + txt + "'>");
+					});
                 }
 				this.ui.createButton.prop('disabled', uiStatus);
             },

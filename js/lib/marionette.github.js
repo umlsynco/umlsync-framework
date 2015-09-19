@@ -146,7 +146,16 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                         return API_URL + "/repos/" + username + "/" + reponame + "/git/trees";
                     }
                 },
-                getDynatreeData: function() {
+                getDynatreeData: function(field) {
+                    // TODO: add another options if required
+                    if (field) {
+                        if (field == "title") {
+                            return this.get("path").split('/').pop();
+                        }
+                        if (field == "isLazy" || field == "isFolder") {
+                            return this.get("type") == "tree";
+                        }
+                    }
                     var ret = {};
                     if (this.get("type") == "blob") {
                         ret["isFolder"] = false;
@@ -302,7 +311,7 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     var sha = model.get('sha');
                     if (!sha)
                         return;
-                    this.fetch({
+                    return this.fetch({
                         add: true,
                         remove:false,
                         merge: false,
