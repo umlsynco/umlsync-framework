@@ -47,6 +47,7 @@ define(['marionette', 'dynatree'],
             },
             initialize: function () {
                 var that = this;
+
                 this.model.on("change:status", function(model, status) {
                     var $span = that.$el.children("SPAN");
                     if (status == "loading") {
@@ -91,7 +92,6 @@ define(['marionette', 'dynatree'],
                     return;
                 }
                 this.trigger("on:activate");
-                this.trigger("file:focus");
             }
         });
         var TreeView = Backbone.Marionette.CollectionView.extend({

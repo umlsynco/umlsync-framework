@@ -183,6 +183,11 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
             //////////////////////////////////////////////// RAW TREE
             var TreeCollection = Backbone.GithubCollection.extend({
                 model: TreeModel,
+                getModelHelper: function(json) {
+                  var model = new TreeModel(json);
+                    this.add(model);
+                    return model;
+                },
                 getUrl: function (method, model, options) {
                     if (method == "read") {
                         var reponame = this.Branch.collection.Repository.get('full_name');

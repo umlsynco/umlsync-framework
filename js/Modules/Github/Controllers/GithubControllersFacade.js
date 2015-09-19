@@ -184,8 +184,8 @@ define(['marionette',
               new NewController({
 				     tree: this.TreeModel,
                      treeController: this.TreeViewController,
-                     branch:this.SyncModelsController.GetActiveBranch(),
-                     contentCache: this.ContentCache
+                     cache: this.ContentCache,
+                     branch:this.SyncModelsController.GetActiveBranch()
 				  });
             },
             //

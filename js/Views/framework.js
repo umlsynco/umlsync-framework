@@ -53,16 +53,20 @@ $.log = function(message) {
                     // if no model abs path then "New {%content type%}" title
 
                     var model2 = model || {title: "selected nothing"};
+                    // Load the diagram menu element
  				    that.diagramMenu.getDialog().addAccordionItem(model2);
 
-                    // Trigger github:content:new -> content:focus (pre-loaded)
- 				    that.vent.trigger("content:focus",
-                        {
-                            title:'New docuemnt',
-                            contentType: 'diagram',
-                            content: {base_type:'base', type:"class", elements:[], connectors:[]}
-                        }
-                    );
+
+                    if (!model.absPath) {
+                        // Trigger github:content:new -> content:focus (pre-loaded)
+                        that.vent.trigger("content:focus",
+                            {
+                                title: 'New document',
+                                contentType: 'diagram',
+                                content: {base_type: 'base', type: "class", elements: [], connectors: []}
+                            }
+                        );
+                    }
 
 					// handle new content creation !!!
 					that.DialogRegion.show();

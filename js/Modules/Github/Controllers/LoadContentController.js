@@ -22,15 +22,15 @@ define(['marionette',
                     var data = view.model.getDynatreeData();
                     data["absPath"] = that.TreeViewController.getAbsolutePath(view.model);
                     that.contentInFocus(data);
-                    that.TreeViewController.loadPath("/diagrams/Diagram1/Diagram4/Diagram4",
-                        function(data) {
-                            alert("LOAD PATH:" + data);
-                        });
                 });
 
                 // trigger loaded
                 this.ContentCache.on("add", function(model) {
-                    that.triggerContentLoaded(model);
+                    // Waiting for load content completion
+                    // therefore we need to mark a new content somehow
+                    if (model.get("status") != "new") {
+                        that.triggerContentLoaded(model);
+                    }
                 });
                 // Handle Error
                 this.ContentCache.on("error", function(model) {

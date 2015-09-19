@@ -104,9 +104,23 @@ define([
 			},
 			onCreateButtonClick: function(button) {
 				// handle dialog completion
-				var active = this.contentTypeList.collection.where({isActive:true})
-				if (active.length > 0)
-				  this.trigger("dialog:done", active[0]);
+				var active = this.contentTypeList.collection.where({isActive:true});
+				if (active.length > 0) {
+                    if (this.ui.checkbox.is(":checked")) {
+                        // create content first and then close the dialog
+                        var that = this,
+							absPath = this.ui.abspath.val();
+                        this.dataProvider.createContent(absPath, active[0], this.cachedPaths[absPath.substring(0, absPath.lastIndexOf("/")+1)], function () {
+                            var result = $.extend({}, active[0], {absPath:absPath});
+                            that.trigger("dialog:done", result);
+                        });
+                    }
+                    else {
+                        // Create a new doc without tree path and corresponding storage in the tree
+                        this.trigger("dialog:done", active[0]);
+                    }
+
+                }
 			},
 			onCancel: function() {
 				// Trigger cancel event
@@ -131,6 +145,7 @@ define([
 				var abspath = value.substring(0, value.lastIndexOf("/")+1); // abspath value
 				// prevent multiple requests of the same path
 				if (this.contentAbsPath == abspath) {
+					// TODO: Check that file is not empty and doesn't exist
 					return;
 				}
 				this.contentAbsPath = abspath;
@@ -158,15 +173,14 @@ define([
 
 				this.lastStatus = undefined;
 				// keep the current status to cache in case of path change:
+				this.cachedPaths[data.path] = data;
+
                 if (this.contentAbsPath != data.path) {
 					// update status of an abandoned path
-					this.cachedPaths[data.path] = data;
 					return;
 				}
 
                 this.lastStatus = data.status;
-
-
 
                 if (data.status == "invalid") {
                     this.ui.statusLine.text("Invalid path: " + this.contentAbsPath);

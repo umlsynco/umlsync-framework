@@ -7,6 +7,7 @@ define(['marionette',
                 var that = this;
                 this.tree = options.tree;
                 this.treeController = options.treeController;
+                this.contentCache = options.cache;
                 // Listeners of content manager
                 Framework.vent.on("content:search:path", function (data) {
                 });
@@ -26,9 +27,38 @@ define(['marionette',
             //
             getPathStatus: function(path, callback) {
                 var status = this.treeController.getSubPaths(path.substr(0, path.lastIndexOf("/")), function(data, x ,y) {
-                    data.path = path;
+                    data["path"] = path;
                     callback(data, x, y);
                 });
+            },
+            createContent: function(path, description, autocompleteState, callback) {
+                // 3. Create model for treeCollection
+                var treeModel = {
+                    path:path + ".umlsync",
+                    status: "new",
+                    type: "blob",
+                    parentCid: autocompleteState.parentCid || ""
+                };
+                // 4. Extend tree with path
+               var modelObj =  this.tree.getModelHelper(treeModel);
+
+                // 1. Create the model for the cache
+                var model = {
+                    status: "new",
+                    absPath: path + ".umlsync",
+                    title: path.split("/").pop() + ".umlsync",
+                    content: {base_type: 'base', type: 'class', elements: [], connectors: []}   , // TODO: description.content
+                    contentType: 'diagram',
+                    key: modelObj.cid
+                };
+                // 2. Append to the cache
+                this.contentCache.add(model);
+
+                // 5. Trigger on activate for the new element
+                this.treeController.trigger("activate", {model:modelObj});
+
+                // 6. callback
+                callback();
             },
             onBeforeDestroy: function() {
                 Framework.vent.off("content:search:path");
