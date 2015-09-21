@@ -109,7 +109,26 @@ define([
                     if (this.ui.checkbox.is(":checked")) {
                         // create content first and then close the dialog
                         var that = this,
-							absPath = this.ui.abspath.val();
+							absPath = this.ui.abspath.val(),
+						// Check an extension:
+						file = absPath.split("/").pop(), extension = file.split("."), ext;
+						if (extension.length > 0) {
+							ext = extension.pop();
+							var isDiagram = (active[0].id != "snippets" && active[0].id != "markdown")
+							if (isDiagram && ext != "umlsync") {
+								absPath = absPath + ".umlsync";
+								active[0].content = {base_type: active[0].base_type, type: active[0].id, elements: [], connectors: []};
+							}
+							if (active[0].id == "snippets" && ext != "snippets") {
+								absPath = absPath + ".snippets";
+								active[0].content = "[]";
+							}
+							if (active[0].id == "markdown" && ext != "md") {
+								absPath = absPath + ".md";
+								active[0].content = "Goodby Word!";
+							}
+						}
+
                         this.dataProvider.createContent(absPath, active[0], this.cachedPaths[absPath.substring(0, absPath.lastIndexOf("/")+1)], function () {
                             var result = $.extend({}, active[0], {absPath:absPath});
                             that.trigger("dialog:done", result);

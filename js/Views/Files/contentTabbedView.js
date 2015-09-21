@@ -19,6 +19,13 @@ define(
             // tab prefix + content Id
             tabPrefix: 'diag-',
             //
+            // There is no tabs for snippets
+            // We have to handle tabs in a separate way
+            //
+            filter: function(childer) {
+              return children.get("contentType") != "snippets";
+            },
+            //
             // map ui element to the model keys
             //
             triggerClose: function(event) {

@@ -89,6 +89,10 @@ $.log = function(message) {
         },
 
         getContentType : function (extension) {
+            //TODO: Another way to make a stub for snippets
+            if (extension == "SNIPPETS") {
+                return "snippets";
+            }
             for (var v in this.contentTypeViews) {
                 if (this.contentTypeViews[v].extensions.split(',').indexOf(extension) >=0) {
                     return this.contentTypeViews[v].type;

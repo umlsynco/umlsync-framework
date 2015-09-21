@@ -3,8 +3,9 @@ define(['marionette',
         'Views/Tree/dataProviderSwitcherView',
         'Collections/contentCollection',
         'Views/framework',
-        'Controllers/router'],
-    function(Marionette, CollectionView, DataProviderView, ContentCollection, Framework, FrameworkRouter) {
+        'Controllers/router',
+	'Controllers/snippetsController'],
+    function(Marionette, CollectionView, DataProviderView, ContentCollection, Framework, FrameworkRouter, SnippetsController) {
         var ContentController = {
             'initializeFramework': function () {
 			    var controller = this;
@@ -84,6 +85,7 @@ define(['marionette',
 
             // content:loaded
             loadedContent: function(data) {
+				// key is content model cid which is unique for all system
                 var models = Framework.ContentCollection.where({key:data.key});
 
                 // Unexpected us-case
@@ -122,13 +124,23 @@ define(['marionette',
                    // Add data if we know how to handle it only
                    if (data.contentType) {
                        data.status = data.content ? 'loaded' : 'loading'; // Do nothing if content was loaded before !!!
-                       // Add file to collection with "loading" status
-                       // as a result loading view will be added to the
-                       // area
-                       Framework.ContentCollection.add(data);
 
-                       // Trigger file load from data provider
-                       Framework.vent.trigger(data.view + ":file:load", data);
+
+					   if (data.contentType != "snippets") {
+						   // Add file to collection with "loading" status
+						   // as a result loading view will be added to the
+						   // area
+						   Framework.ContentCollection.add(data);
+
+						   // Trigger file load from data provider
+						   Framework.vent.trigger(data.view + ":file:load", data);
+					   }
+					   else {
+						   if (!this.snippetsController) {
+							   this.snippetsController = new SnippetsController({region: Framework.DialogRegion});
+						   }
+						   this.snippetsController.request(data);
+					   }
                    }
 			   }
 			},

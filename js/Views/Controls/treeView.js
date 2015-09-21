@@ -250,7 +250,7 @@ define(['marionette', 'dynatree'],
                                 files.push(model.getDynatreeData("title"));
                             }
                         });
-                        handler({status:"valid", path:absPath, loadedPath: data.loadedPath}, folders, files);
+                        handler({status:"valid", path:absPath, loadedPath: data.loadedPath, parentCid: data.parentCid}, folders, files);
                     })
                     .fail(handler)
                     .progress(handler);

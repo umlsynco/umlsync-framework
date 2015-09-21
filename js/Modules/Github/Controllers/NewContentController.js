@@ -33,8 +33,9 @@ define(['marionette',
             },
             createContent: function(path, description, autocompleteState, callback) {
                 // 3. Create model for treeCollection
+                var absPath = autocompleteState.loadedPath + "/" + path.split("/").pop();
                 var treeModel = {
-                    path:path + ".umlsync",
+                    path:absPath,
                     status: "new",
                     type: "blob",
                     parentCid: autocompleteState.parentCid || ""
@@ -45,9 +46,9 @@ define(['marionette',
                 // 1. Create the model for the cache
                 var model = {
                     status: "new",
-                    absPath: path + ".umlsync",
-                    title: path.split("/").pop() + ".umlsync",
-                    content: {base_type: 'base', type: 'class', elements: [], connectors: []}   , // TODO: description.content
+                    absPath: absPath,
+                    title: path.split("/").pop(),
+                    content: description.content,
                     contentType: 'diagram',
                     key: modelObj.cid
                 };

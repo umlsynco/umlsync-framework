@@ -12,13 +12,15 @@ define([
                 return "#us-snippets-template";
             },
             ui: {
-                buttons: "button.ui-button"
+                buttons: "button.ui-button",
+                navigator: "#us-snippets-toolbox>ul>li"
             },
             events: {
                 "mouseenter @ui.buttons": 'mouseHover1',
                 "mouseexit @ui.buttons": 'mouseHover2',
                 'click @ui.buttons': 'onButtonClick',
-                'click .ui-icon-closethick': 'onButtonClick'
+                'click .ui-icon-closethick': 'onButtonClick',
+                'click @ui.navigator': 'onNavigate'
             },
             keyEvents: {
                 'return': 'onReturnPressed',
@@ -26,6 +28,13 @@ define([
             },
             behaviors: {
                 HotKeysBehavior: {}
+            },
+            //
+            // Navigator buttons on the top of the dialog
+            //
+            onNavigate: function() {
+                this.trigger("on:navigate");
+                this.destroy();
             },
             onReturnPressed: function () {
                 var inFocus = this.ui.buttons.filter("ui-state-focus");
