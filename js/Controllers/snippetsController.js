@@ -4,6 +4,8 @@ define(['marionette', 'Views/Dialogs/snippetsDialog'],
             initialize: function (options) {
                 this.snippetsRegion = options.region;
                 this.handlers = {};
+                // Enable/Disable snippets mode for tabs
+                this.contentController = options.contentController;
             },
             request:function(data) {
                 // TODO: 1. Check if some snippet was opened before
@@ -20,7 +22,10 @@ define(['marionette', 'Views/Dialogs/snippetsDialog'],
                 ];
                 this.dialog = new SnippetsDialog({collection: new Backbone.Collection(data2)});
                 this.snippetsRegion.show(this.dialog);
-var that = this;
+
+                this.contentController.setSnippetsMode(true);
+
+                var that = this;
                 this.dialog.on("on:navigate", function(dialog) {
                     that.snippetsRegion.show();
                 });

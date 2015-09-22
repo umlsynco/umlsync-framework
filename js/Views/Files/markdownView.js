@@ -92,38 +92,7 @@ define(
 			        return converter.makeHtml(contentData);
 			  }
 			},
-            render1: function () {
-                var title = this.model.get('title');
-                var parentSelector = this.model.get('parentSelector');
-                var status = this.model.get("status");
-
-                // Destroy the previous value
-				$(parentSelector).empty();
-
-				// trigger before render
-			    this.triggerMethod('before:render', this);
-
-				if (status == "loading") {
-					$('<img id="puh" src="images/Puh.gif"/>').appendTo(parentSelector);
-				}
-				else if (status == "loaded") {
-					
-					$(parentSelector).append('');
-				}
-				else if (status == "error") {
-					var data = this.serializeData();
-					data = this.mixinTemplateHelpers(data);
-
-					var template = "#umlsync-content-failed-template";
-					var html = Marionette.Renderer.render(template, data);
-					this.attachElContent(html);
-				}
-
-			    this.bindUIElements();
-				// trigger render complete
-                this.triggerMethod('render', this);
-            },
-                        //
+            //
             // Ctrl-Z
             //
             handleUndoOperation: function() {

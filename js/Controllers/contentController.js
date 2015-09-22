@@ -281,6 +281,10 @@ define(['marionette',
 			  // Ask to save changes
 			  // call -> commit changes
 			  // change repo confirm github:changetree
+			},
+
+			setSnippetsMode: function(flag) {
+
 			}
         };// controller
 

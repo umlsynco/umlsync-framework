@@ -29,6 +29,25 @@ define(
                 //
                 this.model.on("syncup", this.syncUpBeforeClose, this);
             },
+            ui: {
+                'editButton' : "#us-diagram-edit",
+                'getLink': 'div#getLink'
+
+            },
+            events: {
+                'click @ui.editButton': 'toggleEditMode',
+                'click @ui.getLink' : 'onGetLink'
+            },
+            toggleEditMode: function() {
+                var text = this.ui.editButton.text();
+                if (text == 'Edit') {
+                    this.model.set("mode", "edit");
+//                    this.UD.setMode("edit");
+                    return;
+                }
+//                this.UD.setMode("view");
+                this.model.set("mode", "view");
+            },
             //
             // Loading -> Render or Error 
             //
@@ -42,7 +61,7 @@ define(
                     return "#umlsync-content-failed-template";
                 }
                 // Check if content is in edit mode
-                return "#umlsync-sourcecode-view-template";
+                return "#umlsync-diagram-view-template";
             },
             //
             // Render an internal items
@@ -52,6 +71,9 @@ define(
                 this.$el.empty();
                 // And handle them
                 if (this.model.get("status") != "error" && this.model.get("status") != "loading") {
+
+                    Backbone.Marionette.ItemView.prototype.render.apply(this, arguments);
+
                     var simpleContent  = this.model.get("content");
                     simpleContent = (simpleContent instanceof  String) ? $.parseJSON(simpleContent) : simpleContent;
                     simpleContent = (simpleContent instanceof  Object) ? simpleContent : $.parseJSON(simpleContent);
@@ -112,7 +134,7 @@ JSON.stringify = JSON.stringify || function (obj) {
             // Ctrl-Z
             //
             handleUndoOperation: function() {
-				if (this.operationManager)
+    				if (this.operationManager)
 				  this.operationManager.undo();
 			},
 
