@@ -1,15 +1,35 @@
 // Snippets navigator dialog
 
+// TODO: 1. contentController as input param to request content load or open
+//       2. content - switch to the snippets mode
+//       3. trigger bubble creation !!!
+
 define([
         'marionette',
         'jquery-ui',
         'Views/framework',
         'Behaviors/HotKeysBehavior'],
     function (Marionette, jui, Framework, HotKeysBehavior) {
-        var snippetsDialog = Backbone.Marionette.ItemView.extend({
-            modal: true,
+        var ItemView = Backbone.Marionette.ItemView.extend({
+            template: _.template("<%=path%>"),
+            tagName: "li",
+            onRender:function() {
+                // Set title
+                this.$el.attr("title", this.model.get("comment"));
+            }
+        }),
+        CollectionView = Backbone.Marionette.CollectionView.extend({
+           childView:ItemView,
+            tagName: "ul",
+            className: "ui-sortable"
+        });
+
+        var snippetsDialog = Backbone.Marionette.LayoutView.extend({
             getTemplate: function () {
                 return "#us-snippets-template";
+            },
+            regions: {
+                snippetList: "DIV#snippets>DIV#selectable-list"
             },
             ui: {
                 buttons: "button.ui-button",
@@ -28,6 +48,10 @@ define([
             },
             behaviors: {
                 HotKeysBehavior: {}
+            },
+            initialize: function(options) {
+                // List of the snippets elements
+              this.collection = options.collection;
             },
             //
             // Navigator buttons on the top of the dialog
@@ -65,6 +89,10 @@ define([
                 if (this.modal) {
                     $("DIV.ui-widget-overlay").show();
                 }
+                // Redraw collection on render
+                this.elementsView = new CollectionView({collection:this.collection});
+                this.snippetList.show(this.elementsView);
+                this.elementsView.$el.sortable();
             },
             onDestroy: function () {
                 if (this.modal) {

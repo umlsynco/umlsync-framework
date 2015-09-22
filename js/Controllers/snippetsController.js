@@ -12,7 +12,13 @@ define(['marionette', 'Views/Dialogs/snippetsDialog'],
                 //
                 //       new SnippetsContentController();
                 //       or this.snippetsController.handleSnippet(data);
-                this.dialog = new SnippetsDialog(data);
+                var data2 = [
+                    {path:"/a//vwwwwwwwwww11111111/v/v/v/v", comment: "Do something"},
+                    {path:"/asdfsdfsddsfv/v", comment: "Do something"},
+                    {path:"/a/sddddd222222222222/v/v", comment: "Do something"},
+                    {path:"/a//v/4444444444444v/v/v/v", comment: "Do something"}
+                ];
+                this.dialog = new SnippetsDialog({collection: new Backbone.Collection(data2)});
                 this.snippetsRegion.show(this.dialog);
 var that = this;
                 this.dialog.on("on:navigate", function(dialog) {
