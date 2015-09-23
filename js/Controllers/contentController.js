@@ -137,7 +137,7 @@ define(['marionette',
 					   }
 					   else {
 						   if (!this.snippetsController) {
-							   this.snippetsController = new SnippetsController({region: Framework.DialogRegion});
+							   this.snippetsController = new SnippetsController({region: Framework.DialogRegion, contentController:this});
 						   }
 						   this.snippetsController.request(data);
 					   }
@@ -284,7 +284,13 @@ define(['marionette',
 			},
 
 			setSnippetsMode: function(flag) {
-
+				Framework.ContentCollection.each(function(model) {
+					if (flag) {
+						model.set({mode: "snippets"});
+					}else {
+						model.set({mode: "view"});
+					}
+				});
 			}
         };// controller
 

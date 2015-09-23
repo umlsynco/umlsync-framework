@@ -28,6 +28,7 @@ define(['marionette', 'Views/Dialogs/snippetsDialog'],
                 var that = this;
                 this.dialog.on("on:navigate", function(dialog) {
                     that.snippetsRegion.show();
+                    that.contentController.setSnippetsMode(false);
                 });
             }
         });
