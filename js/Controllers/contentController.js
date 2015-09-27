@@ -137,7 +137,8 @@ define(['marionette',
 					   }
 					   else {
 						   if (!this.snippetsController) {
-							   this.snippetsController = new SnippetsController({region: Framework.DialogRegion, contentController:this});
+							   this.snippetsController = new SnippetsController({
+								   Framework:Framework, region: Framework.DialogRegion, contentController:this});
 						   }
 						   this.snippetsController.request(data);
 					   }
@@ -291,6 +292,20 @@ define(['marionette',
 						model.set({mode: "view"});
 					}
 				});
+			},
+			requestSnippetContentLoad: function(model) {
+				var path = model.get("path"),
+					listOfOpenedContent = Framework.ContentView.children.filter(function(view) {
+					    return view.model.get("absPath") == path;
+				    });
+				var dfd = $.Deferred(),
+					pms = dfd.promise();
+
+				if (listOfOpenedContent.length == 1) {
+
+                   dfd.resolve(listOfOpenedContent[0]);
+				}
+				return pms;
 			}
         };// controller
 

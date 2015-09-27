@@ -11,17 +11,27 @@ define([
         'Behaviors/HotKeysBehavior'],
     function (Marionette, jui, Framework, HotKeysBehavior) {
         var ItemView = Backbone.Marionette.ItemView.extend({
-            template: _.template("<%=path%>"),
+            template: _.template("<a><%=path%></a>"),
             tagName: "li",
+            triggers : {
+               "click a": "select"
+            },
             onRender:function() {
                 // Set title
                 this.$el.attr("title", this.model.get("comment"));
             }
         }),
+
         CollectionView = Backbone.Marionette.CollectionView.extend({
            childView:ItemView,
             tagName: "ul",
-            className: "ui-sortable"
+            className: "ui-sortable",
+            childEvents: {
+                "select" : "onItemSelect"
+            },
+            onItemSelect: function(view, something) {
+                this.trigger("on:select", view);
+            }
         });
 
         var snippetsDialog = Backbone.Marionette.LayoutView.extend({
@@ -51,7 +61,19 @@ define([
             },
             initialize: function(options) {
                 // List of the snippets elements
-              this.collection = options.collection;
+                this.collection = options.collection;
+                this.contentController = options.contentController;
+                this.collection.on("change:status", this.changedStatus, this);
+            },
+            changedStatus: function(model, x, y, z) {
+                if (x == "modified")  {
+
+                }
+                else if (x == "removed") {
+                    if (model._previousAttributes.status == "new") {
+                        this.collection.remove(model);
+                    }
+                }
             },
             //
             // Navigator buttons on the top of the dialog
@@ -91,8 +113,15 @@ define([
                 }
                 // Redraw collection on render
                 this.elementsView = new CollectionView({collection:this.collection});
+                this.elementsView.on("on:select", this.onSelectItem, this);
                 this.snippetList.show(this.elementsView);
                 this.elementsView.$el.sortable();
+            },
+            onSelectItem: function(view2) {
+                $.when(this.contentController.requestSnippetContentLoad(view2.model))
+                    .then(function(view){
+                        view.showSnippet(view2.model);
+                    });
             },
             onDestroy: function () {
                 if (this.modal) {

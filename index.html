@@ -486,7 +486,17 @@
 			</div>
 	</script>
 
-    <script id="umlsync-commit-dialog-template" type="text/template">
+    <script id="umlsync-snippet-bubble" type="text/template">
+        <div style="left: 248px; top: 239px; width: 250px; height: 100px;" id="snippet_bubble" class="us-snippet">
+            <p tabindex="1" class="triangle-border top" id="vrrrrrrrrrrrrrr"><%=comment%></p>
+            <span style="position:absolute;right:50px;top:15px;" class="ui-icon ui-icon-check"></span>
+            <span style="position:absolute;right:30px;top:15px;" class="ui-icon ui-icon-cancel"></span>
+            <span style="position:absolute;right:10px;top:15px;" class="ui-icon ui-icon-trash"></span>
+        </div>
+
+</script>
+    <script id="umlsync-commit-dialog-template" type=
+            "text/template">
         <div aria-labelledby="ui-dialog-title-commit-changes-dialog" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable ui-resizable" style="display: block; z-index: 1004; outline: 0px none; position: absolute; height: auto; width: 550px; top: 241px; left: 433.5px;">
             <div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix">
                 <span id="ui-dialog-title-commit-changes-dialog" class="ui-dialog-title">Commit data:</span>
