@@ -8,10 +8,10 @@ define(['marionette', './../umldiagram'],
                 }
 
                 var ep = points.length-1;
-                var x2 = points[ep][0],
-                    x1 = points[ep-1][0],
-                    y2 = points[ep][1],
-                    y1 = points[ep-1][1];
+                var x2 = points[ep].x,
+                    x1 = points[ep-1].x,
+                    y2 = points[ep].y,
+                    y1 = points[ep-1].y;
 
                 var x = 10,
                     dx = x2 -x1,
@@ -35,9 +35,9 @@ define(['marionette', './../umldiagram'],
                 c.beginPath();
                 c.fillStyle = color;
                 c.strokeStyle = color;
-                c.moveTo(points[0][0], points[0][1]);
+                c.moveTo(points[0].x, points[0].y);
                 for (i=1; i<ep; ++i) {
-                    c.lineTo(points[i][0], points[i][1]);
+                    c.lineTo(points[i].x, points[i].y);
                 }
                 c.moveTo(x1, y1);
                 c.lineTo(x3, y3);

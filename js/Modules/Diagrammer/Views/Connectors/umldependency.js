@@ -8,10 +8,10 @@ define(['marionette', './../umldiagram'],
                 }
                 var ep = points.length-1,
                     x = 10;
-                var x2 = points[ep][0],
-                    x1 = points[ep-1][0],
-                    y2 = points[ep][1],
-                    y1 = points[ep-1][1];
+                var x2 = points[ep].x,
+                    x1 = points[ep-1].x,
+                    y2 = points[ep].y,
+                    y1 = points[ep-1].y;
 
                 var dx = x2 -x1,
                     dy = y2 -y1,
