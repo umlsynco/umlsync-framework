@@ -1,6 +1,9 @@
 define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
     function(Marionette, EB, ClassView, PackageView, ComponentView, InterfaceView, PortView, InstanceView) {
 
+        //
+        // @description - base class for all uml elements
+        //
         Backbone.Marionette.ElementItemView  =  Backbone.Marionette.CompositeView.extend({
             className: "us-element-border",
             initialize: function() {
@@ -31,12 +34,30 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
             }
         });
         
+        
+        Backbone.Marionette.ElementsView = Marionette.CollectionView.extend({
+                    childViewEventPrefix: 'element',
+                    getChildView: function(model) {
+                        var type = model.get("type");
+                        if (type != "helper") {
+                          var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
+                          return view;
+                        }
+                        return helperItemView;
+
+                    }});
+        //
+        // @description - icon menu connection helper
+        //
         var helperItemView = Backbone.Marionette.ItemView.extend({
             el: ".us-icon-menu-connection-helper",
             render: function() {}
             
         });
 
+        //
+        // @description - base class for all connectors
+        //
         Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.ItemView.extend({
             template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%></div>'),
             templateHelpers: function() {
@@ -64,7 +85,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 this.fromModel = elements.findWhere({id:this.model.get("fromId")});
                 this.toModel = elements.findWhere({id:this.model.get("toId")});
             },
-            draw: function(ctx, points, color) { alert("You should redefine DRAW method !");},
+            draw: function(ctx, points, color) {
+                alert("You should redefine DRAW method for concreate connector!");
+            },
             redraw: function(ctx, color) {
                 var context = ctx;
                 var col = color || "rgba(0,0,0,1)";
@@ -106,6 +129,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
                  this['draw'](context, this.points, col);
             },
+            //
+            // @description - helper method to draw dashed line
+            //
             dashedLine: function(p1,p2, c) {
                 var x2 = p2[0],
                     x1 = p1[0],
@@ -137,6 +163,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     y1+= (ey + fy);
                 }
             },
+            //
+            // @description - helper method to get all connection points
+            //
             _getConnectionPoints: function(fromId, toId, epoints) {
 
                 var p1 = $('#'+ fromId).position();
@@ -201,6 +230,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                         return newpoints;
                 }
             },
+            //
+            // @description - helper metho to get the neares point/position
+            //
             _getRValue: function(x1, x2, w) {
                 var diffx = x2-x1;
                 if (diffx>0) {
@@ -210,6 +242,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 }
                 return x1;
             },
+            //
+            // @description - is point over the line ?
+            //
             isPointOnLine: function(x,y) {
                 if (this.points == undefined)
                     return false;
@@ -239,6 +274,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 }
                 return false;
             },
+            //
+            // @description - checker if it is possible to remove point
+            //
             canRemovePoint: function(p1,p2,rp) {
                 if ((p1 == undefined)
                     || (p2 == undefined)) {
@@ -257,6 +295,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     return true;
                 return false;
             },
+            //
+            // @description - add extra points for the connector
+            //
             startTransform: function(x1,y1) {
 				$.log("START TRANSFORM !! " + x1 + " Y " + y1);
 //              if (!this.parrent.options.editable)
@@ -265,7 +306,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 //              var opman = this.parrent.opman;
 //              opman.startTransaction();
 
-              // Clena extra point position
+              // Clean the previous extra point position
               this.eppos = undefined;
 
               // Some scrolling stuff, do not take in account
@@ -293,30 +334,31 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
               if (this.epoints.length == 0) {  // Don't need to identify position
 				  $.log("START TRANSFORM !! no points at all");
-                // in array for the first element
-                this.eppos = 0;
-                this.epoints[this.eppos] = [];
+                  // in array for the first element
+                  this.eppos = 0;
+                  this.epoints[this.eppos] = [];
 //                this.report = "+epoint";
               } else {
-                // means that it is not move on existing point
-                //            it is not first point of replaced first point
-                if (this.eppos == undefined) {
+                  // means that it is not move on existing point
+                  //            it is not first point of replaced first point
+                  if (this.eppos == undefined) {
 
-                  // Get the list of connection points
-                  this.points = this['_getConnectionPoints'](this.fromModel.cid, this.toModel.cid, this.epoints);
-                  newPoint = [];
-                  newPoint[0] = x1; newPoint[1] = y1;
-                  var zi=0;
-                  for (;zi<this.points.length-1;++zi) {
-                    if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
-                      this.eppos = zi;
-                      this.epoints.splice(zi, 0, newPoint);
-                      $.log("START TRANSFORM !! new point at " + zi);
-                      break;
-                    }
-                  }
+                      // Get the list of connection points
+                      this.points = this['_getConnectionPoints'](this.fromModel.cid, this.toModel.cid, this.epoints);
+                      newPoint = [];
+                      newPoint[0] = x1; newPoint[1] = y1;
+                      var zi=0;
+                      for (;zi<this.points.length-1;++zi) {
+                        if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
+                            this.eppos = zi;
+                            this.epoints.splice(zi, 0, newPoint);
+                            $.log("START TRANSFORM !! new point at " + zi);
+                            break;
+                        }
+                      }
 //                  this.report = "+epoint";
-                } else {
+                  }
+                  else {
 //                  this.report = "#epoint";
                    $.log("START TRANSFORM !! epossed " + this.eppos);
                   this.epoints[this.eppos] = [];
@@ -325,19 +367,22 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
 //              opman.reportStart(this.report, this.euid, {idx: this.eppos, value: [x,y]});
 
-if (this.eppos == undefined) return false;
+             if (this.eppos == undefined) {
+				 alert("UNEXPECTED STATE !!! ");
+				 return false;
+			 }
 
               this.epoints[this.eppos][0] = x;
               this.epoints[this.eppos][1] = y;
 
-
-
 //              if (this.onStartTransform != undefined)
 //                this.onStartTransform(x,y);
 
-return true; 
+              return true; 
             },
-            
+            //
+            // @description - stop extra points adding
+            //
             stopTransform: function(x1,y1) {
 				$.log("STOP TRANSFORM !! " + x1 + " Y " + y1);
               if (this.eppos == undefined) {
@@ -391,7 +436,12 @@ return true;
                 }
               }
 
-              this.eppos = undefined;
+
+             this.model.umlepoints.add(this.points[this.eppos], {at:this.eppos});
+
+             this.eppos = undefined;
+              
+              // TODO: Report Extra-points change for the epoints model/collection ?
 
               // [TODO] Think about subscribers !!!
 //              if ($.isFunction(this.onStopTransform))
@@ -403,7 +453,7 @@ return true;
             },
             
             TransformTo: function(x1,y1) {
-				$.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
+//				$.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
               if (this.eppos != undefined) {
                 var x =  x1 + this.$el.parent().scrollLeft(),
                 y = y1 + this.$el.parent().scrollTop();
@@ -419,6 +469,7 @@ return true;
 
 
         Backbone.Marionette.ConnectorsView = Marionette.CollectionView.extend({
+                    childViewEventPrefix: 'connector',
                     className: "us-canvas-bg",
                     getChildView: function(model) {
                         var type = model.get("type");
@@ -562,29 +613,24 @@ return true;
 
             },
             onRender: function() {
-                // Draw all elements
-                this.elementsView = new (Marionette.CollectionView.extend({
-                    childViewEventPrefix: 'element',
-                    getChildView: function(model) {
-
-                        var type = model.get("type");
-                        if (type != "helper") {
-                          var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
-                          return view;
-                        }
-                        return helperItemView;
-
-                    }})) // extend collection with a new method
-                ({collection:this.model.umlelements});
+                //
+                // INITIALIZE ELEMENTS
+                //
+                this.elementsView = new  Backbone.Marionette.ElementsView({collection:this.model.umlelements});
                 this.elementsView.render();
                 this.$el.append(this.elementsView.$el);
 
                 // Trigger connectors re-draw on DND
                 // TODO: skip mouseover events on dragstart and finish to ignore them dragstop
-                this.elementsView.on("element:drag", _.bind(this.drawConnectors, this));
-                this.elementsView.on("element:resize", _.bind(this.drawConnectors, this));
+                var redrawer = _.bind(this.drawConnectors, this);
+                this.elementsView.on("element:drag:start", redrawer);
+                this.elementsView.on("element:drag:do", redrawer);
+                this.elementsView.on("element:drag:stop", redrawer);
+                this.elementsView.on("element:resize",    redrawer);
 
-                // Draw all connectors + wrapped div for the mouse move handling !!!
+                //
+                // INITIALIZE CONNECTORS
+                //
                 this.connectorsView = new Backbone.Marionette.ConnectorsView({collection:this.model.umlconnectors,
                     childViewOptions: {
                         elements:this.model.umlelements
@@ -596,7 +642,9 @@ return true;
                 
                 this.connectorsView.on("connector:changed", _.bind(this.drawConnectors, this));
 
-                // Initialize canvas
+                //
+                // INITIALIZE CANVAS
+                //
                 this.canvasEuid = this.model.cid+'_Canvas';
                 this.canvas = (this.el.childNodes[0]);// .childNodes[0];
             },

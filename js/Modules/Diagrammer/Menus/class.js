@@ -11,15 +11,15 @@ define(['marionette'],
             },
             addfield: function(data) {
 				var model = data.context.view.model;
-				if (model && model.getAttributes) {
-				   var attrs = model.getAttributes();
+				if (model && model.getUmlAttributes) {
+				   var attrs = model.getUmlAttributes();
 				   attrs.add({name:"new field"});
 			    }
 			},
 			addmethod: function(data) {
 				var model = data.context.view.model;
-				if (model && model.getOperations) {
-				   var ops = model.getOperations();
+				if (model && model.getUmlOperations) {
+				   var ops = model.getUmlOperations();
 				   ops.add({name:"newMethod()"});
 			    }
 			}
