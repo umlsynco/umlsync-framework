@@ -1,5 +1,5 @@
-define(['marionette', './../umldiagram'],
-    function(Marionette, diagram) {
+define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSortableBehavior'],
+    function(Marionette, diagram, ListSortableBehavior) {
 		var opiv = Backbone.Marionette.ItemView.extend({
 			tagName: 'li',
 			template: _.template("<a class='editablefield operation'><%= name %></a>"),
@@ -36,7 +36,11 @@ define(['marionette', './../umldiagram'],
 
 		var operationsView = Backbone.Marionette.CollectionView.extend({
 			childView : opiv,
-			tagName: 'ul'
+			tagName: 'ul',
+            behaviors: {
+                ListSortableBehavior: {
+                }
+            }
 		});
 
 
@@ -47,7 +51,11 @@ define(['marionette', './../umldiagram'],
 
 		var attributesView = Backbone.Marionette.CollectionView.extend({
 			childView : ativ,
-			tagName: 'ul'
+			tagName: 'ul',
+            behaviors: {
+                ListSortableBehavior: {
+                }
+            }
 		});
 		
         var ClassView = Backbone.Marionette.ElementItemView.extend({
