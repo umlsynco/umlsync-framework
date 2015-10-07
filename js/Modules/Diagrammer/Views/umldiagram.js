@@ -1,4 +1,4 @@
-define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
+define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/Diagrammer/Behaviors/EditableBehavior'],
     function(Marionette, EB, ClassView, PackageView, ComponentView, InterfaceView, PortView, InstanceView) {
 
         //
@@ -18,13 +18,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     cid: this.model.cid
                 }
             },
-            behaviors: {
-                ElementBehavior: {
-                    // [TODO]: extend with sortable behavior
-                }
+            ui : {
+                "editablefield" : ".editablefield"
             },
-            triggers : {
-                "click editable": "edit"
+            behaviors: {
+                ElementBehavior: {},
+                EditableBehavior: {}
             },
             modelEvents: {
                "change": "modelChanged"

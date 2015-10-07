@@ -73,7 +73,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 
                     // Trigger show or hide icon menu !!!
                     Framework.vent.trigger("diagram:iconmenu:show", view);
-                    event.stopPropagation();
+                    //event.stopPropagation();
                 })
                 .mouseenter(view, function (event){
                     var element = event.data;
