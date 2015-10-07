@@ -1,60 +1,68 @@
-define(['marionette', './../umldiagram'],
-    function(Marionette, diagram) {
-		var opiv = Backbone.Marionette.ItemView.extend({
-			tagName: 'li',
-			template: _.template("<a class='editablefield operation'><%= name %></a>"),
-            events: {
-                "click .editablefield": "editElement"
+define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSortableBehavior', 'Modules/Diagrammer/Behaviors/EditableBehavior'],
+    function(Marionette, diagram, ListSortableBehavior, EditableBehavior) {
+        //
+        // Operation item view
+        //
+        var opiv = Backbone.Marionette.ItemView.extend({
+            tagName: 'li',
+            template: _.template("<a class='editablefield operation'><%= name %></a>"),
+            ui : {
+                "editablefield" : ".editablefield"
             },
-            editElement: function() {
-				this.$el.children().hide();
-				var that = this;
-                        var xxx = that.$el.children("a").html();
-				this.$el.append("<input type='text' value='"+ xxx +"' style='width:100%;'>");
+            behaviors: {
+                EditableBehavior: {
+                }
+            }
+        });
 
-				that.$el.children("input").blur(function() {
-					var inp = that.$el.children("input");
-					var val = inp.val();
-					inp.remove();
-					that.$el.children("a").html(val).show();
-                                        that.model.set("name", val); // SyncUp Model: Class opertations
-				})
-				.on('keyup', function(e){
-                                       if (e.which == 27) { 
-						//$('#status').html("cancel");
-						$(this).off('blur').remove();
-						that.$el.children("A").show();
-					}
-					else if (e.which == 13) { 
-						$(this).trigger("blur");
-					}
+        //
+        // Operation collection view
+        //
+        var operationsView = Backbone.Marionette.CollectionView.extend({
+            childView : opiv,
+            tagName: 'ul',
+            behaviors: {
+                ListSortableBehavior: {
+                }
+            }
+        });
 
-				})
-				.focus();
-			}
-		});
+        //
+        // Attribute item view
+        //
+        var ativ = Backbone.Marionette.ItemView.extend({
+            tagName: 'li',
+            template: _.template("<a class='editablefield attribute'><%= name %></a>"),
+            ui : {
+                "editablefield" : ".editablefield"
+            },
+            behaviors: {
+                EditableBehavior: {
+                    // Make item editable
+                }
+            }
+        });
 
-		var operationsView = Backbone.Marionette.CollectionView.extend({
-			childView : opiv,
-			tagName: 'ul'
-		});
+        //
+        // Attribute collection view
+        //
+        var attributesView = Backbone.Marionette.CollectionView.extend({
+            childView : ativ,
+            tagName: 'ul',
+            behaviors: {
+                ListSortableBehavior: {
+                }
+            }
+        });
 
-
-		var ativ = Backbone.Marionette.ItemView.extend({
-			tagName: 'li',
-			template: _.template("<a class='editablefield attribute'><%= name %></a>")
-		});
-
-		var attributesView = Backbone.Marionette.CollectionView.extend({
-			childView : ativ,
-			tagName: 'ul'
-		});
-		
+        //
+        // UML class element as item view
+        //
         var ClassView = Backbone.Marionette.ElementItemView.extend({
             template: _.template('<div id="<%= cid %>" class="us-class grElement ">\
                                     <div class="us-class-header">\
-                                        <a id="name" class="editablefield us-class-name"><%= name %></a><br>\
-                                        <a id="aux" class="us-class-aux"><%= getAux() %></a>\
+                                        <span name="name"><a id="name" class="editablefield us-class-name"><%= name %></a></span><br>\
+                                        <span name="aux"><a id="aux" class="editablefield us-class-aux"><%= getAux() %></a></span>\
                                     </div>\
                                     <div class="us-class-attributes"><ul class="us-sortable"></ul></div>\
                                     <div class="us-class-operations us-element-resizable-area"><ul class="us-sortable"></ul></div>\
@@ -67,26 +75,26 @@ define(['marionette', './../umldiagram'],
                     getFields: function() {return ""}
                 }
             },
-            events: {
-                "click .editablefield": "editElement"
-            },
-            editElement: function() {
-				this.$el.append("<input type='text' value='New method'>");
-			},
             onRender: function() {
-				if (this.model.getUmlAttributes) {
- 				    this.attributesView = new attributesView({collection:this.model.getUmlAttributes()});
-					this.attributesView.render();
-					this.$el.find("DIV#" + this.model.cid + " div.us-class-attributes").append(this.attributesView.$el);
-			     }
-				if (this.model.getUmlOperations) {
-				   this.operationsView = new operationsView({collection:this.model.getUmlOperations()});
+                //
+                // Extend element with a new fields on render
+                //
+                // Attributes/Fields
+                //
+                if (this.model.getUmlAttributes) {
+                    this.attributesView = new attributesView({collection:this.model.getUmlAttributes()});
+                    this.attributesView.render();
+                    this.$el.find("DIV#" + this.model.cid + " div.us-class-attributes").append(this.attributesView.$el);
+                }
+                //
+                // Operations/methods
+                //
+                if (this.model.getUmlOperations) {
+                   this.operationsView = new operationsView({collection:this.model.getUmlOperations()});
                    this.operationsView.render();
-				   this.$el.find("DIV#" + this.model.cid + " div.us-class-operations").append(this.operationsView.$el);
-
-			   }
-			   this.something = "XXXX";
-			}
+                   this.$el.find("DIV#" + this.model.cid + " div.us-class-operations").append(this.operationsView.$el);
+               }
+            }
         });
         return ClassView;
     });

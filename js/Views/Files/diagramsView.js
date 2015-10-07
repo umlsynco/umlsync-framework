@@ -210,7 +210,7 @@ JSON.stringify = JSON.stringify || function (obj) {
                            if (!mmm.get("id")) {
 							   alert("Unexpected error: uml element didn't get 'id' before connector creation !");
 						   }
-                           connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id")}));
+                           connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id"), epoints: [], labels: []}));
 
                            // TODO: Drop debug output one day
                            /*alert("elements: " + elements.length + "   connectors: " + connectors.length);

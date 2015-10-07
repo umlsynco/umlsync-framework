@@ -1,6 +1,9 @@
-define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
+define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/Diagrammer/Behaviors/EditableBehavior'],
     function(Marionette, EB, ClassView, PackageView, ComponentView, InterfaceView, PortView, InstanceView) {
 
+        //
+        // @description - base class for all uml elements
+        //
         Backbone.Marionette.ElementItemView  =  Backbone.Marionette.CompositeView.extend({
             className: "us-element-border",
             initialize: function() {
@@ -15,13 +18,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     cid: this.model.cid
                 }
             },
-            behaviors: {
-                ElementBehavior: {
-                    // [TODO]: extend with sortable behavior
-                }
+            ui : {
+                "editablefield" : ".editablefield"
             },
-            triggers : {
-                "click editable": "edit"
+            behaviors: {
+                ElementBehavior: {},
+                EditableBehavior: {}
             },
             modelEvents: {
                "change": "modelChanged"
@@ -31,12 +33,30 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
             }
         });
         
+        
+        Backbone.Marionette.ElementsView = Marionette.CollectionView.extend({
+                    childViewEventPrefix: 'element',
+                    getChildView: function(model) {
+                        var type = model.get("type");
+                        if (type != "helper") {
+                          var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
+                          return view;
+                        }
+                        return helperItemView;
+
+                    }});
+        //
+        // @description - icon menu connection helper
+        //
         var helperItemView = Backbone.Marionette.ItemView.extend({
             el: ".us-icon-menu-connection-helper",
             render: function() {}
             
         });
 
+        //
+        // @description - base class for all connectors
+        //
         Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.ItemView.extend({
             template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%></div>'),
             templateHelpers: function() {
@@ -64,7 +84,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 this.fromModel = elements.findWhere({id:this.model.get("fromId")});
                 this.toModel = elements.findWhere({id:this.model.get("toId")});
             },
-            draw: function(ctx, points, color) { alert("You should redefine DRAW method !");},
+            draw: function(ctx, points, color) {
+                alert("You should redefine DRAW method for concreate connector!");
+            },
             redraw: function(ctx, color) {
                 var context = ctx;
                 var col = color || "rgba(0,0,0,1)";
@@ -77,8 +99,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 this.points = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.epoints);
                 this.gip = [];
                 for (var i=0;i<this.points.length-1;++i) {
-                    var dy = this.points[i][1] - this.points[i+1][1],
-                        dx = this.points[i][0] - this.points[i+1][0];
+                    var dy = this.points[i].y - this.points[i+1].y,
+                        dx = this.points[i].x - this.points[i+1].x;
                     this.gip[i] = Math.sqrt(dx*dx + dy*dy);
                 }
                 /*
@@ -106,11 +128,14 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
                  this['draw'](context, this.points, col);
             },
+            //
+            // @description - helper method to draw dashed line
+            //
             dashedLine: function(p1,p2, c) {
-                var x2 = p2[0],
-                    x1 = p1[0],
-                    y2 = p2[1],
-                    y1 = p1[1];
+                var x2 = p2.x,
+                    x1 = p1.x,
+                    y2 = p2.y,
+                    y1 = p1.y;
 
                 var x = 10, // dash length
                     dashf = 5,
@@ -137,6 +162,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     y1+= (ey + fy);
                 }
             },
+            //
+            // @description - helper method to get all connection points
+            //
             _getConnectionPoints: function(fromId, toId, epoints) {
 
                 var p1 = $('#'+ fromId).position();
@@ -164,21 +192,21 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     var y2 = this._getRValue(p2.top + p21.top, p1.top + p11.top,  $('#' + toId).height());
 
                     if (false) { //this.parrent.options.multicanvas) {
-                        var newpoints = [[x1 + scrollLeft,y1 + scrollTop], [x2 + scrollLeft,y2 + scrollTop]];
+                        var newpoints = [{x:x1 + scrollLeft,y:y1 + scrollTop}, {x:x2 + scrollLeft,y:y2 + scrollTop}];
                         return newpoints;
                     }
                     else {
-                        var newpoints = [[x1,y1], [x2,y2]];
+                        var newpoints = [{x:x1, y:y1}, {x:x2, y:y2}];
                         return newpoints;
                     }
                 }
                 else {
                     var lln = epoints.length -1;
-                    var x1 = this._getRValue(p1.left + p11.left, epoints[0][0] - scrollLeft, $('#'+ fromId).width()) ;
-                    var y1 = this._getRValue(p1.top + p11.top, epoints[0][1] - scrollTop, $('#'+ fromId).height()) ;
+                    var x1 = this._getRValue(p1.left + p11.left, epoints[0].x - scrollLeft, $('#'+ fromId).width()) ;
+                    var y1 = this._getRValue(p1.top + p11.top, epoints[0].y - scrollTop, $('#'+ fromId).height()) ;
 
-                    var x2 = this._getRValue(p2.left + p21.left, epoints[lln][0] - scrollLeft, $('#' + toId).width());
-                    var y2 = this._getRValue(p2.top + p21.top, epoints[lln][1] - scrollTop, $('#' + toId).height());
+                    var x2 = this._getRValue(p2.left + p21.left, epoints[lln].x - scrollLeft, $('#' + toId).width());
+                    var y2 = this._getRValue(p2.top + p21.top, epoints[lln].y - scrollTop, $('#' + toId).height());
 
 
                     /*
@@ -191,16 +219,19 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                         // and not scrollable
                         // therefore keep x,y on place and shift extra points
                         var newpoints = [];
-                        newpoints[0] = [x1,y1];
+                        newpoints[0] = {x:x1, y:y1};
                         for (var i=1;i<=epoints.length;++i) {
-                            newpoints[i] = [epoints[i-1][0], epoints[i-1][1]];//epoints[i-1];
-                            newpoints[i][0] -= scrollLeft;
-                            newpoints[i][1] -= scrollTop;
+                            newpoints[i] = {x:epoints[i-1].x, y:epoints[i-1].y};//epoints[i-1];
+                            newpoints[i].x -= scrollLeft;
+                            newpoints[i].y -= scrollTop;
                         }
-                        newpoints[epoints.length + 1] = [x2,y2];
+                        newpoints[epoints.length + 1] = {x:x2,y:y2};
                         return newpoints;
                 }
             },
+            //
+            // @description - helper metho to get the neares point/position
+            //
             _getRValue: function(x1, x2, w) {
                 var diffx = x2-x1;
                 if (diffx>0) {
@@ -210,6 +241,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 }
                 return x1;
             },
+            //
+            // @description - is point over the line ?
+            //
             isPointOnLine: function(x,y) {
                 if (this.points == undefined)
                     return false;
@@ -217,18 +251,18 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
                 // Check if mouse is near to some extra point ?
                 for (var c=0; c<this.epoints.length; ++c) {
-                    if ((this.epoints[c][0] - 12 < x) && (this.epoints[c][0] + 12 > x)
-                        && (this.epoints[c][1] - 12 < y) && (this.epoints[c][1] + 12> y)) {
+                    if ((this.epoints[c].x - 12 < x) && (this.epoints[c].x + 12 > x)
+                        && (this.epoints[c].y - 12 < y) && (this.epoints[c].y + 12> y)) {
                      //   dm.at.cs.mouseover = {euid:this.euid,idx:c};
                         return true;
                     }
                 }
 
                 for (var i=0;i<this.points.length-1;++i) {
-                    var dx1 = x - this.points[i][0],
-                        dy1 = y - this.points[i][1],
-                        dx = this.points[i+1][0] - x,
-                        dy = this.points[i+1][1] - y,
+                    var dx1 = x - this.points[i].x,
+                        dy1 = y - this.points[i].y,
+                        dx = this.points[i+1].x - x,
+                        dy = this.points[i+1].y - y,
                         gip1 = Math.sqrt(dx1*dx1 + dy1*dy1),
                         gip = Math.sqrt(dx*dx + dy*dy);
 
@@ -239,17 +273,20 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                 }
                 return false;
             },
+            //
+            // @description - checker if it is possible to remove point
+            //
             canRemovePoint: function(p1,p2,rp) {
                 if ((p1 == undefined)
                     || (p2 == undefined)) {
                     return false;
                 }
-                var dx = p1[0] - p2[0],
-                    dy = p1[1] - p2[1],
-                    dx1 = p1[0] - rp[0],
-                    dy1 = p1[1] - rp[1],
-                    dx2 = p2[0] - rp[0],
-                    dy2 = p2[1] - rp[1],
+                var dx = p1.x - p2.x,
+                    dy = p1.y - p2.y,
+                    dx1 = p1.x - rp.x,
+                    dy1 = p1.y - rp.y,
+                    dx2 = p2.x - rp.x,
+                    dy2 = p2.y - rp.y,
                     gip1 = Math.sqrt(dx1*dx1 + dy1*dy1),
                     gip2 = Math.sqrt(dx2*dx2 + dy2*dy2),
                     gip = Math.sqrt(dx*dx + dy*dy);
@@ -257,6 +294,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
                     return true;
                 return false;
             },
+            //
+            // @description - add extra points for the connector
+            //
             startTransform: function(x1,y1) {
 				$.log("START TRANSFORM !! " + x1 + " Y " + y1);
 //              if (!this.parrent.options.editable)
@@ -265,7 +305,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 //              var opman = this.parrent.opman;
 //              opman.startTransaction();
 
-              // Clena extra point position
+              // Clean the previous extra point position
               this.eppos = undefined;
 
               // Some scrolling stuff, do not take in account
@@ -283,8 +323,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
               // Check if mouse is near to some extra point ?
               for (var c=0; c<this.epoints.length; ++c) {
-                if ((this.epoints[c][0] - 12 < x) && (this.epoints[c][0] + 12 > x)
-                    && (this.epoints[c][1] - 12 < y) && (this.epoints[c][1] + 12> y)) {
+                if ((this.epoints[c].x - 12 < x) && (this.epoints[c].x + 12 > x)
+                    && (this.epoints[c].y - 12 < y) && (this.epoints[c].y + 12> y)) {
                   this.eppos = c;
                   $.log("START TRANSFORM !! epoint at " + c);
                   break;
@@ -293,30 +333,31 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
               if (this.epoints.length == 0) {  // Don't need to identify position
 				  $.log("START TRANSFORM !! no points at all");
-                // in array for the first element
-                this.eppos = 0;
-                this.epoints[this.eppos] = [];
+                  // in array for the first element
+                  this.eppos = 0;
+                  this.epoints[this.eppos] = [];
 //                this.report = "+epoint";
               } else {
-                // means that it is not move on existing point
-                //            it is not first point of replaced first point
-                if (this.eppos == undefined) {
+                  // means that it is not move on existing point
+                  //            it is not first point of replaced first point
+                  if (this.eppos == undefined) {
 
-                  // Get the list of connection points
-                  this.points = this['_getConnectionPoints'](this.fromModel.cid, this.toModel.cid, this.epoints);
-                  newPoint = [];
-                  newPoint[0] = x1; newPoint[1] = y1;
-                  var zi=0;
-                  for (;zi<this.points.length-1;++zi) {
-                    if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
-                      this.eppos = zi;
-                      this.epoints.splice(zi, 0, newPoint);
-                      $.log("START TRANSFORM !! new point at " + zi);
-                      break;
-                    }
-                  }
+                      // Get the list of connection points
+                      this.points = this['_getConnectionPoints'](this.fromModel.cid, this.toModel.cid, this.epoints);
+                      newPoint = [];
+                      newPoint.x = x1; newPoint.y = y1;
+                      var zi=0;
+                      for (;zi<this.points.length-1;++zi) {
+                        if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
+                            this.eppos = zi;
+                            this.epoints.splice(zi, 0, newPoint);
+                            $.log("START TRANSFORM !! new point at " + zi);
+                            break;
+                        }
+                      }
 //                  this.report = "+epoint";
-                } else {
+                  }
+                  else {
 //                  this.report = "#epoint";
                    $.log("START TRANSFORM !! epossed " + this.eppos);
                   this.epoints[this.eppos] = [];
@@ -325,22 +366,26 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior'],
 
 //              opman.reportStart(this.report, this.euid, {idx: this.eppos, value: [x,y]});
 
-if (this.eppos == undefined) return false;
+             if (this.eppos == undefined) {
+				 alert("UNEXPECTED STATE !!! ");
+				 return false;
+			 }
 
-              this.epoints[this.eppos][0] = x;
-              this.epoints[this.eppos][1] = y;
-
-
+              this.epoints[this.eppos].x = x;
+              this.epoints[this.eppos].y = y;
 
 //              if (this.onStartTransform != undefined)
 //                this.onStartTransform(x,y);
 
-return true; 
+              return true; 
             },
-            
+            //
+            // @description - stop extra points adding
+            //
             stopTransform: function(x1,y1) {
 				$.log("STOP TRANSFORM !! " + x1 + " Y " + y1);
               if (this.eppos == undefined) {
+				alert("STOP CONNECTORS TRANSFORM WITHOU EPOINT ?");
                 return;
               }
               var x = x1 + this.$el.parent().scrollLeft(),
@@ -348,19 +393,22 @@ return true;
 
 //              this.parrent.opman.reportStop(this.report, this.euid, {idx: this.eppos, value:[x,y]});
 
-              this.epoints[this.eppos][0] = x;
-              this.epoints[this.eppos][1] = y;
+              this.epoints[this.eppos].x = x;
+              this.epoints[this.eppos].y = y;
 
               var isEqualPoint = function(p1, p2) {
-                if ( (p1[0] - 12 < p2[0])
-                    && (p1[0] + 12 > p2[0])
-                    && (p1[1] - 12 < p2[1])
-                    && (p1[1] + 12 > p2[1])) {
+                if ( (p1.x - 12 < p2.x)
+                    && (p1.x + 12 > p2.x)
+                    && (p1.y - 12 < p2.y)
+                    && (p1.y + 12 > p2.y)) {
                   return true;
                 }
                 return false;
               };
 
+              //
+              // Try to join points on one end
+              //
               if (this.eppos < this.epoints.length - 1) {
                 if (isEqualPoint(this.epoints[this.eppos], this.epoints[this.eppos + 1])) {
                   $.log("REPORT             1 ");
@@ -369,6 +417,9 @@ return true;
                 }
               }
 
+              //
+              // Try to join points on another end
+              //
               if (this.eppos > 0) {
                 if (isEqualPoint(this.epoints[this.eppos], this.epoints[this.eppos -1])) {
                   this.eppos--;
@@ -379,6 +430,9 @@ return true;
                 }
               }
 
+              //
+              // Try to join several points in one
+              //
               if (this.canRemovePoint(this.points[this.eppos], this.points[this.eppos+2], this.points[this.eppos+1])){
                 if (this.epoints.length > 1) {
                   $.log("REPORT             3:  " + this.eppos + "   COUNT: " + this.epoints.length);
@@ -391,7 +445,12 @@ return true;
                 }
               }
 
-              this.eppos = undefined;
+
+             this.model.umlepoints.add(this.points[this.eppos], {at:this.eppos});
+
+             this.eppos = undefined;
+              
+              // TODO: Report Extra-points change for the epoints model/collection ?
 
               // [TODO] Think about subscribers !!!
 //              if ($.isFunction(this.onStopTransform))
@@ -403,12 +462,12 @@ return true;
             },
             
             TransformTo: function(x1,y1) {
-				$.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
+//				$.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
               if (this.eppos != undefined) {
                 var x =  x1 + this.$el.parent().scrollLeft(),
                 y = y1 + this.$el.parent().scrollTop();
-                this.epoints[this.eppos][0] = x;
-                this.epoints[this.eppos][1] = y;
+                this.epoints[this.eppos].x = x;
+                this.epoints[this.eppos].y = y;
 
                 // On Transform callback caller
                 //if ($.isFunction(this.onTransform))
@@ -419,6 +478,7 @@ return true;
 
 
         Backbone.Marionette.ConnectorsView = Marionette.CollectionView.extend({
+                    childViewEventPrefix: 'connector',
                     className: "us-canvas-bg",
                     getChildView: function(model) {
                         var type = model.get("type");
@@ -562,29 +622,24 @@ return true;
 
             },
             onRender: function() {
-                // Draw all elements
-                this.elementsView = new (Marionette.CollectionView.extend({
-                    childViewEventPrefix: 'element',
-                    getChildView: function(model) {
-
-                        var type = model.get("type");
-                        if (type != "helper") {
-                          var view = require("Modules/Diagrammer/Views/Elements/uml"+type);
-                          return view;
-                        }
-                        return helperItemView;
-
-                    }})) // extend collection with a new method
-                ({collection:this.model.umlelements});
+                //
+                // INITIALIZE ELEMENTS
+                //
+                this.elementsView = new  Backbone.Marionette.ElementsView({collection:this.model.umlelements});
                 this.elementsView.render();
                 this.$el.append(this.elementsView.$el);
 
                 // Trigger connectors re-draw on DND
                 // TODO: skip mouseover events on dragstart and finish to ignore them dragstop
-                this.elementsView.on("element:drag", _.bind(this.drawConnectors, this));
-                this.elementsView.on("element:resize", _.bind(this.drawConnectors, this));
+                var redrawer = _.bind(this.drawConnectors, this);
+                this.elementsView.on("element:drag:start", redrawer);
+                this.elementsView.on("element:drag:do", redrawer);
+                this.elementsView.on("element:drag:stop", redrawer);
+                this.elementsView.on("element:resize",    redrawer);
 
-                // Draw all connectors + wrapped div for the mouse move handling !!!
+                //
+                // INITIALIZE CONNECTORS
+                //
                 this.connectorsView = new Backbone.Marionette.ConnectorsView({collection:this.model.umlconnectors,
                     childViewOptions: {
                         elements:this.model.umlelements
@@ -596,7 +651,9 @@ return true;
                 
                 this.connectorsView.on("connector:changed", _.bind(this.drawConnectors, this));
 
-                // Initialize canvas
+                //
+                // INITIALIZE CANVAS
+                //
                 this.canvasEuid = this.model.cid+'_Canvas';
                 this.canvas = (this.el.childNodes[0]);// .childNodes[0];
             },

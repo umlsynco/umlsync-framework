@@ -39,11 +39,14 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 //                    'grid': [2, 2],
 //                    'scroll': true,
                     'start': function (event, ui) {
+                        view.trigger("drag:start");
                     },
                     'drag': function (event, ui) {
-                        view.trigger("drag");
+                        view.trigger("drag:do");
                     },
                     'stop': function (event, ui) {
+                        // Multiple selection
+                        view.trigger("drag:stop");
 						var pos = view.$el.position();
 						//operationManager.startReport();
 						model.set({left:pos.left, top:pos.top});
@@ -70,7 +73,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 
                     // Trigger show or hide icon menu !!!
                     Framework.vent.trigger("diagram:iconmenu:show", view);
-                    event.stopPropagation();
+                    //event.stopPropagation();
                 })
                 .mouseenter(view, function (event){
                     var element = event.data;
