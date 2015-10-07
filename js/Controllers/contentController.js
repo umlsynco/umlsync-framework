@@ -302,8 +302,11 @@ define(['marionette',
 					pms = dfd.promise();
 
 				if (listOfOpenedContent.length == 1) {
-
+					listOfOpenedContent[0].model.set({isActive:true});
                    dfd.resolve(listOfOpenedContent[0]);
+				}
+				else {
+					dfd.reject();
 				}
 				return pms;
 			}
