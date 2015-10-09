@@ -318,7 +318,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
               if ((this.cleanOnNextTransform) && (this.epoints.length == 1)) {
 				  $.log("START TRANSFORM !! clean point on next transformation");
                 this.cleanOnNextTransform = false;
-                this.epoints.splice(0, 1);
+                this.eppos = 0;
               }
 
               // Check if mouse is near to some extra point ?
@@ -335,7 +335,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 				  $.log("START TRANSFORM !! no points at all");
                   // in array for the first element
                   this.eppos = 0;
-                  this.epoints[this.eppos] = [];
+                  this.epoints[0] = {x:x1,y:y1};
+                  this.model.umlepoints.add({x:x1,y:y1});
 //                this.report = "+epoint";
               } else {
                   // means that it is not move on existing point
@@ -351,6 +352,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
                             this.eppos = zi;
                             this.epoints.splice(zi, 0, newPoint);
+                            this.model.umlepoints.add({x:x1,y:y1}, {at:zi});
                             $.log("START TRANSFORM !! new point at " + zi);
                             break;
                         }
@@ -360,7 +362,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   else {
 //                  this.report = "#epoint";
                    $.log("START TRANSFORM !! epossed " + this.eppos);
-                  this.epoints[this.eppos] = [];
+                  this.epoints[this.eppos] = {x:x1, y:y1};
                 }
               }
 
@@ -371,8 +373,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 				 return false;
 			 }
 
-              this.epoints[this.eppos].x = x;
-              this.epoints[this.eppos].y = y;
+              this.epoints[this.eppos].x = x1;
+              this.epoints[this.eppos].y = y1;
 
 //              if (this.onStartTransform != undefined)
 //                this.onStartTransform(x,y);
@@ -395,6 +397,11 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 
               this.epoints[this.eppos].x = x;
               this.epoints[this.eppos].y = y;
+                // Update position before drop
+              var modelToUpdate = this.model.umlepoints.at(this.eppos);
+                if (modelToUpdate) {
+                    modelToUpdate.set(this.epoints[this.eppos]);
+                }
 
               var isEqualPoint = function(p1, p2) {
                 if ( (p1.x - 12 < p2.x)
@@ -415,7 +422,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 //                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos +1, value:this.epoints[this.eppos+1]});
                   this.epoints.splice(this.eppos +1, 1);
                     // Sync up collection
-                    this.model.umlepoints.splice(this.eppos +1, 1);
+                    modelToUpdate = this.model.umlepoints.at(this.eppos +1);
+                    this.model.umlepoints.remove(modelToUpdate);
                 }
               }
 
@@ -428,7 +436,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   $.log("REPORT             2 ");
 //                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos, value:this.epoints[this.eppos]});
                   this.epoints.splice(this.eppos, 1);
-                    this.model.umlepoints.splice(this.eppos, 1);
+                    modelToUpdate = this.model.umlepoints.at(this.eppos);
+                    this.model.umlepoints.remove(modelToUpdate);
 
                 }
               }
@@ -441,15 +450,14 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   $.log("REPORT             3:  " + this.eppos + "   COUNT: " + this.epoints.length);
 //                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos, value:this.epoints[this.eppos]});
                   this.epoints.splice(this.eppos, 1);
+                    modelToUpdate = this.model.umlepoints.at(this.eppos);
+                    this.model.umlepoints.remove(modelToUpdate);
                   $.log("REPORT AFTER       3:  " + this.eppos + "   COUNT: " + this.epoints.length);
 
                 } else {
                   this.cleanOnNextTransform = true;
                 }
               }
-
-
-             this.model.umlepoints.add(this.points[this.eppos+1], {at:this.eppos});
 
              this.eppos = undefined;
               

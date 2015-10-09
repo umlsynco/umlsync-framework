@@ -122,6 +122,7 @@ JSON.stringify = JSON.stringify || function (obj) {
                     this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager});
                     this.UD.render();
                     this.$el.append(this.UD.$el);
+                    this.UD.drawConnectors();
 
                 }
                 else {

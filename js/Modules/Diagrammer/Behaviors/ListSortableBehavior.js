@@ -13,12 +13,17 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 			else {
 				view.wasInitialized = true;
 			}
-
+var startIndex = 0;
             this.$el
                 .sortable({
-					start: function() {
+					start: function(event, ui) {
+                        startIndex = $(ui.item).index();
 					},
-					stop: function() {
+					stop: function(event, ui) {
+                        var stopIndex = $(ui.item).index();
+                        var models = view.collection.models.splice(startIndex, 1);
+                        view.collection.models.splice(stopIndex, 0, models[0]);
+
 					}
                 });
 

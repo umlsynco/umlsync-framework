@@ -39,7 +39,7 @@ function(Marionette, diagram) {
                  },
                  'drag': function(event, ui) {
 					 if (that.dataProvider && that.dataProvider.IconMenuData) {
-						 that.dataProvider.IconMenuData.trigger("drag");
+						 that.dataProvider.IconMenuData.trigger("drag:do");
 					 }
                  },
                  'stop': function(event, ui) {
