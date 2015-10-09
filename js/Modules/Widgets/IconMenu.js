@@ -39,7 +39,7 @@ function(Marionette, diagram) {
                  },
                  'drag': function(event, ui) {
 					 if (that.dataProvider && that.dataProvider.IconMenuData) {
-						 that.dataProvider.IconMenuData.trigger("drag");
+						 that.dataProvider.IconMenuData.trigger("drag:do");
 					 }
                  },
                  'stop': function(event, ui) {
@@ -49,7 +49,7 @@ function(Marionette, diagram) {
 						                                      initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
 				     // TODO: Force connectors re-draw, but looks really ugly
                      if (that.dataProvider && that.dataProvider.IconMenuData) {
-						 that.dataProvider.IconMenuData.trigger("drag");
+						 that.dataProvider.IconMenuData.trigger("drag:stop");
 					 }
                  } // stop
              }) // draggale
