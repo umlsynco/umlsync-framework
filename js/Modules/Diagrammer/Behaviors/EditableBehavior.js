@@ -31,7 +31,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                 currentTarget.children("a").html(val).show();
 
                 // SyncUp Model: Class opertations
-                that.model.set(modelName, val);
+                that.view.model.set(modelName, val);
             })
             .on('keyup', function(e){
                 if (e.which == 27) { 
@@ -44,6 +44,8 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                 }
             })
             .focus();
+
+            event.stopPropagation();
         }
     });
 

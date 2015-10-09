@@ -414,11 +414,13 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   $.log("REPORT             1 ");
 //                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos +1, value:this.epoints[this.eppos+1]});
                   this.epoints.splice(this.eppos +1, 1);
+                    // Sync up collection
+                    this.model.umlepoints.splice(this.eppos +1, 1);
                 }
               }
 
               //
-              // Try to join points on another end
+              // Tr y to join points on another end
               //
               if (this.eppos > 0) {
                 if (isEqualPoint(this.epoints[this.eppos], this.epoints[this.eppos -1])) {
@@ -426,6 +428,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   $.log("REPORT             2 ");
 //                  this.parrent.opman.reportShort("-epoint", this.euid, {idx: this.eppos, value:this.epoints[this.eppos]});
                   this.epoints.splice(this.eppos, 1);
+                    this.model.umlepoints.splice(this.eppos, 1);
 
                 }
               }
@@ -446,7 +449,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
               }
 
 
-             this.model.umlepoints.add(this.points[this.eppos], {at:this.eppos});
+             this.model.umlepoints.add(this.points[this.eppos+1], {at:this.eppos});
 
              this.eppos = undefined;
               
