@@ -28,10 +28,18 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     'resize': function () {
                     },
                     'stop': function (event, ui) {
-						var pos = view.$el.position();
-						//operationManager.startReport();
-						model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
-						//operationManager.stopReport();
+			var pos = view.$el.position();
+			//operationManager.startReport();
+                        // Update element sizes
+        		model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
+                        var ttt = view.$el.find(".us-element-resizable-area");
+                        ttt.each(function(idx, rel) {
+                            var modelName = $(rel).attr("name");
+                            if (modelName) {
+                              view.model.set(modelName, $(rel).height());
+                            }
+                        });
+			//operationManager.stopReport();
                     }
 
                 })
@@ -61,6 +69,54 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                 })
                 .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;");
 
+
+            // TODO: move to the custom behavior
+            if (view.customResize) {
+              this.$el.find(view.customResize.selector)
+                  .resizable({
+                    //'containment': "#" + this.,// to prevent jumping of element on resize start
+                    alsoResize: '#' + model.cid + '_Border',
+                    'scroll': true,
+                    'handles': view.customResize.handlers || 'n-u,e-u,s-u,w-u,nw-u,sw-u,ne-u,se-u',
+                    'start': function () {
+                    },
+                    'resize': function () {
+                    },
+                    'stop': function (event, ui) {
+                        var item = $(ui.element).css({width:"100%"}),
+                        pos = view.$el.position();
+
+                        model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
+                        var modelName = item.attr("name");
+                        if (modelName) {
+                          model.set(modelName, item.height());
+                        }
+//                      var pos = view.$el.position();
+                        //operationManager.startReport();
+                        // Update element sizes
+//                      model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
+//                      var ttt = view.$el.find(".us-element-resizable-area");
+//                      ttt.each(function(idx, rel) {
+//                          var modelName = $(rel).attr("name");
+//                          if (modelName) {
+//                            view.model.set(modelName, $(rel).height());
+//                          }
+//                      });
+                        //operationManager.stopReport();
+                    }
+
+                  }).each(function(idx, item) {
+                         var modelName = $(item).attr("name");
+                        if (modelName) {
+                           var h = model.get(modelName);
+                           if (h) {
+                               $(item).height(h);
+                           }
+                        }
+                      
+                  });
+           
+            }
 
             this.$el.children(".grElement")
                 .click(view, function(event) {
@@ -99,6 +155,16 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
             if (model.get("color")) {
                 this.$el.find(".grElement").css("background-color", model.get("color"));
             }
+
+            view.$el.find(".us-element-resizable-area").each(function(idx, rel) {
+                var modelName = $(rel).attr("name");
+                if (modelName) {
+                    var h = view.model.get(modelName);
+                    if (h) {
+                       $(rel).height(h);
+                    }
+                }
+            });
         }
     });
 
