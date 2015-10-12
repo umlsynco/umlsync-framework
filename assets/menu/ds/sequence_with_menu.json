@@ -8,11 +8,12 @@
 	},
 	{"type": "llport",
 	 "title": "Port",
-         "options": {},
+         "options": {"width":15, "height": 25},
 	 "hidden": true
 	},
 	{"type": "message",
 	 "title": "Lost/Found Message",
+	  "options": {"width":15, "height": 15},
 	 "icon": "./assets/icons/us/es/common/message.png"
 	},
 	{"type": "lldel",
@@ -22,17 +23,17 @@
 	},
 	{"type": "llalt",
 	 "title": "Alt",
-         "options": {},
+	  "options": {"width":350, "height": 150},
 	 "icon": "./assets/icons/us/es/common/alt.png"
 	},
 	{"type": "llalt",
 	 "title": "Option",
-         "options": {},
+	  "options": {"width":350, "height": 150},
 	 "icon": "./assets/icons/us/es/common/opt.png"
 	},
 	{"type": "llalt",
 	 "title": "Loop",
-         "options": {},
+	  "options": {"width":350, "height": 150},
 	 "icon": "./assets/icons/us/es/common/loop.png"
 	},
 	{"type": "llalt",
@@ -52,12 +53,12 @@
 	},
 	{"type": "actor",
 	 "title": "Actor",
-         "options": {},
+	     "options": {"width":50, "height": 150},
 	 "icon": "./assets/icons/us/es/sequence/Actor.png"
 	},
 	{"type": "note",
 	 "title": "Note",
-         "options": {},
+         "options": {"width": 150, "height":66},
 	 "icon": "/dm/icons/us/es/common/Note.png"
 	}
 

@@ -23,7 +23,8 @@ define(
                     'Modules/Diagrammer/Views/Elements/umlmessage',
                     'Modules/Diagrammer/Views/Elements/umlllport',
                     'Modules/Diagrammer/Views/Elements/umllldel',
-                    'Modules/Diagrammer/Views/Elements/umlllalt']);
+                    'Modules/Diagrammer/Views/Elements/umlllalt',
+                    'Modules/Diagrammer/Views/Elements/umlactor']);
                 // UML connectors
                 require(["Modules/Diagrammer/Views/Connectors/umlaggregation", 
                     "Modules/Diagrammer/Views/Connectors/umldependency", "Modules/Diagrammer/Views/Connectors/umlcomposition",

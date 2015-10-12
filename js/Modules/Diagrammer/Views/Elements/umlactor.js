@@ -1,9 +1,9 @@
 define(['marionette'],
     function(Marionette) {
         var View = Backbone.Marionette.ElementItemView.extend({
-            template: _.template('<div id="<%=cid%>" style="width:15px;height: 15px;background-color: black;" class="us-interface grElement"></div>\
-              <div aria-disabled="true" tabindex="1" class="ui-draggable" id="name"\
-                style="position:absolute;z-index:99999;"><a class="editablefield "><%=name%></a>    </div>'),
+            template: _.template('<img id="<%=cid%>"  class="us-element-resizable-area" src="images/actor3.svg"></img>\
+                <div aria-disabled="true" tabindex="1" class="ui-draggable" id="name"\
+                style="position:absolute;z-index:99999;"><a class="editablefield "><%=name%></a></div>'),
             onRender: function() {
                 this.$el.children("#name").draggable();
             },

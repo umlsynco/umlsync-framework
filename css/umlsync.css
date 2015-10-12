@@ -199,6 +199,8 @@ a.reference {
   border: 2px solid black;
   text-decoration: none;
   text-align: center;
+  width: 350px;
+  height: 150px;
 }
 
 .us-alt-tab {
@@ -829,4 +831,9 @@ border: 0px;
 #diagram-iconmenu-region {
 position: absolute;
 z-index:5000;
+}
+
+
+.us-element-transparent {
+  background-color: transparent;
 }
