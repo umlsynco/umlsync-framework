@@ -4,10 +4,11 @@ define(['marionette'],
             template: _.template('<div id="<%=cid%>" class="us-port us-element-resizable-area grElement"></div>'),
             behaviors: {
                 ElementBehavior: {
-                    "resize-handles": 'nw-u,sw-u,ne-u,se-u'
+                    "resize-handles": 'n-u,s-u'
                 },
                 EditableBehavior: {}
             }
+
         });
         return View;
     });

@@ -6,7 +6,9 @@
 	 "icon": "./assets/icons/us/es/class/Class.png",
          "options":{
             "attributes": [],
-            "operations": []
+            "operations": [],
+		   "width": 150,
+		   "height": 66
          }
 	},
 	{"type": "class",
@@ -14,16 +16,20 @@
 	 "options": {
   	   "aux": "Interface",
 	   "nameTemplate": "Interface",
-           "attributes": [],
-           "operations": []
+	   "attributes": [],
+	   "operations": [],
+	   "width": 150,
+	   "height": 66
 	 },
 	 "icon": "./assets/icons/us/es/class/ClassInterface.png"
 	},
 	{"type": "class",
 	 "title": "Enumeration",
 	 "options":{
-            "attributes": [],
-            "operations": [],
+	   "attributes": [],
+	   "operations": [],
+	   "width": 150,
+	   "height": 66,
 	   "aux": "Enumeration"
 	 },
 	 "icon": "./assets/icons/us/es/class/ClassEnumeration.png"
@@ -31,11 +37,11 @@
 	{"type": "class",
 	 "title": "Template",
 	 "options": {
-            "attributes": [],
-            "operations": [],
-            "aux": "Template",
-            "width": "150",
-            "height": "50"
+	   "attributes": [],
+	   "operations": [],
+	   "width": 150,
+	   "height": 66,
+            "aux": "Template"
 	 },
 	 "icon": "./assets/icons/us/es/class/ClassTemplate.png"
 	},
@@ -43,7 +49,9 @@
 	 "title": "Note",
 	 "icon": "./assets/icons/us/es/common/Note.png",
          "options": {
-           "description": "Please! Add some note here!!!"
+           "description": "Please! Add some note here!!!",
+		   "width": 150,
+		   "height": 66
          }
 	}
     ],

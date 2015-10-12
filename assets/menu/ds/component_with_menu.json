@@ -4,31 +4,49 @@
 	{"type": "component",
 	 "title": "Component",
 	 "icon": "./assets/icons/us/es/component/Component.png",
-         "options": {}
+         "options": {
+		   "width": 150,
+		   "height": 66
+		 }
 	},
 	{"type": "interface",
 	 "title": "Interface",
-	 "options": {"lable":"true"},
+	 "options": {
+	   "width": 47,
+	   "height": 47
+	 },
 	 "icon": "./assets/icons/us/es/component/Interface.png"
 	},
 	{"type": "port",
 	 "title": "Port",
-         "options": {},
+         "options": {
+		   "width": 25,
+		   "height": 25
+		 },
 	 "icon": "./assets/icons/us/es/component/Port.png"
 	},
 	{"type": "empty",
 	 "title": "Empty",
-         "options": {},
+         "options": {
+		   "width": 25,
+		   "height": 25
+		 },
 	 "hidden": true
 	},
 	{"type": "instance",
 	 "title": "Instance Specification",
-         "options": {},
+         "options": {
+		   "width": 150,
+		   "height": 66
+		 },
 	 "icon": "./assets/icons/us/es/component/InstanceSpecification.png"
 	},
 	{"type": "note",
 	 "title": "Note",
-         "options": {},
+         "options": {
+		   "width": 150,
+		   "height": 66
+		 },
 	 "icon": "./assets/icons/us/es/common/Note.png"
 	}
     ],

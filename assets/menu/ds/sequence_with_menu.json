@@ -3,7 +3,7 @@
    "elements": [
 	{"type": "objinstance",
 	 "title": "Object Instance",
-         "options": {},
+         "options": {"width":150, "height": 250},
 	 "icon": "./assets/icons/us/es/component/InstanceSpecification.png"
 	},
 	{"type": "llport",

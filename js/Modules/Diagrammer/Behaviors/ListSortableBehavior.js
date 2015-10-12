@@ -13,7 +13,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 			else {
 				view.wasInitialized = true;
 			}
-var startIndex = 0;
+            var startIndex = 0;
             this.$el
                 .sortable({
 					start: function(event, ui) {

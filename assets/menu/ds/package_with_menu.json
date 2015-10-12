@@ -3,17 +3,26 @@
    "elements": [
 	{"type": "package",
 	 "title": "Package",
-         "options": {},
+         "options": {
+		   "width": 150,
+		   "height": 80
+		 },
 	 "icon": "./assets/icons/us/es/package/Package.png"
 	},
 	{"type": "package",
 	 "title": "Subsystem",
-	 "options": {"aux": "subsystem","dropable":"package"},
+	 "options": {
+	   "width": 150,
+	   "height": 66,
+	   "aux": "subsystem"
+	 },
  	 "icon": "./assets/icons/us/es/package/Subsystem.png"
 	},
 	{"type": "note",
 	 "title": "Note",
-         "options": {},
+         "options": {
+		   "width": 150,
+		   "height": 60},
 	 "icon": "./assets/icons/us/es/common/note.png"
 	}
     ],
