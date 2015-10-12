@@ -129,6 +129,7 @@ JSON.stringify = JSON.stringify || function (obj) {
                     this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager});
                     this.UD.render();
                     this.$el.append(this.UD.$el);
+
                     // draw all connectors
                     this.UD.drawConnectors();
 
@@ -188,7 +189,7 @@ JSON.stringify = JSON.stringify || function (obj) {
                                data.context.model.set("temporary", true);
                                elements.add(data.context.model);
 
-                               connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:"ConnectionHelper", temporary:true}));
+                               connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:"ConnectionHelper", temporary:true, epoints:[], labels:[]}));
                            }
                         }
                         else {

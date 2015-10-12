@@ -64,8 +64,8 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                                         <span name="name"><a id="name" class="editablefield us-class-name"><%= name %></a></span><br>\
                                         <span name="aux"><a id="aux" class="editablefield us-class-aux"><%= getAux() %></a></span>\
                                     </div>\
-                                    <div class="us-class-attributes"><ul class="us-sortable"></ul></div>\
-                                    <div class="us-class-operations us-element-resizable-area"><ul class="us-sortable"></ul></div>\
+                                    <div class="us-class-attributes" name="height_a"><ul class="us-sortable"></ul></div>\
+                                    <div class="us-class-operations us-element-resizable-area" name="height_o"><ul class="us-sortable"></ul></div>\
                                     </div>'),
             templateHelpers: function() {
                 return {
@@ -74,6 +74,10 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                     getMethods: function() {return ""},
                     getFields: function() {return ""}
                 }
+            },
+            customResize: {
+              selector: '.us-class-attributes',
+              handlers: 's-l'
             },
             onRender: function() {
                 //

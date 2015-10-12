@@ -318,20 +318,26 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
               if ((this.cleanOnNextTransform) && (this.epoints.length == 1)) {
 				  $.log("START TRANSFORM !! clean point on next transformation");
                 this.cleanOnNextTransform = false;
-                this.eppos = 0;
+                this.eppos = 0; // Modify an existing point
+                this.epoints[this.eppos] = {x:x1, y:y1};
+                //this.epoints.splice(0, 1);
+                
+//                this.model.umlepoints.splice(0, 1);
               }
+              else {
+                  // Check if mouse is near to some extra point ?
+                  for (var c=0; c<this.epoints.length; ++c) {
+                      if ((this.epoints[c].x - 12 < x) && (this.epoints[c].x + 12 > x)
+                          && (this.epoints[c].y - 12 < y) && (this.epoints[c].y + 12> y)) {
+                          this.eppos = c;
+                          $.log("START TRANSFORM !! epoint at " + c);
+                          break;
+                      }
+                  }
+			  }
 
-              // Check if mouse is near to some extra point ?
-              for (var c=0; c<this.epoints.length; ++c) {
-                if ((this.epoints[c].x - 12 < x) && (this.epoints[c].x + 12 > x)
-                    && (this.epoints[c].y - 12 < y) && (this.epoints[c].y + 12> y)) {
-                  this.eppos = c;
-                  $.log("START TRANSFORM !! epoint at " + c);
-                  break;
-                }
-              }
-
-              if (this.epoints.length == 0) {  // Don't need to identify position
+              // Don't need to identify position
+              if (this.epoints.length == 0) {
 				  $.log("START TRANSFORM !! no points at all");
                   // in array for the first element
                   this.eppos = 0;
@@ -342,11 +348,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   // means that it is not move on existing point
                   //            it is not first point of replaced first point
                   if (this.eppos == undefined) {
-
                       // Get the list of connection points
                       this.points = this['_getConnectionPoints'](this.fromModel.cid, this.toModel.cid, this.epoints);
-                      newPoint = [];
-                      newPoint.x = x1; newPoint.y = y1;
+                      newPoint = {x:x1, y:y1};
                       var zi=0;
                       for (;zi<this.points.length-1;++zi) {
                         if (this.canRemovePoint(this.points[zi], this.points[zi+1], newPoint)) { // Is Point on Line ?  Stuipid double check on mouseMove !!!
@@ -369,7 +373,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 //              opman.reportStart(this.report, this.euid, {idx: this.eppos, value: [x,y]});
 
              if (this.eppos == undefined) {
-				 alert("UNEXPECTED STATE !!! ");
+				 alert("An absolutely UNEXPECTED STATE !!!");
 				 return false;
 			 }
 
@@ -397,6 +401,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 
               this.epoints[this.eppos].x = x;
               this.epoints[this.eppos].y = y;
+
                 // Update position before drop
               var modelToUpdate = this.model.umlepoints.at(this.eppos);
                 if (modelToUpdate) {
@@ -438,7 +443,6 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                   this.epoints.splice(this.eppos, 1);
                     modelToUpdate = this.model.umlepoints.at(this.eppos);
                     this.model.umlepoints.remove(modelToUpdate);
-
                 }
               }
 

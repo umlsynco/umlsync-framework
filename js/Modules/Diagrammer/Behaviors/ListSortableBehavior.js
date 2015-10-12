@@ -5,6 +5,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
             var model = this.view.model;
             //var operationManager = model.getOperationManager();
             var view = this.view;
+var startIndex = -1;
 
             // [TODO]: drop it !!!
             if (view.wasInitialized) {
@@ -13,18 +14,20 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 			else {
 				view.wasInitialized = true;
 			}
-            var startIndex = 0;
-            this.$el
-                .sortable({
-					start: function(event, ui) {
-                        startIndex = $(ui.item).index();
-					},
-					stop: function(event, ui) {
-                        var stopIndex = $(ui.item).index();
-                        var models = view.collection.models.splice(startIndex, 1);
-                        view.collection.models.splice(stopIndex, 0, models[0]);
 
-					}
+            this.$el.sortable({
+                        connectedWith:  "DIV.us-class-operations",
+			start: function(event, ui) {
+                           startIndex = $(ui.item).index();
+
+			},
+			stop: function(event, ui) {
+                           var dropIndex = $(ui.item).index();
+                           if (startIndex != dropIndex) {
+                             var models = view.collection.models.splice(startIndex, 1);
+                             view.collection.models.splice(dropIndex, 0, models[0]);
+                           }
+			}
                 });
 
             var that = this;
