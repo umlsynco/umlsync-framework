@@ -17,14 +17,14 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
             var applyOptions = _.pick(model.attributes, 'height', 'width', 'left', 'top');
             this.$el
                 .css({'position': 'absolute'})
-                .css(applyOptions)
+//                .css(applyOptions)
                 .bind('contextmenu', function (e) {
                     e.preventDefault();
                     // Load and show the context menu for the diagram
                     // [TODO]: Do we need to split "edit/view" states ?
                     Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view}});
                 })
-//                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
+                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
                 .resizable({
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     'scroll': true,
@@ -39,12 +39,12 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 			var pos = view.$el.position();
 			//operationManager.startReport();
                         // Update element sizes
-        		model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
+        		model.set({width:Math.round(view.$el.width()), height: Math.round(view.$el.height()), left:Math.round(pos.left), top:Math.round(pos.top)});
                         var ttt = view.$el.find(".us-element-resizable-area");
                         ttt.each(function(idx, rel) {
                             var modelName = $(rel).attr("name");
                             if (modelName) {
-                              view.model.set(modelName, $(rel).height());
+                              view.model.set(modelName, Math.round($(rel).height()));
                             }
                         });
 			//operationManager.stopReport();

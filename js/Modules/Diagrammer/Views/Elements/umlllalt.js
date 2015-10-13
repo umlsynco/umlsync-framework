@@ -1,7 +1,7 @@
 define(['marionette'],
     function(Marionette) {
         var View = Backbone.Marionette.ElementItemView.extend({
-            className: "us-element-transparent",
+            className: "us-element-transparent us-element-border",
             getTemplate: function() {
            //'<div id="' + this.euid + '" class="us-package">\
            // <div class="us-alt-body us-element-resizable-area grElement">'+
