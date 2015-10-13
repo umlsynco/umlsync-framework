@@ -8,14 +8,13 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 
             // [TODO]: drop it !!!
             if (view.wasInitialized) {
-				alert("DOUBLE CALL OF THE BEHAVIOR HANDLER !!!");
-			}
-			else {
-				view.wasInitialized = true;
-			}
+		alert("DOUBLE CALL OF THE BEHAVIOR HANDLER !!!");
+            } else {
+		view.wasInitialized = true;
+	    }
 
-            alert('.dropped-' + view.cid);
-            var applyOptions = _.pick(model.attributes, 'height', 'width');
+            //alert('.dropped-' + view.cid);
+            var applyOptions = _.pick(model.attributes, 'height', 'width', 'left', 'top');
             this.$el
                 .css({'position': 'absolute'})
                 .css(applyOptions)
@@ -25,7 +24,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     // [TODO]: Do we need to split "edit/view" states ?
                     Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view}});
                 })
-                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
+//                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
                 .resizable({
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     'scroll': true,
@@ -149,13 +148,13 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     var element = event.data;
                     if (!element.options.selected && element.highlighted) {
 
-                        element.$el.css('border-color', 'rgba(255, 255, 255, 0.3)').css({'border-width':'3px'});
+                        element.$el.css('border-color', 'rgba(255, 255, 255, 0.1)').css({'border-width':'3px'});
 
                         element.highlighted = false;
                         element.model.hilighted = false;
                     }
                 })
-                .append("<img id='" + this.euid + "_REF' title='REFERENCE' src='./images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
+                .append("<img id='" + model.cid + "_REF' title='REFERENCE' src='./images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
 
             // Hide element resize points which was
             // added on the previous step
