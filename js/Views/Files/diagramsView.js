@@ -30,7 +30,8 @@ define(
                     "Modules/Diagrammer/Views/Connectors/umldependency", "Modules/Diagrammer/Views/Connectors/umlcomposition",
                     "Modules/Diagrammer/Views/Connectors/umlassociation", "Modules/Diagrammer/Views/Connectors/umlanchor",
                     "Modules/Diagrammer/Views/Connectors/umlnested", "Modules/Diagrammer/Views/Connectors/umlgeneralization",
-                    "Modules/Diagrammer/Views/Connectors/umlrealization"]);
+                    "Modules/Diagrammer/Views/Connectors/umlrealization",
+                    "Modules/Diagrammer/Views/Connectors/umlllsequence"]);
                 //    
                 // Sync-up content on model save
                 //

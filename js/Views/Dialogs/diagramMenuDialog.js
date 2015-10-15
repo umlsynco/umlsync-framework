@@ -33,7 +33,13 @@ define([
 						   // TODO: Prototyped for the multiple descriptions
 						   // download, but uses sinlgle description for a while
 						   that.accordion.addMenu(model, data[0]);
-						   that.extendIconMenus(data[0].menus);
+						}
+					});
+					$.ajax({
+						url: "./assets/menu/icon_menus.json",
+						dataType: "json",
+						success:function(data) {
+						  that.extendIconMenus(data);
 						}
 					});
 				}
