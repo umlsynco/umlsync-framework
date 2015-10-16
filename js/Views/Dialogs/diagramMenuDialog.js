@@ -74,7 +74,7 @@ define([
 				this.IconMenuData = data;
 				
 				if (data.model) {
-					var lookingFor = data.model.get("type") + "-menu";
+					var lookingFor = "us-"+data.model.get("type") + "-menu";
 					if (this.activeIconMenu == lookingFor) {
 						Framework.IconMenuRegion.isActive = true;
 					    var pos = data.$el.position()
@@ -89,7 +89,7 @@ define([
 						var currentItem = this.menus[r];
 						if (currentItem.id == lookingFor) {
 							var icons = currentItem.items[0];
-							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.cs), diagramMenu:this});
+							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.connectors), diagramMenu:this});
 							Framework.IconMenuRegion.show(iconMenuView);
 							// Change the position on the element !!!
 							var pos = data.$el.position()
