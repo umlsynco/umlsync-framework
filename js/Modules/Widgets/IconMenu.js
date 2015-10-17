@@ -27,7 +27,7 @@ function(Marionette, diagram) {
                  },
                  'start': function(event) {
 					 helperModel.set({left:event.pageX,top:event.pageY});
-                                         // [TODO] Looks really stuipid to request framework here !!!
+                     // [TODO] Looks really stuipid to request framework here !!!
 					 var Framework = require('Views/framework');
 
 					 Framework.vent.trigger("content:past", 

@@ -19,7 +19,6 @@ define([
                         image = this.model.get("image"),
                         private = this.model.get("private");
 
-
                     if (image) {
                         text += "list-style-image:url('" + image + "'";
                     }

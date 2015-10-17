@@ -46,7 +46,7 @@ define(['marionette',
                 }
             },
             onResizeStop: function(itemView) {
-                alert("Stop resize controller");
+//                alert("Stop resize controller");
             }
         });
         return DropController;

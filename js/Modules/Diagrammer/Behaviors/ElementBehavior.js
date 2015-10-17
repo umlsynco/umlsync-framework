@@ -8,17 +8,16 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 
             // [TODO]: drop it !!!
             if (view.wasInitialized) {
-				alert("DOUBLE CALL OF THE BEHAVIOR HANDLER !!!");
-			}
-			else {
-				view.wasInitialized = true;
-			}
+		alert("DOUBLE CALL OF THE BEHAVIOR HANDLER !!!");
+            } else {
+		view.wasInitialized = true;
+	    }
 
-            alert('.dropped-' + view.cid);
-            var applyOptions = _.pick(model.attributes, 'height', 'width');
+            //alert('.dropped-' + view.cid);
+            var applyOptions = _.pick(model.attributes, 'height', 'width', 'left', 'top');
             this.$el
                 .css({'position': 'absolute'})
-                .css(applyOptions)
+//                .css(applyOptions)
                 .bind('contextmenu', function (e) {
                     e.preventDefault();
                     // Load and show the context menu for the diagram
@@ -40,12 +39,12 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 			var pos = view.$el.position();
 			//operationManager.startReport();
                         // Update element sizes
-        		model.set({width:view.$el.width(), height: view.$el.height(), left:pos.left, top:pos.top});
+        		model.set({width:Math.round(view.$el.width()), height: Math.round(view.$el.height()), left:Math.round(pos.left), top:Math.round(pos.top)});
                         var ttt = view.$el.find(".us-element-resizable-area");
                         ttt.each(function(idx, rel) {
                             var modelName = $(rel).attr("name");
                             if (modelName) {
-                              view.model.set(modelName, $(rel).height());
+                              view.model.set(modelName, Math.round($(rel).height()));
                             }
                         });
 			//operationManager.stopReport();
@@ -150,12 +149,16 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     var element = event.data;
                     if (!element.options.selected && element.highlighted) {
 
-                        element.$el.css('border-color', 'rgba(255, 255, 255, 0.3)').css({'border-width':'3px'});
+                        element.$el.css('border-color', 'rgba(255, 255, 255, 0.1)').css({'border-width':'3px'});
 
                         element.highlighted = false;
                         element.model.hilighted = false;
                     }
+
                 });
+
+//                })
+//                .append("<img id='" + model.cid + "_REF' title='REFERENCE' src='./images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
 
 
             // Hide element resize points which was
