@@ -72,7 +72,8 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                         view.trigger("drag:stop");
                         //operationManager.stopReport();
                     }
-                });
+                })
+                .append("<img id='" + model.cid + "_REF' title='REFERENCE' src='images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
 
 
             // TODO: move to the custom behavior
@@ -154,8 +155,8 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                         element.highlighted = false;
                         element.model.hilighted = false;
                     }
-                })
-                .append("<img id='" + this.euid + "_REF' title='REFERENCE' src='./images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
+                });
+
 
             // Hide element resize points which was
             // added on the previous step

@@ -6,11 +6,29 @@ define(['marionette',
             initialize: function (options) {
                 this.view = options.view.elementsView;
                 this.model = options.model;
+                this.view.on("element:drag:start", _.bind(this.onDragStart, this));
+                this.view.on("element:drag:do", _.bind(this.onDragDo, this));
                 this.view.on("element:drag:stop", _.bind(this.onDragStop, this));
                 this.view.on("element:resize:stop", _.bind(this.onResizeStop, this));
             },
+            draggableElements: [],
+            onDragDo: function(itemView, event) {
+                _.each(this.draggableElements, function($el) {
+
+                });
+            },
+            onDragStart: function(itemView) {
+                this.draggableElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
+            },
             onDragStop: function(itemView) {
+                if (this.draggableElements.length > 0) {
+                    alert("NUMBER OF DRAGGABLE: " + this.draggableElements.length);
+                    // empty list
+                    this.draggableElements = [];
+                }
+
                 if (itemView.droppable) {
+                    // TODO: _.pick(model.attributes, left, top ...
                     var inner = {left:itemView.model.get("left"), top:itemView.model.get("top"), width:itemView.model.get("width"), height:itemView.model.get("height")};
 
                     this.view.children.each(function(element) {
