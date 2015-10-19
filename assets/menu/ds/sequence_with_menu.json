@@ -18,7 +18,7 @@
 	},
 	{"type": "lldel",
 	 "title": "Del object",
-	 "options":{"hidden": true},
+	 "options":{"hidden": true, "width":15, "height": 15},
 	 "icon": "./assets/icons/us/es/common/del.png"
 	},
 	{"type": "llalt",

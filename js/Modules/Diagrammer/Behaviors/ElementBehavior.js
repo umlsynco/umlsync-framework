@@ -57,10 +57,11 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 //                    'scroll': true,
                     alsoDrag: '.dropped-' + view.cid, // mark all dropped elements with a corresponding class
                     'start': function (event, ui) {
-                        view.trigger("drag:start");
+                        view.operation_start = {left: ui.position.left, top: ui.position.top};
+                        view.trigger("drag:start", ui);
                     },
                     'drag': function (event, ui) {
-                        view.trigger("drag:do");
+                        view.trigger("drag:do", {left:ui.position.left - view.operation_start.left, top:ui.position.top - view.operation_start.top});
                     },
                     'stop': function (event, ui) {
                         var pos = view.$el.position();
@@ -68,7 +69,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                         model.set({left:pos.left, top:pos.top});
 
                         // Multiple selection
-                        view.trigger("drag:stop");
+                        view.trigger("drag:stop", {left:ui.position.left - view.operation_start.left, top:ui.position.top - view.operation_start.top});
                         //operationManager.stopReport();
                     }
                 })

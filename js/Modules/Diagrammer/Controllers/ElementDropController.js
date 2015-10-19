@@ -12,15 +12,32 @@ define(['marionette',
                 this.view.on("element:resize:stop", _.bind(this.onResizeStop, this));
             },
             draggableElements: [],
-            onDragDo: function(itemView, event) {
-                _.each(this.draggableElements, function($el) {
-
+            onDragDo: function(itemView, ui) {
+                _.each(this.draggableElements, function(element, idx) {
+                    if (element != itemView)
+                        element.onDragDo(ui);
                 });
             },
-            onDragStart: function(itemView) {
-                this.draggableElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
+            onDragStart: function(itemView, ui) {
+                //this.draggableElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
+                this.draggableElements = new Array();
+                var that = this;
+                _.each(this.view.children._views, function(item) {
+                   if (item != itemView) {
+                       that.draggableElements.push(item);
+                   }
+                });
+
+                _.each(this.draggableElements, function(element, idx) {
+                   element.onDragStart(ui);
+                });
+
             },
-            onDragStop: function(itemView) {
+            onDragStop: function(itemView, ui) {
+                _.each(this.draggableElements, function(element, idx) {
+                    element.onDragStop(ui);
+                });
+
                 if (this.draggableElements.length > 0) {
                     alert("NUMBER OF DRAGGABLE: " + this.draggableElements.length);
                     // empty list

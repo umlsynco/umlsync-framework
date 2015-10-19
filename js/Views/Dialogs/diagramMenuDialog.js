@@ -44,13 +44,22 @@ define([
 					});
 				}
 			},
+            iconMenuInitialized: false,
 			// Is icon menu is some kind of the context menu ???
 			extendIconMenus: function(menus) {
 				var that = this;
-				_.each(menus, function(menuItem){
+                if (this.iconMenuInitialized)
+                    return;
+                this.iconMenuInitialized = true;
+				_.each(menus, function(menuItem, ii){
+					_.each(menuItem.items, function(item, ci) {
+						_.each(item.connectors, function(con) {
+                            con.menuId = ii;
+                            con.itemId = ci;
+						});
+					});
 					that.menus.push(menuItem);
-				})
-				
+				});
 			},
             onShow: function() {
 				this.$el.draggable({cancel:"#us-diagram-menu-accordion"});
@@ -66,6 +75,10 @@ define([
 				if (!data) {
 					if (Framework.IconMenuRegion.$el)
 					  Framework.IconMenuRegion.isActive = false;
+					if (Framework.IconMenuRegion.$el == undefined) {
+						alert("SMTHING WRONG 2");
+						return;
+					}
 					  Framework.IconMenuRegion.$el.hide();
 					return;
 				}
@@ -74,35 +87,59 @@ define([
 				this.IconMenuData = data;
 				
 				if (data.model) {
-					var lookingFor = "us-"+data.model.get("type") + "-menu";
+					var lookingFor = "us-"+data.model.get("type") + "-menu",
+					lookingFor2 = "us-class-"+data.model.get("type") + "-menu";
 					if (this.activeIconMenu == lookingFor) {
 						Framework.IconMenuRegion.isActive = true;
-					    var pos = data.$el.position()
+					    var pos = data.$el.position();
+if (Framework.IconMenuRegion.$el == undefined) {
+	alert("SMTHING WRONG");
+	return;
+}
 						Framework.IconMenuRegion.$el.css({top:pos.top + 20, left:pos.left +25, opacity:"1"});
 						Framework.IconMenuRegion.$el.show();
 						return;
 					}
 
-					Framework.IconMenuRegion.reset();
+					var found = false;
+					var icons = new Backbone.Collection();
 
+					// looking for us-%diagram%-%element%-menu
+					// and us-%element%-menu
 					for (var r=0; r< this.menus.length; ++r) {
 						var currentItem = this.menus[r];
-						if (currentItem.id == lookingFor) {
-							var icons = currentItem.items[0];
-							var iconMenuView = new IconMenu({collection: new Backbone.Collection(icons.connectors), diagramMenu:this});
-							Framework.IconMenuRegion.show(iconMenuView);
-							// Change the position on the element !!!
-							var pos = data.$el.position()
-							Framework.IconMenuRegion.$el.css({top:pos.top + 20, left:pos.left +25, opacity:"1"});
-							Framework.IconMenuRegion.$el.show();
-							
-							this.activeIconMenu = lookingFor;
-							Framework.IconMenuRegion.isActive = true;
-
-							// There is no multiple views for the current menu, so we can return
-							return;
+						if (currentItem.id == lookingFor || currentItem.id == lookingFor2) {
+							_.each(currentItem.items, function(menuItem){
+								_.each(menuItem, function(connector) {
+									icons.add(connector);
+									found = true;
+								});
+							});
 						}
 					}
+
+					// There are some elements without menu
+					if (found) {
+						Framework.IconMenuRegion.reset();
+						var iconMenuView = new IconMenu({
+							collection: icons,
+							diagramMenu: this,
+							description: this.menus
+						});
+						Framework.IconMenuRegion.show(iconMenuView);
+						// Change the position on the element !!!
+						var pos = data.$el.position()
+						Framework.IconMenuRegion.$el.css({
+							top: pos.top + 20,
+							left: pos.left + 25,
+							opacity: "1"
+						});
+						Framework.IconMenuRegion.$el.show();
+
+						this.activeIconMenu = lookingFor;
+						Framework.IconMenuRegion.isActive = true;
+					}
+
 				}
 			},
 			initialize: function(options) {

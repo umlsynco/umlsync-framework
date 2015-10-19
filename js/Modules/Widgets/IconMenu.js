@@ -4,7 +4,9 @@ function(Marionette, diagram) {
             tagName: 'img',
             template: _.template(""),
             onRender: function() {
-                this.$el.attr("src", this.model.get("image")).attr("title", this.model.get("connector"));
+                this.$el.attr("src", this.model.get("icon")).attr("title", this.model.get("type"))
+                    .attr("itemid", this.model.get("itemId"))
+                    .attr("menuid", this.model.get("menuId"));
             }
         });
 
@@ -14,6 +16,7 @@ function(Marionette, diagram) {
             template: _.template(""),
             initialize: function(options) {
 				this.dataProvider = options.diagramMenu;
+                this.description = options.description;
 			},
             onShow: function() {
 			  var helperModel = new Backbone.Model({left:0, top:0, type:"helper", temporary:true, id:0});
@@ -43,9 +46,13 @@ function(Marionette, diagram) {
 					 }
                  },
                  'stop': function(event, ui) {
+                     var itemId = $(this).attr("itemid");
+                     var menuId = $(this).attr("menuid");
+                     var element = that.description[menuId].items[itemId].element;
 					 var Framework = require('Views/framework');
 					 Framework.vent.trigger("content:past", { source:"diagram-icon-menu",
 						                                      context: {connectorType: this.title || "aggregation", left: ui.position.left, top: ui.position.top},
+                                                                 element: element,
 						                                      initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
 				     // TODO: Force connectors re-draw, but looks really ugly
                      if (that.dataProvider && that.dataProvider.IconMenuData) {

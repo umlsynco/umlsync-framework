@@ -31,7 +31,8 @@ define(
                     "Modules/Diagrammer/Views/Connectors/umlassociation", "Modules/Diagrammer/Views/Connectors/umlanchor",
                     "Modules/Diagrammer/Views/Connectors/umlnested", "Modules/Diagrammer/Views/Connectors/umlgeneralization",
                     "Modules/Diagrammer/Views/Connectors/umlrealization",
-                    "Modules/Diagrammer/Views/Connectors/umlllsequence"]);
+                    "Modules/Diagrammer/Views/Connectors/umlllsequence",
+                    "Modules/Diagrammer/Views/Connectors/umlllreturn"]);
                 //    
                 // Sync-up content on model save
                 //
@@ -232,16 +233,24 @@ JSON.stringify = JSON.stringify || function (obj) {
                                 }*/
                             });
                             if (!mmm) {
-                                mmm = new Backbone.DiagramModel({
-                                    type: "class",
-                                    name: "Test" + fromId,
-                                    left: data.context.left,
-                                    top: data.context.top,
-                                    width: 150,
-                                    height: 66,
-                                    operations: [],
-                                    attributes: []
-                                });
+                                if (data.element) {
+                                    var rrr = $.extend({}, data.element, {left: data.context.left,
+                                        top: data.context.top});
+
+                                    mmm = new Backbone.DiagramModel(rrr);
+                                }
+                                else {
+                                    mmm = new Backbone.DiagramModel({
+                                        type: "class",
+                                        name: "Test" + fromId,
+                                        left: data.context.left,
+                                        top: data.context.top,
+                                        width: 150,
+                                        height: 66,
+                                        operations: [],
+                                        attributes: []
+                                    });
+                                }
                                 // Add new element for a while, but we have to check if it was dropped over
                                 // an existing element
                                 elements.add(mmm);

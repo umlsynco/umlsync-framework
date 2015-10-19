@@ -29,7 +29,18 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                "change": "modelChanged"
             },
             modelChanged: function() {
-                this.$el.css({left:this.model.get("left"), top:this.model.get("top")});
+                this.$el.css({left: this.model.get("left"), top: this.model.get("top")});
+            },
+            onDragStart: function(ui) {
+                this.start_operation = {left: this.model.get("left"), top: this.model.get("top")};
+            },
+            onDragDo: function(ui) {
+                this.$el.css({'left':this.start_operation.left + ui.left + "px", 'top':this.start_operation.top + ui.top + "px"});
+            },
+            onDragStop: function(ui) {
+                var pos = {'left':this.start_operation.left + ui.left, 'top':this.start_operation.top + ui.top};
+                this.$el.css(pos);
+                this.model.set(pos);
             }
         });
         

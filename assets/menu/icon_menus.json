@@ -1,55 +1,55 @@
 
-"icon_menus": [
+[
   {"id":"us-class-menu",
    "items": [
-			{"element":{"type": "class"},
+			{"element":{"type": "class", "width":150, "height":66, "name":"Class"},
 			 "connectors":[
 					{"type":"association",
-					 "icon":"assets/icons/icons/us/cs/class/class/association.png"
+					 "icon":"assets/icons/us/cs/class/class/association.png"
 					},
 					{"type":"aggregation",
-					 "icon":"assets/icons/icons/us/cs/class/class/aggregation.png"
+					 "icon":"assets/icons/us/cs/class/class/aggregation.png"
 					},
 					{"type":"composition",
-					 "icon":"assets/icons/icons/us/cs/class/class/composition.png"
+					 "icon":"assets/icons/us/cs/class/class/composition.png"
 					},
 					{"type":"selfassociation",
-					 "icon":"assets/icons/icons/us/cs/class/class/self-association.png"
+					 "icon":"assets/icons/us/cs/class/class/self-association.png"
 					},
 					{"type":"dependency",
-					 "icon":"assets/icons/icons/us/cs/class/class/dependency.png"
+					 "icon":"assets/icons/us/cs/class/class/dependency.png"
 					},
 					{"type":"realization",
-					 "icon":"assets/icons/icons/us/cs/class/class/realization.png"
+					 "icon":"assets/icons/us/cs/class/class/realization.png"
 					},
 					{"type":"generalization",
-					 "icon":"assets/icons/icons/us/cs/class/class/generalization.png"
+					 "icon":"assets/icons/us/cs/class/class/generalization.png"
 					},
 					{"type":"nested",
-					 "icon":"assets/icons/icons/us/cs/class/class/nested.png"
+					 "icon":"assets/icons/us/cs/class/class/nested.png"
 					}
 				  ]
 			},
-			{"element":{"type":"note"},
+			{"element":{"type":"note", "width":150, "height":66, "name":"Note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
   },
   {"id":"us-class-note-menu",
    "items": [
-			{"element":{"type":"class"},
+			{"element":{"type":"class", "width":150, "height":66, "name":"Class"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			},
-			{"element":{"type":"note"},
+			{"element":{"type":"note", "width":150, "height":66, "name":"Note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
@@ -59,7 +59,7 @@
 			{"element":{"type":"note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
@@ -69,41 +69,41 @@
 			{"element":{"type":"component"},
 			 "connectors":[
 					{"type":"association",
-					 "icon":"assets/icons/icons/us/cs/association.png"
+					 "icon":"assets/icons/us/cs/association.png"
 					},
 					{"type":"aggregation",
-					 "icon":"assets/icons/icons/us/cs/aggregation.png"
+					 "icon":"assets/icons/us/cs/aggregation.png"
 					},
 					{"type":"composition",
-					 "icon":"assets/icons/icons/us/cs/composition.png"
+					 "icon":"assets/icons/us/cs/composition.png"
 					}
 				  ]
 			},
 			{"element":{"type":"interface"},
 			 "connectors":[
 					{"type":"association",
-					 "icon":"assets/icons/icons/us/cs/interface.png"
+					 "icon":"assets/icons/us/cs/interface.png"
 					}
 				  ]
 			},
 			{"element":{"type":"empty"},
 			 "connectors":[
 					{"type":"arc",
-					 "icon":"assets/icons/icons/us/cs/interface_required.png"
+					 "icon":"assets/icons/us/cs/interface_required.png"
 					}
 				  ]
 			},
 			{"element":{"type":"port"},
 			 "connectors":[
 					{"type":"association",
-					 "icon":"assets/icons/icons/us/cs/association.gif"
+					 "icon":"assets/icons/us/cs/association.gif"
 					}
 				  ]
 			},
 			{"element":{"type":"note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
@@ -113,32 +113,32 @@
 			{"element":{"type":"package"},
 			 "connectors":[
 					{"type":"dependency",
-					 "icon":"assets/icons/icons/us/cs/dependency.png"
+					 "icon":"assets/icons/us/cs/dependency.png"
 					},
 					{"type":"access",
-					 "icon":"assets/icons/icons/us/cs/access.png"
+					 "icon":"assets/icons/us/cs/access.png"
 					},
 					{"type":"import",
-					 "icon":"assets/icons/icons/us/cs/import.png"
+					 "icon":"assets/icons/us/cs/import.png"
 					},
 					{"type":"generalization",
-					 "icon":"assets/icons/icons/us/cs/generalization.png"
+					 "icon":"assets/icons/us/cs/generalization.png"
 					},
 					{"type":"realization",
-					 "icon":"assets/icons/icons/us/cs/realization.png"
+					 "icon":"assets/icons/us/cs/realization.png"
 					},
 					{"type":"dependency",
-					 "icon":"assets/icons/icons/us/cs/merge.png"
+					 "icon":"assets/icons/us/cs/merge.png"
 					},
 					{"type":"nested",
-					 "icon":"assets/icons/icons/us/cs/nested.png"
+					 "icon":"assets/icons/us/cs/nested.png"
 					}
 				  ]
 			},
 			{"element":{"type":"note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
@@ -148,43 +148,79 @@
 			{"element":{"type":"note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
   },
   {"id":"us-objinstance-menu",
    "items": [
-			{"element":{"type":"objinstance"},
+			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object"},
 			 "connectors":[
 					{"type":"llsequence",
-					 "icon":"assets/icons/icons/us/cs/createobject.png"
+					 "icon":"assets/icons/us/cs/createobject.png"
 					},
 					{"type":"llreturn",
-					 "icon":"assets/icons/icons/us/cs/return.png"
+					 "icon":"assets/icons/us/cs/return.png"
 					}
 				  ]
 			},
-			{"element":{"type":"port"},
+			{"element":{"type":"port", "width":15, "height": 45},
 			 "connectors":[
 					{"type":"llsequence",
-					 "icon":"assets/icons/icons/us/cs/sequence.png"
+					 "icon":"assets/icons/us/cs/sequence.png"
 					},
 					{"type":"llselfcall",
-					 "icon":"assets/icons/icons/us/cs/self-call.png"
+					 "icon":"assets/icons/us/cs/self-call.png"
 					}
 				  ]
 			},
-			{"element":{"type":"lldel"},
+			{"element":{"type":"lldel", "width":15, "height": 15},
 			 "connectors":[
 					{"type":"llsequence",
-					 "icon":"assets/icons/icons/us/cs/killobject.png"}
+					 "icon":"assets/icons/us/cs/killobject.png"}
 				  ]
 			},
-			{"element":{"type":"message"},
+			{"element":{"type":"message", "width":15, "height": 15},
 			 "connectors":[
 					{"type":"llsequence",
-					 "icon":"assets/icons/icons/us/cs/lostmessage.png"}
+					 "icon":"assets/icons/us/cs/lostmessage.png"}
+				  ]
+			}
+		 ]
+  },
+  {"id":"us-port-menu",
+   "items": [
+			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object"},
+			 "connectors":[
+					{"type":"llsequence",
+					 "icon":"assets/icons/us/cs/createobject.png"
+					},
+					{"type":"llreturn",
+					 "icon":"assets/icons/us/cs/return.png"
+					}
+				  ]
+			},
+			{"element":{"type":"port", "width":15, "height": 45},
+			 "connectors":[
+					{"type":"llsequence",
+					 "icon":"assets/icons/us/cs/sequence.png"
+					},
+					{"type":"llselfcall",
+					 "icon":"assets/icons/us/cs/self-call.png"
+					}
+				  ]
+			},
+			{"element":{"type":"lldel", "width":15, "height": 15},
+			 "connectors":[
+					{"type":"llsequence",
+					 "icon":"assets/icons/us/cs/killobject.png"}
+				  ]
+			},
+			{"element":{"type":"message", "width":15, "height": 15},
+			 "connectors":[
+					{"type":"llsequence",
+					 "icon":"assets/icons/us/cs/lostmessage.png"}
 				  ]
 			}
 		 ]
@@ -194,14 +230,14 @@
 			{"element":{"type":"objinstance"},
 			 "connectors":[
 					{"type":"llsequence",
-					 "icon":"assets/icons/icons/us/cs/createobject.png"
+					 "icon":"assets/icons/us/cs/createobject.png"
 					}
 				  ]
 			},
 			{"element":{"type":"port"},
 			 "connectors":[
 					{"type":"llsequence",
-					 "icon":"assets/icons/icons/us/cs/sequence.png"
+					 "icon":"assets/icons/us/cs/sequence.png"
 					}
 				  ]
 			}
@@ -212,7 +248,7 @@
 			{"element":{"type":"note"},
 			 "connectors":[
 					{"type":"anchor",
-					 "icon":"assets/icons/icons/us/cs/diagram/anchor_with_note.gif"}
+					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
 				  ]
 			}
 		 ]
