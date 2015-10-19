@@ -4,13 +4,14 @@ define(['marionette',
     function (Marionette, Framework) {
         var DropController = Marionette.Controller.extend({
             initialize: function (options) {
-                this.view = options.view.elementsView;
+                this.elements = options.view.elementsView;
+                this.connectors = options.view.connectorsView;
                 this.model = options.model;
-                this.view.on("element:select", _.bind(this.onElementSelect, this));
-                this.view.on("element:drag:start", _.bind(this.onDragStart, this));
-                this.view.on("element:drag:do", _.bind(this.onDragDo, this));
-                this.view.on("element:drag:stop", _.bind(this.onDragStop, this));
-                this.view.on("element:resize:stop", _.bind(this.onResizeStop, this));
+                this.elements.on("element:select", _.bind(this.onElementSelect, this));
+                this.elements.on("element:drag:start", _.bind(this.onDragStart, this));
+                this.elements.on("element:drag:do", _.bind(this.onDragDo, this));
+                this.elements.on("element:drag:stop", _.bind(this.onDragStop, this));
+                this.elements.on("element:resize:stop", _.bind(this.onResizeStop, this));
             },
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {
@@ -25,7 +26,7 @@ define(['marionette',
 					return;
 				}
 				var that = this;
-                _.each(this.view.children._views, function(item) {
+                _.each(this.elements.children._views, function(item) {
                    if (item != itemView) {
                        item.onSelect(false);
                    }
@@ -34,21 +35,31 @@ define(['marionette',
 			},
             // Droppable
             draggableElements: [],
+            draggableConnectors: [],
             onDragDo: function(itemView, ui) {
                 _.each(this.draggableElements, function(element, idx) {
                     if (element != itemView)
                         element.onDragDo(ui);
                 });
+                _.each(this.draggableConnectors, function(connector, idx) {
+					connector.onDragDo(ui);
+				});
             },
             onDragStart: function(itemView, ui) {
 				// Skip one select on DND completion
 				this.skipOneSelect = true;
+
                 //this.draggableElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
                 this.draggableElements = new Array();
+                this.draggableConnectors = new Array();
+                
+                var queued = new Array();
+
                 var that = this;
-                _.each(this.view.children._views, function(item) {
+                _.each(this.elements.children._views, function(item) {
                    if (item != itemView && item.selected) {
                        that.draggableElements.push(item);
+                       queued.push(item.model.cid);
                    }
                 });
 
@@ -56,22 +67,36 @@ define(['marionette',
                    element.onDragStart(ui);
                 });
 
+                // Trigger drag start
+                _.each(this.connectors.children._views, function(connector, idx) {
+					if (queued.indexOf(connector.fromModel.cid) >= 0
+					  && queued.indexOf(connector.toModel.cid) >= 0 {
+				      // Connector drag start
+                      connector.onDragStart(ui);
+                      // Push connectors
+                      that.draggableConnectors.push(connector);
+			        }
+                });
+
             },
             onDragStop: function(itemView, ui) {
                 _.each(this.draggableElements, function(element, idx) {
                     element.onDragStop(ui);
                 });
-
+                _.each(this.draggableConnectors, function(connector, idx) {
+					connector.onDragDo(ui);
+				});
                 if (this.draggableElements.length > 0) {
                     // empty list
                     this.draggableElements = [];
+                    this.draggableConnectors = [];
                 }
 
                 if (itemView.droppable) {
                     // TODO: _.pick(model.attributes, left, top ...
                     var inner = {left:itemView.model.get("left"), top:itemView.model.get("top"), width:itemView.model.get("width"), height:itemView.model.get("height")};
 
-                    this.view.children.each(function(element) {
+                    this.elements.children.each(function(element) {
                         if (element == itemView) {
                             return;
                         }

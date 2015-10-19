@@ -511,6 +511,15 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 //  this.onTransform(x,y);
               }
             },
+            onDragStart: function(ui) {
+                this.start_operation = $.extend({}, this.epoints);
+            },
+            onDragDo: function(ui) {
+                
+            },
+            onDragStop: function(ui) {
+                this.start_operation = null;
+            },
         });
 
 
