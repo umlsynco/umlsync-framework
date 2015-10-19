@@ -849,3 +849,11 @@ z-index:5000;
 .us-element-transparent {
   background-color: transparent;
 }
+
+DIV.us-element-border > DIV.ui-resizable-handle {
+  visibility: hidden;
+}
+
+DIV.us-selected > DIV.ui-resizable-handle {
+  visibility: visible;
+}

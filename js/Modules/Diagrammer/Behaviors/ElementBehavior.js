@@ -57,6 +57,11 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 //                    'scroll': true,
                     alsoDrag: '.dropped-' + view.cid, // mark all dropped elements with a corresponding class
                     'start': function (event, ui) {
+						// prevent wrong behavior for the multiple selection
+						if (!view.selected) {
+						    view.trigger("select", event);
+						}
+
                         view.operation_start = {left: ui.position.left, top: ui.position.top};
                         view.trigger("drag:start", ui);
                     },
@@ -130,8 +135,10 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     //$("#" + element.parrent.euid + " .us-references").hide();
                     var element = event.data;
                     // [TODO]: Check for Ctrl-pressed event.CtrlKey == true ?
-                    element.$el.parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
-                    element.$el.children("DIV.ui-resizable-handle").css("visibility", "visible");
+                    //element.$el.parent().find("DIV.us-element-border > DIV.ui-resizable-handle").css("visibility", "hidden");
+                    //element.$el.children("DIV.ui-resizable-handle").css("visibility", "visible");
+
+                    view.trigger("select", event);
 
                     // Trigger show or hide icon menu !!!
                     Framework.vent.trigger("diagram:iconmenu:show", view);
@@ -164,7 +171,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
 
             // Hide element resize points which was
             // added on the previous step
-            this.$el.children(".ui-resizable-handle").css({'visibility': 'hidden'});
+            //this.$el.children(".ui-resizable-handle").css({'visibility': 'hidden'});
 
             if (model.get("color")) {
                 this.$el.find(".grElement").css("background-color", model.get("color"));

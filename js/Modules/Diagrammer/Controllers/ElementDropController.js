@@ -6,11 +6,33 @@ define(['marionette',
             initialize: function (options) {
                 this.view = options.view.elementsView;
                 this.model = options.model;
+                this.view.on("element:select", _.bind(this.onElementSelect, this));
                 this.view.on("element:drag:start", _.bind(this.onDragStart, this));
                 this.view.on("element:drag:do", _.bind(this.onDragDo, this));
                 this.view.on("element:drag:stop", _.bind(this.onDragStop, this));
                 this.view.on("element:resize:stop", _.bind(this.onResizeStop, this));
             },
+            skipOneSelect: false,
+            onElementSelect: function(itemView, event) {
+				// Skip selection DND completion
+				if (this.skipOneSelect) {
+					this.skipOneSelect = false;
+					return;
+				}
+
+				if (event && event.ctrlKey) {
+					itemView.onSelect(!itemView.selected);
+					return;
+				}
+				var that = this;
+                _.each(this.view.children._views, function(item) {
+                   if (item != itemView) {
+                       item.onSelect(false);
+                   }
+                });
+                itemView.onSelect(true);
+			},
+            // Droppable
             draggableElements: [],
             onDragDo: function(itemView, ui) {
                 _.each(this.draggableElements, function(element, idx) {
@@ -19,11 +41,13 @@ define(['marionette',
                 });
             },
             onDragStart: function(itemView, ui) {
+				// Skip one select on DND completion
+				this.skipOneSelect = true;
                 //this.draggableElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
                 this.draggableElements = new Array();
                 var that = this;
                 _.each(this.view.children._views, function(item) {
-                   if (item != itemView) {
+                   if (item != itemView && item.selected) {
                        that.draggableElements.push(item);
                    }
                 });
@@ -39,7 +63,6 @@ define(['marionette',
                 });
 
                 if (this.draggableElements.length > 0) {
-                    alert("NUMBER OF DRAGGABLE: " + this.draggableElements.length);
                     // empty list
                     this.draggableElements = [];
                 }

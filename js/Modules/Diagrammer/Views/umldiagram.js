@@ -41,7 +41,18 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 var pos = {'left':this.start_operation.left + ui.left, 'top':this.start_operation.top + ui.top};
                 this.$el.css(pos);
                 this.model.set(pos);
-            }
+            },
+            selected: false,
+            onSelect: function(flag) {
+				if (this.selected == flag) return;
+				this.selected = flag;
+				if (flag) {
+					this.$el.addClass("us-selected");
+				}
+				else {
+					this.$el.removeClass("us-selected");
+				}
+			}
         });
         
         
