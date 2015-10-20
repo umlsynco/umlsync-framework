@@ -45,8 +45,22 @@ function ($, useless, _, Marionette) {
    var connectorView = Marionette.ItemView.extend({
        tagName: 'li',
        className: 'connector-selector',
-       template: _.template("<span style=\"cursor:pointer;list-style-image:url('<%= icon %>');\"><a><%= title %></a>"),
+       template: _.template("<a style=\"cursor:pointer;background-image:url('<%= icon %>');\"><%= title %></a>")
    });
+
+    var connectorsCollection = Marionette.CollectionView.extend({
+        tagName: 'ul',
+        childView: connectorView,
+
+        // Filter hidden items
+        addChild: function(child, ChildView, index){
+            var hasIcon = child.has("icon");
+            var isHidden = child.get("hidden");
+            if (child.has("icon") && child.get("hidden") != true) {
+                Marionette.CollectionView.prototype.addChild.apply(this, arguments);
+            }
+        }
+    });
 
    // <h3 class="ui-accordion-header ui-helper-reset ui-state-default ui-state-active ui-corner-top" aux="class">
    // <span class=""></span><a tabindex="-1" href="#">class diagram</a></h3>
@@ -82,11 +96,15 @@ function ($, useless, _, Marionette) {
            this.collection.add(model);
 
            this.elements  = new elementsCollection({collection: new Backbone.Collection(data.elements)});
+           this.connectors = new connectorsCollection({collection: new Backbone.Collection(data.connectors)});
 
            this.elements.render();
            this.$el.append(this.elements.$el);
+           this.connectors.render();
+           //this.$el.append();
            this.elements.$el
-           .wrap('<div aria-hidden="false" role="tabpanel" aria-labelledby="ui-id-3" style="display: block; min-height: 119px;" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active ui-item-'+model.type+'"></div>');
+           .wrap('<div aria-hidden="false" role="tabpanel" aria-labelledby="ui-id-3" style="display: block; min-height: 119px;" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content-active ui-item-'+model.type+'"></div>')
+               .parent()    .append(this.connectors.$el);
 //           .wrap('<p></p>');
        },
        hasMenu: function(model) {
