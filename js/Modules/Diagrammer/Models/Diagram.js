@@ -126,7 +126,12 @@ define(['backbone', 'underscore'], function (Backbone, _) {
                     }
                 }
                 else {
-                    result += indent + '"' + key + '":"' + opt + '",\n';
+                    if ($.type(opt) === "number") {
+                        result += indent + '"' + key + '":' + Math.round(opt) + ',\n';
+                    }
+                    else {
+                        result += indent + '"' + key + '":"' + opt + '",\n';
+                    }
                 }
             });
             result = result.substring(0, result.length-2) + '\n'; // remove ",\n" for the last items

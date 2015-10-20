@@ -189,6 +189,11 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             //
             _getConnectionPoints: function(fromId, toId, epoints) {
 
+                // No reason to update parameters on DND
+                if (this.dragdo) {
+                    return this.drag_points;
+                }
+
                 var p1 = $('#'+ fromId).position();
                 var p2 = $('#' + toId).position();
                 if (p2 == null) {
@@ -511,14 +516,36 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 //  this.onTransform(x,y);
               }
             },
+            dragdo: false,
+            drag_points: [],
+            start_operation: [],
             onDragStart: function(ui) {
-                this.start_operation = $.extend({}, this.epoints);
+                this.start_operation = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.epoints);
+                this.drag_points = this.start_operation;
+                this.dragdo = true;
             },
             onDragDo: function(ui) {
-                
+                this.drag_points = new Array();
+                var that = this;
+                _.each(this.start_operation, function(point) {
+                    that.drag_points.push({x:point.x + ui.left, y:point.y + ui.top})
+                });
             },
             onDragStop: function(ui) {
+                // clear arrays
+                this.drag_points = [];
                 this.start_operation = null;
+
+                _.each(this.epoints, function(point) {
+                    point.x += ui.left;
+                    point.y += ui.top;
+                });
+                // Sync up model
+                this.model.umlepoints.each(function(model) {
+                      model.set({x:model.get("x") + ui.left, y: model.get("y") + ui.top});
+                });
+                // Enable regular points requests
+                this.dragdo = false;
             },
         });
 

@@ -63,6 +63,7 @@ define(['marionette',
                    }
                 });
 
+                queued.push(itemView.model.cid);
                 _.each(this.draggableElements, function(element, idx) {
                    element.onDragStart(ui);
                 });
@@ -70,7 +71,7 @@ define(['marionette',
                 // Trigger drag start
                 _.each(this.connectors.children._views, function(connector, idx) {
 					if (queued.indexOf(connector.fromModel.cid) >= 0
-					  && queued.indexOf(connector.toModel.cid) >= 0 {
+					  && queued.indexOf(connector.toModel.cid) >= 0) {
 				      // Connector drag start
                       connector.onDragStart(ui);
                       // Push connectors
@@ -84,7 +85,7 @@ define(['marionette',
                     element.onDragStop(ui);
                 });
                 _.each(this.draggableConnectors, function(connector, idx) {
-					connector.onDragDo(ui);
+					connector.onDragStop(ui);
 				});
                 if (this.draggableElements.length > 0) {
                     // empty list
