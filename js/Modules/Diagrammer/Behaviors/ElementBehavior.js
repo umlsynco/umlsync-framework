@@ -55,6 +55,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                 .draggable({
 //                    'grid': [2, 2],
 //                    'scroll': true,
+                    axis: view.axis,
                     alsoDrag: '.dropped-' + view.cid, // mark all dropped elements with a corresponding class
                     'start': function (event, ui) {
 						// prevent wrong behavior for the multiple selection

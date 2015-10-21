@@ -165,7 +165,7 @@
 					}
 				  ]
 			},
-			{"element":{"type":"port", "width":15, "height": 45},
+			{"element":{"type":"llport", "width":15, "height": 45},
 			 "connectors":[
 					{"type":"llsequence",
 					 "icon":"assets/icons/us/cs/sequence.png"
