@@ -28,6 +28,42 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             modelEvents: {
                "change": "modelChanged"
             },
+            // Indicates if it is possible to drop one element on another
+            droppable: false,
+            // List of elements which can be dropped on this one
+            acceptDrop: [],
+            //
+            droppedElements: [],
+            _checkRelation: function(e1, e2) {
+                // e1 could be dropped on e2
+                if (e1.droppable && (e1.model.get("type") in e2.acceptDrop)) {
+                    var inner = {
+                        left: e1.model.get("left"),
+                        top: e1.model.get("top"),
+                        width: e1.model.get("width"),
+                        height: e1.model.get("height")
+                        },
+                    outer = {
+                        left: e2.get("left"),
+                        top: e2.get("top"),
+                        width: e2.get("width"),
+                        height: e2.get("height")
+                    };
+                    if (outer.top < inner.top && inner.top + inner.height < outer.top + outer.height
+                        && outer.left < inner.left && outer.left + outer.width > inner.left + inner.width) {
+                        e2.$el.addClass('dropped-' + e1.cid);
+                        return true;
+                    }
+                }
+            },
+            // Check if this element could accept drop
+            dropDone: function(dev) {
+                // Check if this element could be dropped on dev
+                // or dev could be dropped on this
+                //
+                this._checkRelation(dev, this) || this._checkRelation(this, dev);
+            },
+            //model change callback
             modelChanged: function() {
                 this.$el.css({left: this.model.get("left"), top: this.model.get("top")});
             },

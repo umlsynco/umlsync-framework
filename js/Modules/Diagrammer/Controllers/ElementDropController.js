@@ -81,35 +81,35 @@ define(['marionette',
 
             },
             onDragStop: function(itemView, ui) {
+                var that = this;
+                // Sync up model on drag stop
                 _.each(this.draggableElements, function(element, idx) {
                     element.onDragStop(ui);
                 });
+                // Sync up epoints on drag stop
                 _.each(this.draggableConnectors, function(connector, idx) {
 					connector.onDragStop(ui);
 				});
+
+                //
+                // Check the droppable relation for the dragged element
+                // and which was not drag
+                // Note: as a result do nothing if was dragged all elements
+                //
+                this.elements.children.each(function(itemView2) {
+                    if (!(itemView2 in that.draggableElements)) {
+                        _.each(that.draggableElements, function (droppedElemement) {
+                            itemView2.dropDone(droppedElemement);
+                        });
+                    }
+                });
+
                 if (this.draggableElements.length > 0) {
                     // empty list
                     this.draggableElements = [];
                     this.draggableConnectors = [];
                 }
 
-                if (itemView.droppable) {
-                    // TODO: _.pick(model.attributes, left, top ...
-                    var inner = {left:itemView.model.get("left"), top:itemView.model.get("top"), width:itemView.model.get("width"), height:itemView.model.get("height")};
-
-                    this.elements.children.each(function(element) {
-                        if (element == itemView) {
-                            return;
-                        }
-                        var elem = element.model;
-                        var outer = {left:elem.get("left"), top:elem.get("top"), width:elem.get("width"), height:elem.get("height")};
-
-                        if (outer.top < inner.top && inner.top + inner.height < outer.top + outer.height
-                            && outer.left < inner.left && outer.left + outer.width > inner.left + inner.width) {
-                            itemView.$el.addClass('dropped-' + element.cid);
-                        }
-                    });
-                }
             },
             onResizeStop: function(itemView) {
 //                alert("Stop resize controller");
