@@ -7,6 +7,7 @@ define(['marionette'],
         onRender: function() {
             this.$el.children("#name").draggable();
         },
+        droppable: true,
         behaviors: {
             ElementBehavior: {
                 "resize-handles": 'nw-u,sw-u,ne-u,se-u'

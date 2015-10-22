@@ -67,7 +67,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                         view.trigger("drag:start", ui);
                     },
                     'drag': function (event, ui) {
-                        view.trigger("drag:do", {left:ui.position.left - view.operation_start.left, top:ui.position.top - view.operation_start.top});
+                        view.trigger("drag:do", {left: (view.axis == "y") ? 0 : ui.position.left - view.operation_start.left, top: (view.axis == "x") ? 0 : ui.position.top - view.operation_start.top});
                     },
                     'stop': function (event, ui) {
                         var pos = view.$el.position();

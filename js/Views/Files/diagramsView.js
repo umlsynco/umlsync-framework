@@ -4,10 +4,11 @@ define(
      'Models/contentModel',
      'Modules/Diagrammer/Models/Diagram',
      'Modules/Diagrammer/Controllers/OperationManager',
-        'Modules/Diagrammer/Controllers/ElementDropController',
+     'Modules/Diagrammer/Controllers/ElementDropController',
+     'Modules/Diagrammer/Controllers/SequenceElementDropController',
      'Modules/Diagrammer/Views/umldiagram'
     ],
-    function (Backbone, Framework, ContentModel, Diagram, OperationManager, ElementDropController, UmlDiagram) {
+    function (Backbone, Framework, ContentModel, Diagram, OperationManager, ElementDropController, SequenceElementDropController, UmlDiagram) {
         var diagramView = Backbone.Marionette.ItemView.extend({
 			//
 			// Pre-load of elements
@@ -97,37 +98,6 @@ define(
                         ContentView.model.set("isModified", value);                       
                     });
 
-                    // Methods become available if elements and connectors are not empty
-                    if (this.modelDiagram.getUmlElements && this.modelDiagram.getUmlConnectors) {
-                        var els = this.modelDiagram.getUmlElements();
-                        var cs = this.modelDiagram.getUmlConnectors();
-
-////////////////////////////////////////////////// DROP IT !!!
-/*
-var JSON = {};
-
-JSON.stringify = JSON.stringify || function (obj) {
-    var t = typeof (obj);
-    if (t != "object" || obj === null) {
-        // simple data type
-        if (t == "string") obj = '"'+obj+'"';
-        return String(obj);
-    }
-    else {
-        // recurse array or object
-        var n, v, json = [], arr = (obj && obj.constructor == Array);
-        for (n in obj) {
-            v = obj[n]; t = typeof(v);
-            if (t == "string") v = '"'+v+'"';
-            else if (t == "object" && v !== null) v = JSON.stringify(v);
-            json.push((arr ? "" : '"' + n + '":') + String(v));
-        }
-        return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
-    }
-};
-*/
-                    }
-
                     // Create the diagram view from the model and append to the current view
                     this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager});
                     this.UD.render();
@@ -136,7 +106,15 @@ JSON.stringify = JSON.stringify || function (obj) {
                     // draw all connectors
                     this.UD.drawConnectors();
 
-                    this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
+                    //
+                    // Sequence diagram has complex behavior which is out of scope of diagram types
+                    //
+                    if (this.modelDiagram.get("type") == "sequence") {
+						this.dropController = new SequenceElementDropController({view:this.UD, model: this.modelDiagram});
+					}
+					else {
+						this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
+					}
 
                 }
                 else {
@@ -165,6 +143,7 @@ JSON.stringify = JSON.stringify || function (obj) {
             // Handle content past from different sources:
             // Clipboard, main-elements-menu or icon-menu
             //
+            _iconMenuStarted: false,
             handlePast: function(data) {
                 // Create a new element !!!
                 if (data.source == "diagram-menu") {
@@ -223,14 +202,6 @@ JSON.stringify = JSON.stringify || function (obj) {
                                 if (elem.hilighted) {
                                   mmm = elem;
                                 }
-/*                                var top = elem.get("top"),
-                                    left = elem.get("left"),
-                                    width = elem.get("width"),
-                                    height = elem.get("height");
-                                if (top < data.context.top && data.context.top < top + height
-                                  && left < data.context.left && data.context.left < left + width) {
-                                  mmm = elem;
-                                }*/
                             });
                             if (!mmm) {
                                 if (data.element) {

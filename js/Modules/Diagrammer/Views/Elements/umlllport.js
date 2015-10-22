@@ -3,6 +3,7 @@ define(['marionette'],
         var View = Backbone.Marionette.ElementItemView.extend({
             template: _.template('<div id="<%=cid%>" class="us-port us-element-resizable-area grElement"></div>'),
             axis: "y",
+            droppable: true,
             behaviors: {
                 ElementBehavior: {
                     "resize-handles": 'n-ul,s-ul',

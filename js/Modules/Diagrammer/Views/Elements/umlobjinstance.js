@@ -6,6 +6,7 @@ define(['marionette'],
         <div id="<%=cid%>_NEXT" class="us-instance grElement" style="height:40px;">\
         <div><a id="name" class="editablefield Name">:<%=name%></a></div></div></div>'),
             axis: "x",
+            acceptDrop: ["llport", "lldel"],
             behaviors: {
                 ElementBehavior: {
                     "resize-handles": 'w-ul,e-ul,s-ul',
