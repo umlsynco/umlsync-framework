@@ -36,7 +36,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             droppedElements: [],
             _checkRelation: function(e1, e2) {
                 // e1 could be dropped on e2
-                if (e1.droppable && (e1.model.get("type") in e2.acceptDrop)) {
+                if (e1.droppable && _.contains(e2.acceptDrop, e1.model.get("type"))) {
                     var inner = {
                         left: e1.model.get("left"),
                         top: e1.model.get("top"),
@@ -44,17 +44,25 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         height: e1.model.get("height")
                         },
                     outer = {
-                        left: e2.get("left"),
-                        top: e2.get("top"),
-                        width: e2.get("width"),
-                        height: e2.get("height")
+                        left: e2.model.get("left"),
+                        top: e2.model.get("top"),
+                        width: e2.model.get("width"),
+                        height: e2.model.get("height")
                     };
                     if (outer.top < inner.top && inner.top + inner.height < outer.top + outer.height
                         && outer.left < inner.left && outer.left + outer.width > inner.left + inner.width) {
                         e2.$el.addClass('dropped-' + e1.cid);
+                        if (!_.contains(e2.droppedElements, e1)) {
+                            e2.droppedElements.push(e1);
+                        }
                         return true;
                     }
+                    else {
+                        e2.droppedElements = _.without(e2.droppedElements, e1);
+                        e2.$el.removeClass('dropped-' + e1.cid);
+                    }
                 }
+                return false;
             },
             // Check if this element could accept drop
             dropDone: function(dev) {

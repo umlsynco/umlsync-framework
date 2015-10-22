@@ -34,10 +34,10 @@ define(['marionette',
                 itemView.onSelect(true);
 			},
             // Droppable
-            draggableElements: [],
+            dragAlsoElements: [],
             draggableConnectors: [],
             onDragDo: function(itemView, ui) {
-                _.each(this.draggableElements, function(element, idx) {
+                _.each(this.dragAlsoElements, function(element, idx) {
                     if (element != itemView)
                         element.onDragDo(ui);
                 });
@@ -49,22 +49,39 @@ define(['marionette',
 				// Skip one select on DND completion
 				this.skipOneSelect = true;
 
-                //this.draggableElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
-                this.draggableElements = new Array();
+                //this.dragAlsoElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
+                this.dragAlsoElements = new Array();
                 this.draggableConnectors = new Array();
                 
                 var queued = new Array();
+                queued.push(itemView.model.cid);
 
                 var that = this;
-                _.each(this.elements.children._views, function(item) {
+                this.elements.children.each(function(item) {
                    if (item != itemView && item.selected) {
-                       that.draggableElements.push(item);
+                       that.dragAlsoElements.push(item);
                        queued.push(item.model.cid);
                    }
                 });
 
-                queued.push(itemView.model.cid);
-                _.each(this.draggableElements, function(element, idx) {
+                // itemView is not a part of drag also
+                // Therefore it is no in the list of dragAlsoElements
+                _.each(itemView.droppedElements, function(e3) {
+                     if (!_.contains(that.dragAlsoElements, e3)) {
+                         that.dragAlsoElements.push(e3);
+                     }
+                });
+
+                // Include all containments
+                _.each(this.dragAlsoElements, function(e2) {
+                     _.each(e2.droppedElements, function(e3) {
+                        if (!_.contains(that.dragAlsoElements, e3)) {
+                            that.dragAlsoElements.push(e3);
+                        }
+                     });
+                });
+
+                _.each(this.dragAlsoElements, function(element, idx) {
                    element.onDragStart(ui);
                 });
 
@@ -83,7 +100,7 @@ define(['marionette',
             onDragStop: function(itemView, ui) {
                 var that = this;
                 // Sync up model on drag stop
-                _.each(this.draggableElements, function(element, idx) {
+                _.each(this.dragAlsoElements, function(element, idx) {
                     element.onDragStop(ui);
                 });
                 // Sync up epoints on drag stop
@@ -96,17 +113,18 @@ define(['marionette',
                 // and which was not drag
                 // Note: as a result do nothing if was dragged all elements
                 //
+                that.dragAlsoElements.push(itemView); // it is not in the list of dragAlsoElements, because it is the list of dragAlsoElements
                 this.elements.children.each(function(itemView2) {
-                    if (!(itemView2 in that.draggableElements)) {
-                        _.each(that.draggableElements, function (droppedElemement) {
+                    if (!(itemView2 in that.dragAlsoElements)) {
+                        _.each(that.dragAlsoElements, function (droppedElemement) {
                             itemView2.dropDone(droppedElemement);
                         });
                     }
                 });
 
-                if (this.draggableElements.length > 0) {
+                if (this.dragAlsoElements.length > 0) {
                     // empty list
-                    this.draggableElements = [];
+                    this.dragAlsoElements = [];
                     this.draggableConnectors = [];
                 }
 
