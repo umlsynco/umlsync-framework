@@ -16,22 +16,17 @@ define(['marionette',
                 this.elements.on("element:resize:stop", _.bind(this.onResizeStop, this));
 
                 this.connectors.on("add:child", _.bind(this.onNewConnector, this));
-                this.elements.on("connector:drag:start", _.bind(this.onConnectorDragStart, this));
-                this.elements.on("connector:drag:do", _.bind(this.onConnectorDragDo, this));
-                this.elements.on("connector:drag:stop", _.bind(this.onConnectorDragStop, this));
+                this.connectors.on("connector:drag:start", _.bind(this.onConnectorDragStart, this));
+                this.connectors.on("connector:drag:do", _.bind(this.onDragDo, this));
+                this.connectors.on("connector:drag:stop", _.bind(this.onConnectorDragStop, this));
 
             },
             onElementAdd: function(element) {
 				this.elements.children.each(function(child) {
-					if (child != element)
+				  if (child != element) {
 					  child.dropDone(element);
+				  }
 				});
-			},
-            onConnectorDragStart: function(conView) {
-			},
-			onConnectorDragDo: function(conView) {
-			},
-			onConnectorDragStop: function(conView) {
 			},
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {
@@ -88,14 +83,64 @@ define(['marionette',
 				// 1. If connector from objinstance then create from port or attach to existing one
 				// 2. if connector dropped on objinstance then crea llport and drop it on
 			},
+            onConnectorDragStart: function(conView, ui) {
+				// Skip one select on DND completion
+				this.skipOneSelect = true;
+                //this.dragAlsoElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
+                this.dragAlsoElements = new Array();
+                this.draggableConnectors = new Array();
+
+                var that = this;
+                this.elements.children.each(function(item) {
+                   if (conView.fromModel == item.model || item.model == conView.toModel) {
+                       that.dragAlsoElements.push(item);
+                       item.onDragStart(ui);
+                   }
+                });
+
+                _.each(this.dragAlsoElements, function(element, idx) {
+                   element.onDragStart(ui);
+                });
+			},
+			onConnectorDragDo: function(conView) {
+				// use common dragDo
+			},
+			onConnectorDragStop: function(conView, ui) {
+				
+				//////////////////////////// COMPLETE DROP OF EACH ELEMENT AND SYNC UP MODELS
+                _.each(this.dragAlsoElements, function(element, idx) {
+                   element.onDragStop(ui);
+                });
+
+                // Sync up epoints on drag stop
+                _.each(this.draggableConnectors, function(connector, idx) {
+					connector.onDragStop(ui);
+				});
+
+                // Refresh droppable relations
+                var that = this;
+                this.elements.children.each(function(itemView2) {
+                    if (!(itemView2 in that.dragAlsoElements)) {
+                        _.each(that.dragAlsoElements, function (droppedElemement) {
+                            itemView2.dropDone(droppedElemement);
+                        });
+                    }
+                });
+
+                this.dragAlsoElements = new Array();
+                this.draggableConnectors = new Array();
+			},
             // Droppable
             dragAlsoElements: [],
             draggableConnectors: [],
             onDragDo: function(itemView, ui) {
+				if (ui && ui.x)
+				  $.log("DRAG DO " + ui.x + " Y: " + ui.y);
                 _.each(this.dragAlsoElements, function(element, idx) {
                     if (element != itemView)
                         element.onDragDo(ui);
                 });
+
                 _.each(this.draggableConnectors, function(connector, idx) {
 					connector.onDragDo(ui);
 				});

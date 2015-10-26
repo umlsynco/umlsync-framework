@@ -99,8 +99,9 @@ define(['marionette', './umldiagram'],
 
                 this.eppos = 0; // Modify an existing point
                 this.epoints[this.eppos] = {x: x1, y: y1};
+                this.drag_start = {x: x1, y: y1};
 
-                this.trigger("drag:start", this.epoints[this.eppos]);
+                this.trigger("drag:start", {left:0, top:0});
                 return true;
             },
             //
@@ -120,7 +121,8 @@ define(['marionette', './umldiagram'],
                 if (modelToUpdate) {
                     modelToUpdate.set(this.epoints[this.eppos]);
                 }
-                this.trigger("drag:stop", this.epoints[this.eppos]);
+                // There is no way to DND connector in a horizontal way
+                this.trigger("drag:stop", {left: 0, top: y1 - this.drag_start.y});
                 this.eppos = undefined;
             },
 
@@ -139,7 +141,9 @@ define(['marionette', './umldiagram'],
                     else {
                         this.model.umlepoints.add(this.epoints[this.eppos]);
                     }
-                    this.trigger("drag:do", this.epoints[this.eppos]);
+                    $.log("TRANSFORM TO !!");
+                    // only vertical transform available !!!
+                    this.trigger("drag:do", {left: 0, top: y1 - this.drag_start.y});
                 }
             }
 

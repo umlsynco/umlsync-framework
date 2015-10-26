@@ -79,9 +79,21 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 this.start_operation = {left: this.model.get("left"), top: this.model.get("top")};
             },
             onDragDo: function(ui) {
+				if (this.axis == "x") {
+					ui.top = 0;
+				}
+				else if (this.axis == "y1") {
+					ui.left = 0;
+				}
                 this.$el.css({'left':this.start_operation.left + ui.left + "px", 'top':this.start_operation.top + ui.top + "px"});
             },
             onDragStop: function(ui) {
+				if (this.axis == "x") {
+					ui.top = 0;
+				}
+				else if (this.axis == "y1") {
+					ui.left = 0;
+				}
                 var pos = {'left':this.start_operation.left + ui.left, 'top':this.start_operation.top + ui.top};
                 this.$el.css(pos);
                 this.model.set(pos);
