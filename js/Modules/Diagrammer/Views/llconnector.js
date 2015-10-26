@@ -100,6 +100,7 @@ define(['marionette', './umldiagram'],
                 this.eppos = 0; // Modify an existing point
                 this.epoints[this.eppos] = {x: x1, y: y1};
 
+                this.trigger("drag:start", this.epoints[this.eppos]);
                 return true;
             },
             //
@@ -119,7 +120,7 @@ define(['marionette', './umldiagram'],
                 if (modelToUpdate) {
                     modelToUpdate.set(this.epoints[this.eppos]);
                 }
-
+                this.trigger("drag:stop", this.epoints[this.eppos]);
                 this.eppos = undefined;
             },
 
@@ -138,6 +139,7 @@ define(['marionette', './umldiagram'],
                     else {
                         this.model.umlepoints.add(this.epoints[this.eppos]);
                     }
+                    this.trigger("drag:do", this.epoints[this.eppos]);
                 }
             }
 

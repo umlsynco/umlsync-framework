@@ -7,13 +7,32 @@ define(['marionette',
                 this.elements = options.view.elementsView;
                 this.connectors = options.view.connectorsView;
                 this.model = options.model;
-                this.connectors.on("add:child", _.bind(this.onNewConnector, this));
+
+                this.elements.on("add:child", _.bind(this.onElementAdd, this));
                 this.elements.on("element:select", _.bind(this.onElementSelect, this));
                 this.elements.on("element:drag:start", _.bind(this.onDragStart, this));
                 this.elements.on("element:drag:do", _.bind(this.onDragDo, this));
                 this.elements.on("element:drag:stop", _.bind(this.onDragStop, this));
                 this.elements.on("element:resize:stop", _.bind(this.onResizeStop, this));
+
+                this.connectors.on("add:child", _.bind(this.onNewConnector, this));
+                this.elements.on("connector:drag:start", _.bind(this.onConnectorDragStart, this));
+                this.elements.on("connector:drag:do", _.bind(this.onConnectorDragDo, this));
+                this.elements.on("connector:drag:stop", _.bind(this.onConnectorDragStop, this));
+
             },
+            onElementAdd: function(element) {
+				this.elements.children.each(function(child) {
+					if (child != element)
+					  child.dropDone(element);
+				});
+			},
+            onConnectorDragStart: function(conView) {
+			},
+			onConnectorDragDo: function(conView) {
+			},
+			onConnectorDragStop: function(conView) {
+			},
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {
 				// Skip selection DND completion
@@ -122,7 +141,7 @@ define(['marionette',
                 });
 
                 // Trigger drag start
-                _.each(this.connectors.children._views, function(connector, idx) {
+                this.connectors.children.each(function(connector, idx) {
 					if (queued.indexOf(connector.fromModel.cid) >= 0
 					  && queued.indexOf(connector.toModel.cid) >= 0) {
 				      // Connector drag start
