@@ -5,6 +5,11 @@ define(['marionette', './umldiagram'],
             // @description - helper method to get all connection points
             //
             '_getConnectionPoints': function(fromId, toId, epoints) {
+                // No reason to update parameters on DND
+                if (this.dragdo) {
+                    return this.drag_points;
+                }
+                
                 var p1 = $('#'+ fromId).position();
 
                 var p2 = $('#' + toId).position();

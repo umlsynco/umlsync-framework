@@ -32,7 +32,6 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             droppable: false,
             // List of elements which can be dropped on this one
             acceptDrop: [],
-            //
             droppedElements: [],
             _checkRelation: function(e1, e2) {
                 // e1 could be dropped on e2

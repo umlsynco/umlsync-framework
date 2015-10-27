@@ -22,11 +22,24 @@ define(['marionette',
 
             },
             onElementAdd: function(element) {
+				// Do nothing for the temporary elements (DND)
+				if (element.model.get("temporary")) return;
+				// avoid iteration for the not droppable elements
+				if ((!element.droppable) && (element.acceptDrop.length == 0)) return;
+
+				if (element.droppedElements.length >0)
+				  //TODO: Work-around. There is no way to get dropped elements before new element creation
+				  //      but somhow it is not empty. Most likely it is an issue of backbone or marionette
+				  element.droppedElements = new Array();
+
 				this.elements.children.each(function(child) {
 				  if (child != element) {
 					  child.dropDone(element);
 				  }
 				});
+
+				if (element.droppedElements.length >0)
+  				    $.log("NAME: " + element.model.get("type"));
 			},
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {
@@ -84,9 +97,6 @@ define(['marionette',
 				// 2. if connector dropped on objinstance then crea llport and drop it on
 			},
             onConnectorDragStart: function(conView, ui) {
-				// Skip one select on DND completion
-				this.skipOneSelect = true;
-                //this.dragAlsoElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
                 this.dragAlsoElements = new Array();
                 this.draggableConnectors = new Array();
 
@@ -156,11 +166,19 @@ define(['marionette',
                 var queued = new Array();
                 queued.push(itemView.model.cid);
 
-                var that = this;
+                var that = this,
+                isObjInstance = itemView.model.get("type") == "objinstance",
+                isLlport =  itemView.model.get("type") == "llport";
+                
+                
                 this.elements.children.each(function(item) {
                    if (item != itemView && item.selected) {
-                       that.dragAlsoElements.push(item);
-                       queued.push(item.model.cid);
+					        
+					   if ((isLlport && item.model.get("type") == "llport")
+					     || (isObjInstance && item.model.get("type") != "llport")) {
+                         that.dragAlsoElements.push(item);
+                         queued.push(item.model.cid);
+					 }
                    }
                 });
 
@@ -171,6 +189,48 @@ define(['marionette',
                          that.dragAlsoElements.push(e3);
                      }
                 });
+                
+                if (isLlport) {
+					var secondStageModels = new Array();
+					// Check outgoing connectors
+                    this.connectors.children.each(function(connector, idx) {
+	    				if (connector.fromModel == itemView.model) {
+							secondStageModels.push(connector.toModel);
+						}
+						else if (connector.toModel == itemView.model) {
+							secondStageModels.push(connector.fromModel);
+						}
+					});
+					$.log("OUTGOING: " + secondStageModels.length);
+					if (secondStageModels.length > 0) {
+						var nextStageModels = new Array();
+						_.each(secondStageModels, function(m4) {
+							var hasMoreConnectors = false;
+						   that.connectors.children.each(function(c4) {
+							   if ((c4.fromModel == m4 && c4.toModel != itemView.model)
+							     || (c4.toModel == m4 && c4.fromModel != itemView.model)) {
+							     hasMoreConnectors = true;
+							   }
+						   });
+						   if (!hasMoreConnectors) {
+							   nextStageModels.push(m4);
+						   }
+					   });
+
+ 					   that.elements.children.each(function(e4) {
+						   _.each(nextStageModels, function(ns) {
+							   if (e4.model == ns) {
+								   if (!_.contains(that.dragAlsoElements, e4)) {
+								     that.dragAlsoElements.push(e4);
+								     queued.push(e4.model.cid);
+								   }
+							   }
+						   });
+					   });
+
+					}
+					
+				}
 
                 // Include all containments
                 _.each(this.dragAlsoElements, function(e2) {

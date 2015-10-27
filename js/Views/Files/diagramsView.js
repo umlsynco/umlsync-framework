@@ -149,6 +149,7 @@ define(
                 if (data.source == "diagram-menu") {
                     if (this.modelDiagram.getUmlElements) {
                         var elements = this.modelDiagram.getUmlElements();
+                        data.context.set({left:200, top: 5});
                         elements.add(data.context);
                     }
 
