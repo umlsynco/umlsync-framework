@@ -162,6 +162,13 @@ define(['marionette',
                 //this.dragAlsoElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
                 this.dragAlsoElements = new Array();
                 this.draggableConnectors = new Array();
+
+                // Do not support drag also for the not dropped connector
+                if (itemView.model.get("type") == "llport" && itemView.dropParent == null) {
+					// Emulate element select, to prevent wrong expectation from user
+					this.onElementSelect(itemView, {ctrlKey:false});
+					return;
+				}
                 
                 var queued = new Array();
                 queued.push(itemView.model.cid);

@@ -28,6 +28,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             modelEvents: {
                "change": "modelChanged"
             },
+            // To prevent extra JS class creation, declare this field
+            dropParent: null,
             // Indicates if it is possible to drop one element on another
             droppable: false,
             // List of elements which can be dropped on this one
@@ -81,7 +83,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 				if (this.axis == "x") {
 					ui.top = 0;
 				}
-				else if (this.axis == "y1") {
+				else if (this.axis == "y") {
 					ui.left = 0;
 				}
                 this.$el.css({'left':this.start_operation.left + ui.left + "px", 'top':this.start_operation.top + ui.top + "px"});
@@ -90,7 +92,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 				if (this.axis == "x") {
 					ui.top = 0;
 				}
-				else if (this.axis == "y1") {
+				else if (this.axis == "y") {
 					ui.left = 0;
 				}
                 var pos = {'left':this.start_operation.left + ui.left, 'top':this.start_operation.top + ui.top};
