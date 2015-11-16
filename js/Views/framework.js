@@ -1,11 +1,9 @@
 define(['marionette',
         'Collections/dataProviderCollection',
-        'Controllers/DiagramMenuController',
         'Controllers/NewDocumentController',
-        'Controllers/ContextMenuRegistry',
-        'Modules/Diagrammer/Views/contextmenu'
+        'Controllers/ContextMenuRegistry'
         ],
-    function(Marionette, DataProviderCollection, DiagramMenu, NewDocumentDialog, ContextMenuRegistry, DiagramCtxMenu) {
+    function(Marionette, DataProviderCollection, NewDocumentDialog, ContextMenuRegistry, DiagramCtxMenu) {
 
 $.log = function(message) {
 	if (window.console) console.log(message);
@@ -14,18 +12,18 @@ $.log = function(message) {
     var Framework = new Marionette.Application({
         contentTypeViews: {},
         dataProviders: new DataProviderCollection(),
+        //
+        // @param options - the list of options for the content type
+        // @param options.controller - action controller :
+        //        { onRegister: function({framework: null}) {},
+        //          onActivate: function() { }
+        //        }
+        //
         registerContentTypeView : function (options) {
           this.contentTypeViews[options.type] = options;
 
-          if (this.diagramMenu == undefined) {
-			  this.diagramMenu = new DiagramMenu({Framework:this});
-			  this.DiagramMenuRegion.show(this.diagramMenu.getDialog(), {forceShow: true});
-			  this.diagramMenu.hide();
-			  
-			  // TODO: Think if we really need this callback !!!
-			  this.diagramMenu.on("add:accordion", function(regionId) {
-				  //alert("Handle new item added to the diagram menu !!!");
-			  });
+          if (options.controller && options.controller.onRegister) {
+			  options.controller.onRegister({framework:this});
 		  }
 
 		  if (this.newDocController == undefined) {
@@ -54,7 +52,10 @@ $.log = function(message) {
 
                     var model2 = model || {title: "selected nothing"};
                     // Load the diagram menu element
- 				    that.diagramMenu.getDialog().addAccordionItem(model2);
+                    var stype = model2.get("contentType");
+                    if (stype && that.contentTypeViews[stype].controller && that.contentTypeViews[stype].controller.onRequest) {
+						that.contentTypeViews[stype].controller.onRequest(model2);
+				    }
 
 
                     if (!model.absPath) {
@@ -76,15 +77,10 @@ $.log = function(message) {
 		  }
         },
         getContentTypeView : function (id) {
-		  if (id == "diagram") {
-			  this.diagramMenu.show();
-			  if (!this.dctx) {
-				  this.dctx = new DiagramCtxMenu({registry:this.ContextMenuRegistry});
-			  }
+		  if (this.contentTypeViews[id].controller && this.contentTypeViews[id].controller.onActivate) {
+			  this.contentTypeViews[id].controller.onActivate({contextMenuRegistry:this.ContextMenuRegistry});
 		  }
-		  else {
-			  this.diagramMenu.hide();
-		  }
+		  
           return this.contentTypeViews[id].classPrototype;
         },
 

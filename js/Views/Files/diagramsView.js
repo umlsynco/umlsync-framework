@@ -6,9 +6,10 @@ define(
      'Modules/Diagrammer/Controllers/OperationManager',
      'Modules/Diagrammer/Controllers/ElementDropController',
      'Modules/Diagrammer/Controllers/SequenceElementDropController',
-     'Modules/Diagrammer/Views/umldiagram'
+     'Modules/Diagrammer/Views/umldiagram',
+     'Controllers/DiagramMenuController'
     ],
-    function (Backbone, Framework, ContentModel, Diagram, OperationManager, ElementDropController, SequenceElementDropController, UmlDiagram) {
+    function (Backbone, Framework, ContentModel, Diagram, OperationManager, ElementDropController, SequenceElementDropController, UmlDiagram, DiagramMenuController) {
         var diagramView = Backbone.Marionette.ItemView.extend({
 			//
 			// Pre-load of elements
@@ -265,10 +266,14 @@ define(
 			}
         });
 
+        
+        var controller = new DiagramMenuController();
+
         Framework.registerContentTypeView({
             type: 'diagram',
             classPrototype:diagramView,
-            extensions:"UMLSYNC,US.SVG"
+            extensions:"UMLSYNC,US.SVG",
+            controller: controller
         });
 
         return diagramView;
