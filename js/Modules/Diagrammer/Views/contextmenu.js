@@ -62,7 +62,7 @@ define([
                         that.loading = false;
                     },
                     error: function() {
-                        alert("Context menu desctiption dowload failed !!!");
+                        alert("Failed to AJAX context menu description!");
                         that.loadfailed = true;
                         that.loading = false;
                     }

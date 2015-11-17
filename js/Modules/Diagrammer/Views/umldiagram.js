@@ -124,6 +124,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         return helperItemView;
 
                     }});
+
         //
         // @description - icon menu connection helper
         //
@@ -755,7 +756,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 //
                 // INITIALIZE ELEMENTS
                 //
-                this.elementsView = new  Backbone.Marionette.ElementsView({collection:this.model.umlelements});
+                this.elementsView = new  Backbone.Marionette.ElementsView({collection:this.model.umlelements,
+					childViewOptions: {
+                        parent: this
+					}
+				});
+
                 this.elementsView.render();
                 this.$el.append(this.elementsView.$el);
 
@@ -772,14 +778,15 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 //
                 this.connectorsView = new Backbone.Marionette.ConnectorsView({collection:this.model.umlconnectors,
                     childViewOptions: {
-                        elements:this.model.umlelements
+                        elements:this.model.umlelements,
+                        parent: this
                     }
                 });
 
                 this.connectorsView.render();
                 this.$el.append(this.connectorsView.$el);
                 
-                this.connectorsView.on("connector:changed", _.bind(this.drawConnectors, this));
+                this.connectorsView.on("connector:changed", redrawer);
 
                 //
                 // INITIALIZE CANVAS
@@ -803,7 +810,23 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 var views = this.connectorsView.children._views;
                 this.connectorsView.ctx = this.ctx;
                 this.connectorsView.triggerCustomEvent("redraw", this.ctx);
-            }
+            },
+            
+            //
+            // @description - remove element logic
+            //
+            removeElement: function(view) {
+				var mid = view.model, that = this;
+				this.connectorsView.children.each(function(connector, idx, collection) {
+					if (connector.fromModel == mid || connector.toModel == mid) {
+						that.connectorsView.collection.remove(connector.model);
+					}
+				});
+				this.elementsView.collection.remove(view.model);
+
+                // re-draw connectors
+				this.drawConnectors();
+			}
         });
         return DiagramView;
     });

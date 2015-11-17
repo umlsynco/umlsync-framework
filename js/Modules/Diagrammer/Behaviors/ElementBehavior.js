@@ -22,7 +22,7 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     e.preventDefault();
                     // Load and show the context menu for the diagram
                     // [TODO]: Do we need to split "edit/view" states ?
-                    Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view}});
+                    Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view, diagram: view.options.parent}});
                 })
                 .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
                 .resizable({
@@ -66,7 +66,6 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                         view.trigger("drag:start", ui);
                     },
                     'drag': function (event, ui) {
-                        $.log("AXIS IS: " + view.axis);
                         view.trigger("drag:do", {left: (view.axis == "y") ? 0 : ui.position.left - view.operation_start.left, top: (view.axis == "x") ? 0 : ui.position.top - view.operation_start.top});
                     },
                     'stop': function (event, ui) {
