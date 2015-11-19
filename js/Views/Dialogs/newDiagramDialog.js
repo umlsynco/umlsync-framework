@@ -98,9 +98,10 @@ define([
 					}
 				});
 				//var collection = this.collection;
-				//this.collection.on("change:isActive", function(model) {
-                //   // collection.each(
-				//});
+				this.contentTypeList.collection.on("change:isActive", function(model) {
+                   that.ui.abspath.val("/" + model.get("id"));
+                   that.ui.abspath.trigger("keyup");
+				});
 			},
 			onCreateButtonClick: function(button) {
 				// handle dialog completion

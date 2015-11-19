@@ -34,12 +34,18 @@ define(['marionette',
 
 				this.elements.children.each(function(child) {
 				  if (child != element) {
-					  child.dropDone(element);
+					  element.dropDone(child);
 				  }
 				});
 
-				if (element.droppedElements.length >0)
+				if (element.droppedElements.length >0) {
   				    $.log("NAME: " + element.model.get("type"));
+  				}
+  				else if (element.model.get("type") == "llport") {
+					if (element.dropParent == null) {
+						element.model.collection.add(new Backbone.DiagramModel({name:"Class2",type:"objinstance", left: (element.model.get("left") - 100), "width":150, "height": 250}));
+					}
+				}
 			},
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {

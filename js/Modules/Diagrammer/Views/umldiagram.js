@@ -76,6 +76,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             modelChanged: function() {
                 this.$el.css({left: this.model.get("left"), top: this.model.get("top")});
             },
+            // Initial value of the start operation object
+            start_operation: null,
             onDragStart: function(ui) {
                 this.start_operation = {left: this.model.get("left"), top: this.model.get("top")};
             },
@@ -88,6 +90,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 				}
                 this.$el.css({'left':this.start_operation.left + ui.left + "px", 'top':this.start_operation.top + ui.top + "px"});
             },
+            //
             onDragStop: function(ui) {
 				if (this.axis == "x") {
 					ui.top = 0;
@@ -98,6 +101,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 var pos = {'left':this.start_operation.left + ui.left, 'top':this.start_operation.top + ui.top};
                 this.$el.css(pos);
                 this.model.set(pos);
+                // Drop the start operation object values
+                delete this.start_operation;
+                this.start_operation = null;
             },
             selected: false,
             onSelect: function(flag) {
