@@ -648,6 +648,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                             this.selectedConnector = undefined;
                         }
                     },
+                    highlighted: null,
+                    selectedConnector: null,
                     isPointOnLine: function(x, y) {
                         var diag = this;
                         var shouldRedraw = false;
@@ -665,8 +667,13 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                                 var result = child.isPointOnLine(x,y);
                                 if (result == true) {
                                     child.isMouseOver = true;
-                                    diag.trigger("connector:changed");
-                                    return true;
+                                    shouldRedraw = diag.highlighted != child;
+                                    // Looks strupid because of the else if above
+                                    // But actually this case handles use-case of crossing of the several connectors
+                                    // So, if user point on the cross-lines then it should get hilighted the latest added connector
+                                    if (shouldRedraw && diag.highlighted)
+                                        diag.highlighted.isMouseOver = false;
+                                    diag.highlighted = child;
                                 }
                                 else if (child.isMouseOver) {
                                     child.isMouseOver = false;
@@ -675,6 +682,11 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                                 }
                             }
                         });
+
+                        // Check if connector is not highlighted anymore
+                        if (diag.highlighted && !diag.highlighted.isMouseOver) {
+							diag.highlighted = null;
+						}
                         if (shouldRedraw == true) {
                             diag.trigger("connector:changed");
                         }
@@ -732,13 +744,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                           }
                         })
                         .bind('contextmenu', function(e) {
-                          $.log("CONTEXT MENU PRESSED !!!");
-                          if (diag.selectedconntector && diag.menuCtx) {
-                            diag.menuCtx['hideAll']();
-                            diag.menuCtx['visit'](diag.selectedconntector, e.pageX , e.pageY);
-                            e.preventDefault();
-                            diag.multipleSelection = true; // work around to hide connector selection on click
-                          }
+                          
+                          if (diag.highlighted) {
+							  $.log("CONTEXT MENU PRESSED !!!");
+							  window.Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:diag.highlighted, diagram: view.options.parent}});
+							  e.preventDefault();
+						  }
                         });
                     }
         });
