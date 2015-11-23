@@ -46,7 +46,7 @@
     "fields": [
         {
             "title": "Remove",
-            "command": "diagram:common:remove"
+            "command": "diagram:connector:remove"
         },
         {
             "title": "Add Label",
@@ -54,7 +54,7 @@
         },
         {
             "title": "Edit",
-            "command": "diagram:common:edit"
+            "command": "diagram:connector:edit"
         }
     ]
   },

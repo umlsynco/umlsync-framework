@@ -1,32 +1,31 @@
-/**
-  *   Class: context menu for all connectors
-  * 
-  */
-//@aspect
-(function( $, dm, undefined ) {
+define(['marionette'],
+    function(Marionette) {
+        var Framework;
+        var Controller = Marionette.Controller.extend({
+            initialize: function (options) {
+                Framework = options.Framework;
+                if (Framework) {
+                    Framework.vent.on("diagram:connector:addlabel", _.bind(this.addLabel, this));
+                    Framework.vent.on("diagram:connector:remove", _.bind(this.onRemove, this));
+                    
+				}
+            },
+            onRemove: function(data) {
+				if (data.context.view && data.context.diagram) {
+					// Remove element via diagram's method
+					// It should support operation manager (Ctrl-Z/Y)
+					data.context.diagram.removeElement(data.context.view, true);
+				}
+			},
+            addLabel: function(data) {
+				var model = data.context.view.model;
+				if (model && model.getUmlLabels) {
+				   var ls = model.getUmlLabels();
+				   ls.add({name:"new text"});
+			    }
+			}
+        });
 
-dm.ms.ctx['connector'] = function(menuBuilder) {
-  return new dm.ms.ctx.common(menuBuilder, {id: "connector", uid:"connectorEUI"}, [
-           {
-                title: 'Add "Text"',
-                click: function(connector, x, y) {
-                  if (connector.addLabel) {
-                    connector.addLabel({text:"Text", left:x, top:y});
-                  }                  
-                }
-            },
-            {
-                title: 'Remove',
-                click: function(connector) {  // connector is the jquery obj clicked on when context menu launched
-                  connector.parrent.removeConnectorById(connector.euid);
-                }
-            },
-            {
-                title: 'Edit',
-                click: function(connector) {  // connector is the jquery obj clicked on when context menu launched
-                }
-            }
-        ]);
-};
-//@aspect
-})(jQuery, dm);
+        return Controller;
+    }
+);

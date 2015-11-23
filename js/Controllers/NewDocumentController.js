@@ -10,14 +10,14 @@ define(['marionette',
             },
             getDialog: function(options) {
                 this.dialog.dataProvider = options.dataprovider;
-				return this.dialog;
-			},
-			show: function() {
-			    $(this.dialog.$el).show();
-			},
-			hide: function() {
-				//$(this.dialog.$el).hide();
-			}
+                return this.dialog;
+            },
+            show: function() {
+                $(this.dialog.$el).show();
+            },
+            hide: function() {
+                //$(this.dialog.$el).hide();
+            }
         });
 
         return Controller;

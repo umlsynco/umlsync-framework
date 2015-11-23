@@ -14,23 +14,24 @@ define([
                 'click': "itemclick"
             }
         });
+
         // Context menu list
         var contextMenu = Marionette.CollectionView.extend({
-                                 tagName: 'ul',
-                                 childView: contextItemView,
-                                 childEvents: {
-                                     "itemclick": function(view, vm) {
-                                         if (!Framework) Framework = require('Views/framework');
-                                         if (vm.model.get("command"))
-                                           Framework.vent.trigger(vm.model.get("command"), this.options.controller.cachedData);
-                                         $(document).trigger("click");
-                                     }
-                                 },
-                                 className: 'context-menu',
-                                 onRender: function() {
-                                     this.$el.show();
-                                 }
-                          });
+            tagName: 'ul',
+            childView: contextItemView,
+            childEvents: {
+                "itemclick": function(view, vm) {
+                    if (!Framework) Framework = require('Views/framework');
+                    if (vm.model.get("command"))
+                        Framework.vent.trigger(vm.model.get("command"), this.options.controller.cachedData);
+                        $(document).trigger("click");
+                    }
+                },
+                className: 'context-menu',
+                    onRender: function() {
+                        this.$el.show();
+                    }
+        });
 
         // Content select dialog
         var ContextMenuView = Marionette.Controller.extend({
@@ -78,9 +79,12 @@ define([
                 // get element type from model
                 // or select subtype directly for the fieds ctx menu
                 var subtype = data.subtype;
-                if (!subtype && data.context && data.context.view && data.context.view.model) {
+                if (!data.context.isConnector && !subtype && data.context && data.context.view && data.context.view.model) {
                     subtype = data.context.view.model.get("type");
-                } 
+                }
+                if (data.context.isConnector) {
+					subtype = "connector";
+				}
                 // can not detect the subtype of the element !!!
                 if (!subtype) return;
                 

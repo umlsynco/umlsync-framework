@@ -1,4 +1,4 @@
-define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Backbone, Marionette, ui, Framework) {
+define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, ui) {
 
     var WrapDraggableResizable = Marionette.Behavior.extend({
         onRender: function () {
@@ -22,7 +22,9 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     e.preventDefault();
                     // Load and show the context menu for the diagram
                     // [TODO]: Do we need to split "edit/view" states ?
-                    Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view, diagram: view.options.parent}});
+                    var diagram = view.options.parent;
+                    if (diagram)
+                        diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view, diagram: view.options.parent}});
                 })
                 .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
                 .resizable({
@@ -141,7 +143,9 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
                     view.trigger("select", event);
 
                     // Trigger show or hide icon menu !!!
-                    Framework.vent.trigger("diagram:iconmenu:show", view);
+                    var diagram = view.options.parent;
+                    if (diagram)
+                        diagram.vent.trigger("diagram:iconmenu:show", view);
                     //event.stopPropagation();
                 })
                 .mouseenter(view, function (event){

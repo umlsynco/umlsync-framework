@@ -10,10 +10,14 @@ define(
      'Controllers/DiagramMenuController'
     ],
     function (Backbone, Framework, ContentModel, Diagram, OperationManager, ElementDropController, SequenceElementDropController, UmlDiagram, DiagramMenuController) {
+        //
+        // This class is responsible for the tab which contain diagram
+        // It should handle concreate instance of the diagram
+        //
         var diagramView = Backbone.Marionette.ItemView.extend({
-			//
-			// Pre-load of elements
-			//
+            //
+            // Pre-load of elements
+            //
             initialize: function () {
                 this.model.on('change:status', this.render);
                 // TODO: handle the lazy load of these modules
@@ -100,7 +104,7 @@ define(
                     });
 
                     // Create the diagram view from the model and append to the current view
-                    this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager});
+                    this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager, vent: Framework.vent});
                     this.UD.render();
                     this.$el.append(this.UD.$el);
 
@@ -111,11 +115,11 @@ define(
                     // Sequence diagram has complex behavior which is out of scope of diagram types
                     //
                     if (this.modelDiagram.get("type") == "sequence") {
-						this.dropController = new SequenceElementDropController({view:this.UD, model: this.modelDiagram});
-					}
-					else {
-						this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
-					}
+                        this.dropController = new SequenceElementDropController({view:this.UD, model: this.modelDiagram});
+                    }
+                    else {
+                        this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
+                    }
 
                 }
                 else {
@@ -128,17 +132,17 @@ define(
             // Ctrl-Z
             //
             handleUndoOperation: function() {
-    				if (this.operationManager)
-				  this.operationManager.undo();
-			},
+                    if (this.operationManager)
+                  this.operationManager.undo();
+            },
 
             //
             // Ctrl-Y
             //
             handleRedoOperation: function() {
-				if (this.operationManager)
-				  this.operationManager.redo();
-			},
+                if (this.operationManager)
+                  this.operationManager.redo();
+            },
 
             //
             // Handle content past from different sources:
@@ -231,17 +235,17 @@ define(
 
 
                            if (!mmm.get("id")) {
-							   alert("Unexpected error: uml element didn't get 'id' before connector creation !");
-						   }
+                               alert("Unexpected error: uml element didn't get 'id' before connector creation !");
+                           }
                            connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id"), epoints: [], labels: []}));
 
                            // TODO: Drop debug output one day
                            /*alert("elements: " + elements.length + "   connectors: " + connectors.length);
                            if (elements.length == 5) {
-							    for (var r =0 ; r< elements.length; ++r) {
-									alert("Element[" + r + "] = "  + elements.at(r).get("id"));
-								}
-						   }*/
+                                for (var r =0 ; r< elements.length; ++r) {
+                                    alert("Element[" + r + "] = "  + elements.at(r).get("id"));
+                                }
+                           }*/
                         }
                         
                     }
@@ -258,12 +262,12 @@ define(
             //  Sync-up diagram model and content tracker
             //
             syncUpBeforeClose: function() {
-				if (this.model.get("isModified")) {
-					var text = this.modelDiagram.getDescription("");
-					alert(text);
-					this.model.set("modifiedContent", text);
-			    }
-			}
+        if (this.model.get("isModified")) {
+                    var text = this.modelDiagram.getDescription("");
+        //        alert(text);
+            this.model.set("modifiedContent", text);
+        }
+            }
         });
 
         

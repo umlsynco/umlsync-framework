@@ -82,22 +82,22 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 this.start_operation = {left: this.model.get("left"), top: this.model.get("top")};
             },
             onDragDo: function(ui) {
-				if (this.axis == "x") {
-					ui.top = 0;
-				}
-				else if (this.axis == "y") {
-					ui.left = 0;
-				}
+                if (this.axis == "x") {
+                    ui.top = 0;
+                }
+                else if (this.axis == "y") {
+                    ui.left = 0;
+                }
                 this.$el.css({'left':this.start_operation.left + ui.left + "px", 'top':this.start_operation.top + ui.top + "px"});
             },
             //
             onDragStop: function(ui) {
-				if (this.axis == "x") {
-					ui.top = 0;
-				}
-				else if (this.axis == "y") {
-					ui.left = 0;
-				}
+                if (this.axis == "x") {
+                    ui.top = 0;
+                }
+                else if (this.axis == "y") {
+                    ui.left = 0;
+                }
                 var pos = {'left':this.start_operation.left + ui.left, 'top':this.start_operation.top + ui.top};
                 this.$el.css(pos);
                 this.model.set(pos);
@@ -107,15 +107,15 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             },
             selected: false,
             onSelect: function(flag) {
-				if (this.selected == flag) return;
-				this.selected = flag;
-				if (flag) {
-					this.$el.addClass("us-selected");
-				}
-				else {
-					this.$el.removeClass("us-selected");
-				}
-			}
+                if (this.selected == flag) return;
+                this.selected = flag;
+                if (flag) {
+                    this.$el.addClass("us-selected");
+                }
+                else {
+                    this.$el.removeClass("us-selected");
+                }
+            }
         });
         
         
@@ -389,7 +389,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             // @description - add extra points for the connector
             //
             startTransform: function(x1,y1) {
-				$.log("START TRANSFORM !! " + x1 + " Y " + y1);
+                $.log("START TRANSFORM !! " + x1 + " Y " + y1);
 //              if (!this.parrent.options.editable)
 //                return;
 
@@ -407,7 +407,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
               //                      lines between elements.
               //                      It is single extra point which should be removed on next DND
               if ((this.cleanOnNextTransform) && (this.epoints.length == 1)) {
-				  $.log("START TRANSFORM !! clean point on next transformation");
+                  $.log("START TRANSFORM !! clean point on next transformation");
                 this.cleanOnNextTransform = false;
                 this.eppos = 0; // Modify an existing point
                 this.epoints[this.eppos] = {x:x1, y:y1};
@@ -425,11 +425,11 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                           break;
                       }
                   }
-			  }
+              }
 
               // Don't need to identify position
               if (this.epoints.length == 0) {
-				  $.log("START TRANSFORM !! no points at all");
+                  $.log("START TRANSFORM !! no points at all");
                   // in array for the first element
                   this.eppos = 0;
                   this.epoints[0] = {x:x1,y:y1};
@@ -464,9 +464,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 //              opman.reportStart(this.report, this.euid, {idx: this.eppos, value: [x,y]});
 
              if (this.eppos == undefined) {
-				 alert("An absolutely UNEXPECTED STATE !!!");
-				 return false;
-			 }
+                 alert("An absolutely UNEXPECTED STATE !!!");
+                 return false;
+             }
 
               this.epoints[this.eppos].x = x1;
               this.epoints[this.eppos].y = y1;
@@ -480,9 +480,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             // @description - stop extra points adding
             //
             stopTransform: function(x1,y1) {
-				$.log("STOP TRANSFORM !! " + x1 + " Y " + y1);
+                $.log("STOP TRANSFORM !! " + x1 + " Y " + y1);
               if (this.eppos == undefined) {
-				alert("STOP CONNECTORS TRANSFORM WITHOU EPOINT ?");
+                alert("STOP CONNECTORS TRANSFORM WITHOU EPOINT ?");
                 return;
               }
               var x = x1 + this.$el.parent().scrollLeft(),
@@ -568,7 +568,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             },
             
             TransformTo: function(x1,y1) {
-//				$.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
+//                $.log("TRANSFORM !! " + x1 + " Y " + y1 + " EPOS : " + this.eppos);
               if (this.eppos != undefined) {
                 var x =  x1 + this.$el.parent().scrollLeft(),
                 y = y1 + this.$el.parent().scrollTop();
@@ -637,8 +637,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         this.children.each(function(child) {
                             if (child.isMouseOver == true) {
                                 if (child.startTransform(x,y)) {
-									diag.selectedConnector = child;
-								};
+                                    diag.selectedConnector = child;
+                                };
                             }
                         }); // each
                     }, 
@@ -685,8 +685,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 
                         // Check if connector is not highlighted anymore
                         if (diag.highlighted && !diag.highlighted.isMouseOver) {
-							diag.highlighted = null;
-						}
+                            diag.highlighted = null;
+                        }
                         if (shouldRedraw == true) {
                             diag.trigger("connector:changed");
                         }
@@ -746,10 +746,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         .bind('contextmenu', function(e) {
                           
                           if (diag.highlighted) {
-							  $.log("CONTEXT MENU PRESSED !!!");
-							  window.Framework.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:diag.highlighted, diagram: view.options.parent}});
-							  e.preventDefault();
-						  }
+                              var diagram = diag.highlighted.options.parent;
+                              if (diagram) {
+                                  diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:diag.highlighted, diagram: diagram, isConnector: true}});
+                                  e.preventDefault();
+                              }
+                          }
                         });
                     }
         });
@@ -762,7 +764,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                     cid: this.model.cid
                 }
             },
+            //
+            // Take platform vent or create a new one
+            //
+            vent: null,
             initialize: function(options, attr) {
+                this.vent = options.vent || _.extend({}, Backbone.Events);
                 if (attr && attr.singleCanvas) {
                     // TODO: handle embedded content
                 }
@@ -774,10 +781,10 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 // INITIALIZE ELEMENTS
                 //
                 this.elementsView = new  Backbone.Marionette.ElementsView({collection:this.model.umlelements,
-					childViewOptions: {
+                    childViewOptions: {
                         parent: this
-					}
-				});
+                    }
+                });
 
                 this.elementsView.render();
                 this.$el.append(this.elementsView.$el);
@@ -828,22 +835,22 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 this.connectorsView.ctx = this.ctx;
                 this.connectorsView.triggerCustomEvent("redraw", this.ctx);
             },
-            
+
             //
             // @description - remove element logic
             //
             removeElement: function(view) {
-				var mid = view.model, that = this;
-				this.connectorsView.children.each(function(connector, idx, collection) {
-					if (connector.fromModel == mid || connector.toModel == mid) {
-						that.connectorsView.collection.remove(connector.model);
-					}
-				});
-				this.elementsView.collection.remove(view.model);
+                var mid = view.model, that = this;
+                this.connectorsView.children.each(function(connector, idx, collection) {
+                    if (connector.fromModel == mid || connector.toModel == mid) {
+                        that.connectorsView.collection.remove(connector.model);
+                    }
+                });
+                this.elementsView.collection.remove(view.model);
 
                 // re-draw connectors
-				this.drawConnectors();
-			}
+                this.drawConnectors();
+            }
         });
         return DiagramView;
     });

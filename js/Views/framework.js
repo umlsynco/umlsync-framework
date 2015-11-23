@@ -6,11 +6,40 @@ define(['marionette',
     function(Marionette, DataProviderCollection, NewDocumentDialog, ContextMenuRegistry, DiagramCtxMenu) {
 
 $.log = function(message) {
-	if (window.console) console.log(message);
+    if (window.console) console.log(message);
 };
-		
+        
     var Framework = new Marionette.Application({
+        //
+        // Collection of the loaded content on the right side tabs
+        //
+        ContentCollection: null,
+        //
+        // Right side view
+        // It could be easily extended with a multi-window
+        //
+        ContentView: null,
+        //
+        // View which is responsible for the switching
+        // between all registered data providers (DP)
+        // 1. It could close close all opened files on DP change
+        // 2. It could support multiple DP mode etc..
+        //
+        DataProviderSwitcher: null,
+        //
+        // Context menu state:
+        // TODO: Move to ContextMenuRegistry
+        //
+        ContextMenuActive: false,
+        //
+        // List of the registered content types
+        // with a corresponding prototypes and controllers
+        //
         contentTypeViews: {},
+        //
+        // List of the registered data providers
+        // Github, BitBake, LocalHost etc..
+        //
         dataProviders: new DataProviderCollection(),
         //
         // @param options - the list of options for the content type
@@ -23,28 +52,28 @@ $.log = function(message) {
           this.contentTypeViews[options.type] = options;
 
           if (options.controller && options.controller.onRegister) {
-			  options.controller.onRegister({framework:this});
-		  }
+              options.controller.onRegister({framework:this});
+          }
 
-		  if (this.newDocController == undefined) {
-			var that = this;
-		    this.newDocController = new NewDocumentDialog({});
+          if (this.newDocController == undefined) {
+            var that = this;
+            this.newDocController = new NewDocumentDialog({});
 
             // Data should describe the storage (github, eclipse etc)   
-		    this.vent.on('content:new:dialog', function(data) {
-				var dlg =  that.newDocController.getDialog({dataprovider: data, contentTypeViews: that.contentTypeViews});
-				that.DialogRegion.show(dlg);
-				dlg.on("dialog:cancel", function() {
-					// Unsubscribe and hide
-					dlg.off("dialog:cancel");
-					dlg.off("dialog:done");
-					that.DialogRegion.show();
-				});
-				dlg.on("dialog:done", function(model) {
-					
-					// Unsubscribe and hide
-					dlg.off("dialog:cancel");
-					dlg.off("dialog:done");
+            this.vent.on('content:new:dialog', function(data) {
+                var dlg =  that.newDocController.getDialog({dataprovider: data, contentTypeViews: that.contentTypeViews});
+                that.DialogRegion.show(dlg);
+                dlg.on("dialog:cancel", function() {
+                    // Unsubscribe and hide
+                    dlg.off("dialog:cancel");
+                    dlg.off("dialog:done");
+                    that.DialogRegion.show();
+                });
+                dlg.on("dialog:done", function(model) {
+                    
+                    // Unsubscribe and hide
+                    dlg.off("dialog:cancel");
+                    dlg.off("dialog:done");
 
                     // if model is empty then something wrong happened
                     // if model has absPath then github:content:new (save) -> content:focus (loaded) from data provider
@@ -54,9 +83,9 @@ $.log = function(message) {
                     // Load the diagram menu element
                     var stype = model2.get("contentType");
                     if (stype && that.contentTypeViews[stype].controller && that.contentTypeViews[stype].controller.onRequest) {
-						that.contentTypeViews[stype].controller.onRequest(model2);
-				    }
-
+                        // Controller trigger request for load content type
+                        that.contentTypeViews[stype].controller.onRequest(model2);
+                    }
 
                     if (!model.absPath) {
                         // Trigger github:content:new -> content:focus (pre-loaded)
@@ -69,18 +98,18 @@ $.log = function(message) {
                         );
                     }
 
-					// handle new content creation !!!
-					that.DialogRegion.show();
-				});
+                    // handle new content creation !!!
+                    that.DialogRegion.show();
+                });
 
-			});
-		  }
+            });
+          }
         },
         getContentTypeView : function (id) {
-		  if (this.contentTypeViews[id].controller && this.contentTypeViews[id].controller.onActivate) {
-			  this.contentTypeViews[id].controller.onActivate({contextMenuRegistry:this.ContextMenuRegistry});
-		  }
-		  
+          if (this.contentTypeViews[id].controller && this.contentTypeViews[id].controller.onActivate) {
+              this.contentTypeViews[id].controller.onActivate({contextMenuRegistry:this.ContextMenuRegistry});
+          }
+          
           return this.contentTypeViews[id].classPrototype;
         },
 
@@ -95,11 +124,12 @@ $.log = function(message) {
                 }
             }
         },
-
+        //////////////////////////////////////////////
+        //            DATA PROVIDER API             //
+        //////////////////////////////////////////////
         registerDataProvider: function(name, object) {
             this.dataProviders.add({name:name, object:object});
         },
-
         getDataProvider : function(name) {
             var result = this.dataProviders.where({name:name});
             if (result.length == 1) {
@@ -109,7 +139,6 @@ $.log = function(message) {
                 return null;
             }
         },
-
         getDataProviderCollection: function() {
             return this.dataProviders;
         }
@@ -129,30 +158,30 @@ $.log = function(message) {
     var DialogRegion = Marionette.Region.extend({
           show: function(view, options) {
 
-     		  if (this.currentView && this.currentView.isSingletone) {
-				  // detach child element
-				  this.$el.children().detach();
-				  this.currentView = undefined;
-			  }
+               if (this.currentView && this.currentView.isSingletone) {
+                  // detach child element
+                  this.$el.children().detach();
+                  this.currentView = undefined;
+              }
 
-              // View detach when necessary		
+              // View detach when necessary        
               if (!view) {
-	            this.currentView = undefined;
+                this.currentView = undefined;
                 return;
               }
 
               // Do not re-render view for 
-			  if (view && view.$el && view.$el.length > 0
-			      && view.isSingletone) {
-				  // Destroy previous dialog
-				  if (this.currentView) {
-					  this.reset();
-				  }
-				  // Set incomming view as default !
-				  this.currentView = view;
-				  this.$el.append(view.$el);
-				  // Trigger method
-				  this.triggerMethod('show', view);
+              if (view && view.$el && view.$el.length > 0
+                  && view.isSingletone) {
+                  // Destroy previous dialog
+                  if (this.currentView) {
+                      this.reset();
+                  }
+                  // Set incomming view as default !
+                  this.currentView = view;
+                  this.$el.append(view.$el);
+                  // Trigger method
+                  this.triggerMethod('show', view);
 
                   if (_.isFunction(view.triggerMethod)) {
                     view.triggerMethod('show');
@@ -160,11 +189,11 @@ $.log = function(message) {
                     this.triggerMethod.call(view, 'show');
                   }
                   return this;
-			  }
-			  else {
-			    Marionette.Region.prototype.show.apply(this, arguments);
-			  }
-		  }
+              }
+              else {
+                Marionette.Region.prototype.show.apply(this, arguments);
+              }
+          }
     });
 
     Framework.addRegions({
@@ -185,13 +214,13 @@ $.log = function(message) {
             regionClass: ResizableRegion
         },
         DialogRegion: {
-			selector: '#content-dialog',
-			regionClass: DialogRegion
-		},
-		ContextMenuRegion: {
-			selector: '#context-menu-region',
-			regionClass: DialogRegion // Singletone and disconnect without destroy !
-		},
+            selector: '#content-dialog',
+            regionClass: DialogRegion
+        },
+        ContextMenuRegion: {
+            selector: '#context-menu-region',
+            regionClass: DialogRegion // Singletone and disconnect without destroy !
+        },
         DiagramMenuRegion: "#diagram-menu",
 
         IconMenuRegion : "#diagram-iconmenu-region"
@@ -213,28 +242,28 @@ $.log = function(message) {
 
         // context menu is global feature
         this.vent.on("contextmenu:show", function(data) {
-			that.ContextMenuRegistry.show(data);
-			that.ContextMenuActive = true;
-		});
-		
-		// Hide the context menu on each click
-		$(document).click(function(){
-			if (that.ContextMenuActive && that.ContextMenuRegion.$el) {
-			  that.ContextMenuRegion.$el.hide();
-			  that.ContextMenuActive = false;
-		    }
-		    
-		    // hide the icon menu
-		    if (that.IconMenuRegion.isActive) 
-		      that.vent.trigger("diagram:iconmenu:show", null);
-		});
+            that.ContextMenuRegistry.show(data);
+            that.ContextMenuActive = true;
+        });
+        
+        // Hide the context menu on each click
+        $(document).click(function(){
+            if (that.ContextMenuActive && that.ContextMenuRegion.$el) {
+              that.ContextMenuRegion.$el.hide();
+              that.ContextMenuActive = false;
+            }
+            
+            // hide the icon menu
+            if (that.IconMenuRegion.isActive) 
+              that.vent.trigger("diagram:iconmenu:show", null);
+        });
 
     });
 
-	Marionette.Behaviors.behaviorsLookup = function() {
-		return window.Behaviors;
-	}
-	window.Behaviors = window.Behaviors || {};
+    Marionette.Behaviors.behaviorsLookup = function() {
+        return window.Behaviors;
+    }
+    window.Behaviors = window.Behaviors || {};
 
     return Framework;
 });

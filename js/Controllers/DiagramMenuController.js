@@ -12,56 +12,64 @@ define(['marionette',
             //  Need to create diagram-menu-region
             //
             onRegister: function (options) {
-				// TODO:
+                // TODO:
                 // Framework->addDialog(#diagram-menu)
                 // new Dialog(#diagram-menu)
                 this.dialog = new dialog({Framework:options.framework});
 
                 if (options.framework) {
-					// TODO: REMOVE
+                    // TODO: REMOVE
                     options.framework.vent.on("diagram:element:create", function(model) {
-						// [TODO]: Get diagram content handler -> focus diagram -> create element !!!
-						alert("Create something !!!!");
-					});
+                        // [TODO]: Get diagram content handler -> focus diagram -> create element !!!
+                        alert("Create something !!!!");
+                    });
                 }
 
                 var that = this;
                 // TODO: REMOVE
                 this.dialog.on("add:accordion", function(somthing) {
-					that.trigger("add:accordion", somthing);					
-				});
+                    that.trigger("add:accordion", somthing);                    
+                });
 
-  			    options.framework.DiagramMenuRegion.show(this.dialog, {forceShow: true});
-			    this.hide();
-			  
+                // TODO: Use addRegion() method
+                options.framework.DiagramMenuRegion.show(this.dialog, {forceShow: true});
+                this.hide();
+              
             },
             //
             // On new content creation or open existing one
             //
             onRequest: function(model2) {
- 				this.dialog.addAccordionItem(model2);
-			},
-			//
-			// 
-			//
-			onActivate: function(options) {
-			  this.show();
-			  if (!this.dctx) {
-				  this.dctx = new DiagramCtxMenu({registry:options.contextMenuRegistry});
-			  }
-			},
+                 this.dialog.addAccordionItem(model2);
+            },
+            //
+            // On activate the concreate instance of the diagram
+            // 1. Show the diagram menu
+            // 2. Activate diagram-menu accordion tab
+            // 3. Hide context and icon menus
+            // 4. Redraw connectors
+            //
+            onActivate: function(options) {
+              this.show();
+              if (!this.dctx) {
+                  this.dctx = new DiagramCtxMenu({registry:options.contextMenuRegistry});
+              }
+            },
+            //
+            // TODO: Check that no required anymore and drop
+            //
             getDialog: function() {
-				return this.dialog;
-			},
-			//
-			// Show and hide current dialog
-			//
-			show: function() {
-			    $(this.dialog.$el).show();
-			},
-			hide: function() {
-				$(this.dialog.$el).hide();
-			}
+                return this.dialog;
+            },
+            //
+            // Show and hide current dialog
+            //
+            show: function() {
+                $(this.dialog.$el).show();
+            },
+            hide: function() {
+                $(this.dialog.$el).hide();
+            }
         });
 
         return Controller;
