@@ -91,7 +91,9 @@ define([
                 // load handler if it was not load
                 if (!this.subtypes[subtype]) {
                     require(['Modules/Diagrammer/Menus/' + subtype], function(handler) {
+						
                         that.subtypes[subtype] = new handler({Framework:require('Views/framework')});
+                        $.log("LOADED : " + subtype + " = " + that.subtypes[subtype]);
                     });
                 }
 

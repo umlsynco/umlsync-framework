@@ -151,7 +151,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                     // Marionette requires to bind view to some element
                     // So, in that case each connector should have the default empty label
                     // which should be shown on mouse over
-                    getDefaultLabel: function() { return "________"}
+                    getDefaultLabel: function() { return ""}
                 }
             },
             collectionEvents: {
@@ -746,8 +746,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         .bind('contextmenu', function(e) {
                           
                           if (diag.highlighted) {
+                              
                               var diagram = diag.highlighted.options.parent;
+              
+$.log("HAS CONNECTOR !!!");
                               if (diagram) {
+$.log("HAS DIAGRAM !!!");
                                   diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:diag.highlighted, diagram: diagram, isConnector: true}});
                                   e.preventDefault();
                               }
@@ -839,7 +843,13 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             //
             // @description - remove element logic
             //
-            removeElement: function(view) {
+            removeElement: function(view, isConnector) {
+                if (isConnector && view.model && view.model.collection) {
+                        view.model.collection.remove(view.model);
+                        this.drawConnectors();
+                        return;
+                }
+
                 var mid = view.model, that = this;
                 this.connectorsView.children.each(function(connector, idx, collection) {
                     if (connector.fromModel == mid || connector.toModel == mid) {
