@@ -140,11 +140,32 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             
         });
 
+
+        //
+        // @description - connector's labels
+        //
+        var LabelView = Backbone.Marionette.ItemView.extend({
+			tagName: 'li',
+			className: 'connector-selector',
+            template: _.template('<a class="editablefield"><%=name%></a>'),
+            ui : {
+                "editablefield" : ".editablefield"
+            },
+            onRender: function() {
+				this.$el.draggable();
+				this.$el.css({top: this.model.get("y"), left: this.model.get("x")});
+		    },
+            behaviors: {
+                EditableBehavior: {}
+            }
+        });
         //
         // @description - base class for all connectors
         //
-        Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.ItemView.extend({
-            template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%></div>'),
+        Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.CompositeView.extend({
+            template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%><ul></ul></div>'),
+            childViewContainer: "ul",
+            childView: LabelView,
             templateHelpers: function() {
                 return {
                     cid: this.model.cid,
@@ -165,6 +186,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 var that = this;
             //    this.on("redraw", _.bind(this.redraw, this));
                 this.epoints = this.model.get("epoints") || [];
+                this.collection = this.model.getUmlLabels();
 
                 var elements = opt.elements;
                 this.fromModel = elements.findWhere({id:this.model.get("fromId")});
@@ -744,7 +766,10 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                           }
                         })
                         .bind('contextmenu', function(e) {
-                          
+                          var p = $(this).offset(),
+                          x = e.pageX - p.left,
+                          y = e.pageY - p.top;
+
                           if (diag.highlighted) {
                               
                               var diagram = diag.highlighted.options.parent;
@@ -752,7 +777,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 $.log("HAS CONNECTOR !!!");
                               if (diagram) {
 $.log("HAS DIAGRAM !!!");
-                                  diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:diag.highlighted, diagram: diagram, isConnector: true}});
+                                  diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, coordinates: {x:x, y:y}, context: {view:diag.highlighted, diagram: diagram, isConnector: true}});
                                   e.preventDefault();
                               }
                           }
