@@ -857,3 +857,10 @@ DIV.us-element-border > DIV.ui-resizable-handle {
 DIV.us-selected > DIV.ui-resizable-handle {
   visibility: visible;
 }
+
+
+li.us-label {
+  list-style: none;
+  width: 256px;
+}
+

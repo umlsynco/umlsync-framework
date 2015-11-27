@@ -146,18 +146,35 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
         //
         var LabelView = Backbone.Marionette.ItemView.extend({
 			tagName: 'li',
-			className: 'connector-selector',
+			className: 'us-label',
             template: _.template('<a class="editablefield"><%=name%></a>'),
             ui : {
                 "editablefield" : ".editablefield"
             },
             onRender: function() {
-				this.$el.draggable();
+				var view = this;
+				this.$el.draggable({
+					stop: function(event, ui) {
+						view.model.set({x:ui.position.left, y:ui.position.top});
+					}
+				});
 				this.$el.css({top: this.model.get("y"), left: this.model.get("x")});
 		    },
             behaviors: {
                 EditableBehavior: {}
-            }
+            },
+            start_operation: null,
+            onDragStart: function(ui) {
+                this.start_operation = {x:this.model.get("x"), y:this.model.get("y")};
+            },
+            onDragDo: function(ui) {
+                this.$el.css({left:this.start_operation.x + ui.left, top:this.start_operation.y + ui.top});
+            },
+            onDragStop: function(ui) {
+                this.$el.css({left:this.start_operation.x + ui.left, top:this.start_operation.y + ui.top});
+                this.model.set({x:this.start_operation.x + ui.left, y: this.start_operation.y + ui.top});
+                this.start_operation = null;
+            },
         });
         //
         // @description - base class for all connectors
@@ -609,13 +626,24 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 this.start_operation = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.epoints);
                 this.drag_points = this.start_operation;
                 this.dragdo = true;
+
+                // List of the connector's labels
+                this.children.each(function(label) {
+					label.onDragStart(ui);
+				});
             },
             onDragDo: function(ui) {
                 this.drag_points = new Array();
                 var that = this;
+                // Move points
                 _.each(this.start_operation, function(point) {
                     that.drag_points.push({x:point.x + ui.left, y:point.y + ui.top})
                 });
+
+                // Move labels
+                this.children.each(function(label) {
+					label.onDragDo(ui);
+				});
             },
             onDragStop: function(ui) {
                 // clear arrays
@@ -630,6 +658,11 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 this.model.umlepoints.each(function(model) {
                       model.set({x:model.get("x") + ui.left, y: model.get("y") + ui.top});
                 });
+
+                // Stop move for labels too
+                this.children.each(function(label) {
+					label.onDragStop(ui);
+				});
                 // Enable regular points requests
                 this.dragdo = false;
             },
@@ -773,10 +806,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                           if (diag.highlighted) {
                               
                               var diagram = diag.highlighted.options.parent;
-              
-$.log("HAS CONNECTOR !!!");
                               if (diagram) {
-$.log("HAS DIAGRAM !!!");
                                   diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, coordinates: {x:x, y:y}, context: {view:diag.highlighted, diagram: diagram, isConnector: true}});
                                   e.preventDefault();
                               }
