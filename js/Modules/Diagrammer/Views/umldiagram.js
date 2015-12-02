@@ -151,10 +151,16 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             ui : {
                 "editablefield" : ".editablefield"
             },
+            dnd: false,
             onRender: function() {
                 var view = this;
                 this.$el.draggable({
+					start: function() {
+						// prevent mouse enter/exit on DND
+						view.dnd = true;
+					},
                     stop: function(event, ui) {
+						view.dnd = false;
                         view.model.set({x:ui.position.left, y:ui.position.top});
                     }
                 })
@@ -171,8 +177,22 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
               })
               .mouseenter(this, function (event){
                   // Highlight connector
+                  if (view.dnd) 
+                    return;
+                  view.options.parent.isMouseOverLabel = true;
+                  view.options.diagram.drawConnectors();
+                  event.stopPropagation();
               })
+              .mousemove(view, function(event) {
+				  // Prevent connector state checking
+				  event.stopPropagation();
+			  })
               .mouseleave(view, function (event){
+                  if (view.dnd) 
+                    return;
+				  view.options.parent.isMouseOverLabel = false;
+				  view.options.diagram.drawConnectors();
+				  event.stopPropagation();
               });
               this.$el.css({top: this.model.get("y"), left: this.model.get("x")});
             },
@@ -197,6 +217,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
         //
         Backbone.Marionette.ConnectorItemView  =  Backbone.Marionette.CompositeView.extend({
             template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%><ul></ul></div>'),
+            className: "us-connector",
             childViewContainer: "ul",
             childView: LabelView,
             childViewOptions: function() {
@@ -234,11 +255,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             draw: function(ctx, points, color) {
                 alert("You should redefine DRAW method for concreate connector!");
             },
+            isMouseOver: false,
             redraw: function(ctx, color) {
                 var context = ctx;
                 var col = color || "rgba(0,0,0,1)";
 
-                col = this.isMouseOver == true ? "#43EC28" : col; // Re-draw connector with specific color on mouse over
+                col = this.isMouseOver == true || this.isMouseOverLabel == true ? "#43EC28" : col; // Re-draw connector with specific color on mouse over
 
                 if (ctx == undefined) {
                     return;
@@ -728,6 +750,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                     highlighted: null,
                     selectedConnector: null,
                     isPointOnLine: function(x, y) {
+						if ($.ipp) {
+							$.log("IPOL:");
+						}
                         var diag = this;
                         var shouldRedraw = false;
                         // Check of transformat has been started
@@ -744,6 +769,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                                 var result = child.isPointOnLine(x,y);
                                 if (result == true) {
                                     child.isMouseOver = true;
+                                    child.$el.addClass("hover");
                                     shouldRedraw = diag.highlighted != child;
                                     // Looks strupid because of the else if above
                                     // But actually this case handles use-case of crossing of the several connectors
@@ -754,6 +780,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                                 }
                                 else if (child.isMouseOver) {
                                     child.isMouseOver = false;
+                                    child.$el.removeClass("hover");
                                     // re-draw if mouse left this connector
                                     shouldRedraw = true;
                                 }

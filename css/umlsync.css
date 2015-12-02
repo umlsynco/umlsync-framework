@@ -864,3 +864,17 @@ li.us-label {
   width: 256px;
 }
 
+li.us-label>a {
+border-opacity:0.1;
+border: 2px dashed white;
+}
+
+li.us-label>a:hover {
+border: 2px dashed #97F7A1;
+}
+
+div.us-connector.hover>div>ul>li>a {
+border: 2px dashed #97F7A1;
+}
+
+
