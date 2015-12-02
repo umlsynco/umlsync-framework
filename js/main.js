@@ -12,8 +12,9 @@ require.config({
         dynatree : 'lib/jquery.dynatree',
         jcookie : 'lib/jquery.cookie',
         showdown: 'lib/showdown/showdown',
-		fieldselection: 'lib/jquery-fieldselection/jquery-fieldselection',
-		hotkeys: 'lib/hotkeys'
+        'showdown-umlsync': 'lib/showdown/extensions/umlsync',
+	fieldselection: 'lib/jquery-fieldselection/jquery-fieldselection',
+	hotkeys: 'lib/hotkeys'
     },
     shim : {
         jquery : {
@@ -23,7 +24,10 @@ require.config({
             exports : '_'
         },
         showdown : {
-          export : 'Showdown'
+          export : 'Showdown',
+        },
+        'showdown-umlsync': {
+          deps: ['showdown']
         },
         jcookie: {
 		  deps: ['jquery']

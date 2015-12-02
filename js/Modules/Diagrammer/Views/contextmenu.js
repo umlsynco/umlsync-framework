@@ -79,19 +79,17 @@ define([
                 // get element type from model
                 // or select subtype directly for the fieds ctx menu
                 var subtype = data.subtype;
-                if (!data.context.isConnector && !subtype && data.context && data.context.view && data.context.view.model) {
+                // TODO: remove this stuff, sub-type should be defined on the element behavior side
+                if (!subtype && data.context && data.context.view && data.context.view.model) {
                     subtype = data.context.view.model.get("type");
                 }
-                if (data.context.isConnector) {
-					subtype = "connector";
-				}
+
                 // can not detect the subtype of the element !!!
                 if (!subtype) return;
                 
                 // load handler if it was not load
                 if (!this.subtypes[subtype]) {
                     require(['Modules/Diagrammer/Menus/' + subtype], function(handler) {
-						
                         that.subtypes[subtype] = new handler({Framework:require('Views/framework')});
                         $.log("LOADED : " + subtype + " = " + that.subtypes[subtype]);
                     });

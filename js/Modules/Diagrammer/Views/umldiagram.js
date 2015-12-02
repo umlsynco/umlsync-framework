@@ -145,21 +145,37 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
         // @description - connector's labels
         //
         var LabelView = Backbone.Marionette.ItemView.extend({
-			tagName: 'li',
-			className: 'us-label',
+            tagName: 'li',
+            className: 'us-label',
             template: _.template('<a class="editablefield"><%=name%></a>'),
             ui : {
                 "editablefield" : ".editablefield"
             },
             onRender: function() {
-				var view = this;
-				this.$el.draggable({
-					stop: function(event, ui) {
-						view.model.set({x:ui.position.left, y:ui.position.top});
-					}
-				});
-				this.$el.css({top: this.model.get("y"), left: this.model.get("x")});
-		    },
+                var view = this;
+                this.$el.draggable({
+                    stop: function(event, ui) {
+                        view.model.set({x:ui.position.left, y:ui.position.top});
+                    }
+                })
+               .bind('contextmenu', function(e) {
+                     var p = $(this).offset(),
+                     x = e.pageX - p.left,
+                     y = e.pageY - p.top;
+
+                       var diagram = view.options.diagram;
+                        if (diagram) {
+                          diagram.vent.trigger("contextmenu:show", {type:"diagram", subtype: "connector-label", event:e, coordinates: {x:x, y:y}, context: {view:view, diagram: diagram}});
+                          e.preventDefault();
+                        }
+              })
+              .mouseenter(this, function (event){
+                  // Highlight connector
+              })
+              .mouseleave(view, function (event){
+              });
+              this.$el.css({top: this.model.get("y"), left: this.model.get("x")});
+            },
             behaviors: {
                 EditableBehavior: {}
             },
@@ -183,6 +199,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             template: _.template('<div id="<%= cid %>"><%=getDefaultLabel()%><ul></ul></div>'),
             childViewContainer: "ul",
             childView: LabelView,
+            childViewOptions: function() {
+                return {
+                  parent: this,
+                  diagram: this.options.parent
+                };
+            },
             templateHelpers: function() {
                 return {
                     cid: this.model.cid,
@@ -629,8 +651,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 
                 // List of the connector's labels
                 this.children.each(function(label) {
-					label.onDragStart(ui);
-				});
+                    label.onDragStart(ui);
+                });
             },
             onDragDo: function(ui) {
                 this.drag_points = new Array();
@@ -642,8 +664,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 
                 // Move labels
                 this.children.each(function(label) {
-					label.onDragDo(ui);
-				});
+                    label.onDragDo(ui);
+                });
             },
             onDragStop: function(ui) {
                 // clear arrays
@@ -661,8 +683,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
 
                 // Stop move for labels too
                 this.children.each(function(label) {
-					label.onDragStop(ui);
-				});
+                    label.onDragStop(ui);
+                });
                 // Enable regular points requests
                 this.dragdo = false;
             },
@@ -807,7 +829,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                               
                               var diagram = diag.highlighted.options.parent;
                               if (diagram) {
-                                  diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, coordinates: {x:x, y:y}, context: {view:diag.highlighted, diagram: diagram, isConnector: true}});
+                                  diagram.vent.trigger("contextmenu:show", {type:"diagram", subtype: "connector", event:e, coordinates: {x:x, y:y}, context: {view:diag.highlighted, diagram: diagram}});
                                   e.preventDefault();
                               }
                           }

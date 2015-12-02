@@ -59,6 +59,20 @@
     ]
   },
   {
+    "type":"connector-label",
+    "require": "connector-label.js",
+    "fields": [
+        {
+            "title": "Edit Label",
+            "command": "diagram:connector-label:edit"
+        },
+        {
+            "title": "Remove Label",
+            "command": "diagram:connector-label:remove"
+        }
+    ]
+  },
+  {
     "type":"default",
     "require": "default.js",
     "fields": [
