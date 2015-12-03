@@ -55,6 +55,9 @@ a.reference {
   z-index: 0;
   width:100%;
   height: 100%;
+  top:0px;
+  left:0px;
+  position:absolute;
 }
 
 .us-element-border {
@@ -876,5 +879,4 @@ border: 2px dashed #97F7A1;
 div.us-connector.hover>div>ul>li>a {
 border: 2px dashed #97F7A1;
 }
-
 

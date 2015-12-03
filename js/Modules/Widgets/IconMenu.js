@@ -23,13 +23,15 @@ function(Marionette, diagram) {
 			  var that = this;
               $("#tabs .elmenu-us-class-menu img").draggable({
                 'appendTo': "#tabs",
+                'containment': "#tabs",
                 'helper': function(event) {
                    // Use the double wrapper because of element's structrure
-                   return $("<div id='"+ helperModel.cid +"_Border' style='border:solid black;border-width:1px;' class='us-icon-menu-connection-helper'>" + 
+                   return $("<div id='"+ helperModel.cid +"_Border' style='border:solid black;border-width:1px;position:absolute;top:-50;' class='us-icon-menu-connection-helper'>" + 
                             "<div id='"+ helperModel.cid +"' style='border:solid yellow;border-width:1px;'> [ x ]</div></div>");
                  },
-                 'start': function(event) {
-					 helperModel.set({left:event.pageX,top:event.pageY});
+                 'start': function(event, ui) {
+                     $(ui.helper).css({left:ui.position.left,top:ui.position.top-50});
+					 helperModel.set({left:ui.position.left,top:ui.position.top});
                      // [TODO] Looks really stuipid to request framework here !!!
 					 var Framework = require('Views/framework');
 
@@ -41,6 +43,8 @@ function(Marionette, diagram) {
                                               initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
                  },
                  'drag': function(event, ui) {
+$(ui.helper).css({left:ui.position.left,top:ui.position.top-50});
+//                      $(ui.helper).css({left:event.pageX,top:event.pageY});
 					 if (that.dataProvider && that.dataProvider.IconMenuData) {
 						 that.dataProvider.IconMenuData.trigger("drag:do");
 					 }
