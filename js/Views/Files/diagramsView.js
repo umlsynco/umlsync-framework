@@ -46,12 +46,14 @@ define(
             },
             ui: {
                 'editButton' : "#us-diagram-edit",
-                'getLink': 'div#getLink'
+                'getLink': 'span#us-getlink',
+                'getLinkContent' : 'div#us-getlink-content'
 
             },
             events: {
                 'click @ui.editButton': 'toggleEditMode',
                 'click @ui.getLink' : 'onGetLink'
+          
             },
             toggleEditMode: function() {
                 var text = this.ui.editButton.text();
@@ -62,6 +64,13 @@ define(
                 }
 //                this.UD.setMode("view");
                 this.model.set("mode", "view");
+            },
+            onGetLink: function() {
+               this.ui.getLinkContent.toggle();
+               $.cachedPath = this.model.get("absPath");
+               // TODO: move to render
+               this.ui.getLinkContent.find('input').val('http://umlsync.org/github?path=' + this.model.get("absPath"));
+             
             },
             //
             // Loading -> Render or Error 

@@ -58,9 +58,14 @@ define(
               postfix = $(e.currentTarget).attr("postfix") || "";
 
               if (prefix == "diagram") {
-                prefix = '![mime-type:application/vnd.umlsync.json] (http://umlsync.org/github/%repo%/%branch%/%path% "';
-                postfix = '")';
-                alert("TODO: ADD REQUEST of CACHED DIAGRAM PATH");
+                if ($.cachedPath) {
+                     prefix = '![mime-type:application/vnd.umlsync.json] (http://umlsync.org/github?path=' + $.cachedPath + ' "';
+                     postfix = '")';
+                }
+                else {
+                     prefix = '![mime-type:application/vnd.umlsync.json] (http://umlsync.org/github/%repo%/%branch%/%path% "';
+                     postfix = '")';
+                }
               }
               
               this.ui.textarea.wrapSelection(prefix, postfix);
