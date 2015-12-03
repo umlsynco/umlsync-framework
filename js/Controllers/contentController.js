@@ -39,7 +39,14 @@ define(['marionette',
                     this.vent.on('content:syncall', function(options) {
                       controller.onContentSyncAll(options);
                     });
+                    
+                    this.vent.on('content:embedded:on', function(data) {
+                        controller.onEmbeddedLoad(data);
+                    });
 
+                    this.vent.on('content:embedded:off', function(data) {
+                        controller.onEmbeddedUnload(data);
+                    });
                     // Attach an existing view, because it has own div#tabs
                     this.RightRegion.attachView(this.ContentView);
 
@@ -85,8 +92,13 @@ define(['marionette',
 
             // content:loaded
             loadedContent: function(data) {
-                // key is content model cid which is unique for all system
-                var models = Framework.ContentCollection.where({key:data.key});
+				//
+                // key is cached content model cid which is unique for all system
+                // key is available for content which was loaded from the file tree widget
+                // but key is unavailable for a content which was requested for embedded view
+                var models = (data.isEmbedded ? 
+                  Framework.ContentCollection.where({parentSelector:data.parentSelector})
+                  : Framework.ContentCollection.where({key:data.key}));
 
                 // Unexpected us-case
                 if (models.length == 0) {
@@ -309,6 +321,39 @@ define(['marionette',
                     dfd.reject();
                 }
                 return pms;
+            },
+            
+            onEmbeddedLoad: function(data) {
+               var models = Framework.ContentCollection.where(data);
+
+               // Unexpected us-case
+               if (models.length > 0) {
+                 alert("Multiple instances of content was opened somehow!");
+                 return;
+               }
+
+               // Extract the cotent type if not available
+               if (!data.contentType) {
+                 var ext = data.asbPath.split('.').pop().toUpperCase();
+                 data.contentType = Framework.getContentType(ext);
+               }
+
+               // Add data if we know how to handle it only
+               if (data.contentType) {
+                   data.status = data.content ? 'loaded' : 'loading'; // Do nothing if content was loaded before !!!
+
+                   // Add file to collection with "loading" status
+                   // as a result loading view will be added to the
+                   // area
+                   Framework.ContentCollection.add(data);
+
+                   // Trigger file load from data provider
+                   Framework.vent.trigger(data.view + ":file:load", data);
+               }
+            },
+            onEmbeddedUnload: function(data) {
+                var models = Framework.ContentCollection.where(data);
+                Framework.ContentCollection.remove(models);
             }
         };// controller
 
