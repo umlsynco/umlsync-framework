@@ -153,7 +153,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             },
             dnd: false,
             onRender: function() {
-                var view = this;
+                var view = this,
+                isemb = view.options.diagram.model.get("isEmbedded");
+if (!isemb) {
                 this.$el.draggable({
 					start: function() {
 						// prevent mouse enter/exit on DND
@@ -174,8 +176,9 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                           diagram.vent.trigger("contextmenu:show", {type:"diagram", subtype: "connector-label", event:e, coordinates: {x:x, y:y}, context: {view:view, diagram: diagram}});
                           e.preventDefault();
                         }
-              })
-              .mouseenter(this, function (event){
+              });
+}
+              this.$el.mouseenter(this, function (event){
                   // Highlight connector
                   if (view.dnd) 
                     return;
@@ -826,6 +829,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         })
                         .mousedown(function(e) {
 
+if(diag.options.isEmbedded) return;
+
                           var p = $(this).offset(),
                           x = e.pageX - p.left,
                           y = e.pageY - p.top;
@@ -912,7 +917,8 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                     childViewOptions: {
                         elements:this.model.umlelements,
                         parent: this
-                    }
+                    },
+                    isEmbedded: this.model.get("isEmbedded")
                 });
 
                 this.connectorsView.render();

@@ -98,19 +98,25 @@ define(
 
                     Backbone.Marionette.ItemView.prototype.render.apply(this, arguments);
 
+                    var isemb = this.model.get("isEmbedded");
+
                     var simpleContent  = this.model.get("content");
                     simpleContent = (simpleContent instanceof  String) ? $.parseJSON(simpleContent) : simpleContent;
                     simpleContent = (simpleContent instanceof  Object) ? simpleContent : $.parseJSON(simpleContent);
 
                     this.modelDiagram = new Diagram(simpleContent);
-                    this.operationManager = new OperationManager({diagram:this.modelDiagram});
+                    if (!isemb) {
+                      this.operationManager = new OperationManager({diagram:this.modelDiagram});
 
-                    var ContentView = this;
+                      var ContentView = this;
                     
-                    // Only operation manager knows about real status of diagram (on Ctrl-Z/Y or Ctrl+S)
-                    this.operationManager.on("modified", function(value) {
-                        ContentView.model.set("isModified", value);                       
-                    });
+                      // Only operation manager knows about real status of diagram (on Ctrl-Z/Y or Ctrl+S)
+                      this.operationManager.on("modified", function(value) {
+                          ContentView.model.set("isModified", value);                       
+                      });
+                    }
+
+                    this.modelDiagram.set({isEmbedded:isemb});
 
                     // Create the diagram view from the model and append to the current view
                     this.UD = new UmlDiagram({model:this.modelDiagram, opman:this.operationManager, vent: Framework.vent});
@@ -123,11 +129,13 @@ define(
                     //
                     // Sequence diagram has complex behavior which is out of scope of diagram types
                     //
-                    if (this.modelDiagram.get("type") == "sequence") {
-                        this.dropController = new SequenceElementDropController({view:this.UD, model: this.modelDiagram});
-                    }
-                    else {
-                        this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
+                    if (!isemb) {
+                      if (this.modelDiagram.get("type") == "sequence") {
+                          this.dropController = new SequenceElementDropController({view:this.UD, model: this.modelDiagram});
+                      }
+                      else {
+                          this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
+                      }
                     }
 
                 }

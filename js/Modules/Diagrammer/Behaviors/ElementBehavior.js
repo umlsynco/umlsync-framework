@@ -4,7 +4,8 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
         onRender: function () {
             var model = this.view.model;
             //var operationManager = model.getOperationManager();
-            var view = this.view;
+            var view = this.view,
+            isemb = view.options.parent.model.get("isEmbedded");
 
             // [TODO]: drop it !!!
             if (view.wasInitialized) {
@@ -15,8 +16,12 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
 
             //alert('.dropped-' + view.cid);
             var applyOptions = _.pick(model.attributes, 'height', 'width', 'left', 'top');
+
             this.$el
                 .css({'position': 'absolute'})
+                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;");
+if (!isemb) {
+            this.$el
 //                .css(applyOptions)
                 .bind('contextmenu', function (e) {
                     e.preventDefault();
@@ -26,7 +31,6 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                     if (diagram)
                         diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view, diagram: view.options.parent}});
                 })
-                .attr("style", "left:"+model.get("left")+"px;top:"+model.get("top")+"px;height:"+model.get("height")+"px;width:"+model.get("width")+"px;")
                 .resizable({
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     'scroll': true,
@@ -79,14 +83,16 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                         view.trigger("drag:stop", {left: (view.axis == "y") ? 0 : ui.position.left - view.operation_start.left, top: (view.axis == "x") ? 0 : ui.position.top - view.operation_start.top});
                         //operationManager.stopReport();
                     }
-                })
-                .append("<img id='" + model.cid + "_REF' title='REFERENCE' src='images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
+                });
+} // is embedded
+               this.$el.append("<img id='" + model.cid + "_REF' title='REFERENCE' src='images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
 
 
             // TODO: move to the custom behavior
             if (view.customResize) {
-              this.$el.find(view.customResize.selector)
-                  .resizable({
+              var data = this.$el.find(view.customResize.selector);
+if (!isemb) {
+                  data.resizable({
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     alsoResize: '#' + model.cid + '_Border',
                     'scroll': true,
@@ -118,7 +124,9 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                         //operationManager.stopReport();
                     }
 
-                  }).each(function(idx, item) {
+                  });
+} // isemb
+                   data.each(function(idx, item) {
                          var modelName = $(item).attr("name");
                         if (modelName) {
                            var h = model.get(modelName);
@@ -131,8 +139,9 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
            
             }
 
-            this.$el.find(".grElement")
-                .click(view, function(event) {
+            var data = this.$el.find(".grElement");
+if (!isemb) {
+                data.click(view, function(event) {
                     // Hide previous references
                     //$("#" + element.parrent.euid + " .us-references").hide();
                     var element = event.data;
@@ -147,8 +156,9 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
                     if (diagram)
                         diagram.vent.trigger("diagram:iconmenu:show", view);
                     //event.stopPropagation();
-                })
-                .mouseenter(view, function (event){
+                });
+} // isemb
+               data.mouseenter(view, function (event){
                     var element = event.data;
                     if (!element.options.selected && !element.highlighted) {
                         element.highlighted = true;

@@ -9,7 +9,11 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
             "click @ui.editablefield": "editField"
         },
         editField: function (event) {
-            var model = this.view.model;
+            var model = this.view.model,
+            tparent = this.view.options.diagram || this.view.options.parent,
+            isemb = tparent.model.get("isEmbedded");
+            // Do nothing for embedded diagrams
+            if (isemb) return;
             //var operationManager = model.getOperationManager();
             var view = this.view;
 
