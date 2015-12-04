@@ -55,8 +55,14 @@ define(
                 'click @ui.getLink' : 'onGetLink'
           
             },
-            toggleEditMode: function() {
+            toggleEditMode: function(event) {
                 var text = this.ui.editButton.text();
+                if (text == "Open") {
+                    alert("Please implement open handler");
+                    // Prevent markdown onEdit handler call
+                    event.stopPropagation();
+                    return;            
+                }
                 if (text == 'Edit') {
                     this.model.set("mode", "edit");
 //                    this.UD.setMode("edit");
@@ -138,6 +144,8 @@ define(
                       }
                     }
 
+                    // An embedded diagram behavior
+                    if (isemb) this.ui.editButton.text("Open");
                 }
                 else {
                    // Use the default method
