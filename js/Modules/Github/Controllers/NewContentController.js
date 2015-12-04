@@ -35,10 +35,11 @@ define(['marionette',
                 // 3. Create model for treeCollection
                 var absPath = autocompleteState.loadedPath + "/" + path.split("/").pop();
                 var treeModel = {
-                    path:absPath,
+                    path:path.split("/").pop(),
+                    absPath: absPath,
                     status: "new",
                     type: "blob",
-                    parentCid: autocompleteState.parentCid || ""
+                    parentCid: autocompleteState.parentCid
                 };
                 // 4. Extend tree with path
                var modelObj =  this.tree.getModelHelper(treeModel);

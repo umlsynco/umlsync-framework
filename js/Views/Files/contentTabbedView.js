@@ -117,7 +117,10 @@ define(
                    delete this.kids[view.model.cid];
                 }
                 else {
-                  alert("Trying to remove not existing child !!!");
+                  // an emebedded content doesn't keep instance in
+                  // the local content tabs cache
+                  if (!view.model.get("isEmbedded"))
+                      alert("Trying to remove not existing child !!!");
                 }
 
                 var parent = view.model.get("parentSelector");

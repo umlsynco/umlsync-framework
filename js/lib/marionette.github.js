@@ -90,6 +90,14 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     this.reset(options); // Drop an existing items
                 },
                 findNewOrBase: function(data) {
+                    var model = this._findNewOrBase(data);
+                    if (model) {
+                      // increase ref counter
+                      model.refcount = model.refcount ? 1: model.refcount +1;
+                    }
+                    return model;
+                },
+                _findNewOrBase: function(data) {
                     var clone = _.pick(data, "absPath", "title");
                     var models = this.where(clone);
                     // found nothing
@@ -101,16 +109,19 @@ define(['jquery', 'underscore', 'base64', 'backbone', 'marionette'], function (j
                     }
 
                     // check if models has new model
-                    var result = _.find(models, function(model) {
+                    var result = _.filter(models, function(model) {
                         return (model.get("status") == "new");
                     });
-                    if (result) return result;
+                    if (result && result.length > 0) return result[0];
 
                     // find the concrete model by SHA
-                    return _.find(models, function(model) {
+                    var allModels = _.filter(models, function(model) {
                         return (model.get("sha") == data.sha)
                     });
-
+                    if (allModels.length > 0) {
+                       return allModels[0];
+                    }
+                    return;
                 },
                 findNewOrCreate: function(data) {
                     var model = this.findNewOrBase(data);

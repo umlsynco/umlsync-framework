@@ -84,20 +84,33 @@ define(['marionette',
             // Respond from mediator to load content
             //
             loadContent: function(data) {
+                //
+                // key - is tree view option
+                // if key undefined thatn we should load path
+                // in a regular case path to content should be loaded
+                // but it is not true for embedded content
+                //
+                // TODO: cross reference is not embedded content
+                //       but data provider should be able to load
+                //       path for this case too
                 if (!data.key) {
-					if (data.isEmbedded) {
-						this._loadEmbeddedContent(data);
-					}
-					else {
-					    alert("Requested invalid resource key: " + data.absPath);
-				    }
+                    if (data.isEmbedded) {
+                        this._loadEmbeddedContent(data);
+                    }
+                    else {
+                        alert("Requested invalid resource key: " + data.absPath);
+                    }
                     return;
-				}
+                }
 
+                // Content cach should contain cache only
+                // it is not a good idea to share this model
+                // 
                 var model = this.ContentCache.findNewOrBase(data);
 
-                if (model) {
-                    this.triggerContentLoaded(model);
+                if (model ) {
+                    var dataModel = new Backbone.Model($.extend({}, model.attributes, data));
+                    this.triggerContentLoaded(dataModel);
                 }
                 // get content from github
                 else {

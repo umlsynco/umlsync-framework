@@ -92,13 +92,18 @@ define(['marionette',
 
             // content:loaded
             loadedContent: function(data) {
-				//
+                //
                 // key is cached content model cid which is unique for all system
                 // key is available for content which was loaded from the file tree widget
                 // but key is unavailable for a content which was requested for embedded view
-                var models = (data.isEmbedded ? 
-                  Framework.ContentCollection.where({parentSelector:data.parentSelector})
-                  : Framework.ContentCollection.where({key:data.key}));
+                var models = Framework.ContentCollection.filter(function(model) {
+                    if (data.isEmbedded) {
+                        return data.parentSelector == model.get("parentSelector");
+                    }
+                    else {
+                        return (!model.get("isEmbedded") && data.key == model.get("key"));
+                    }
+                });
 
                 // Unexpected us-case
                 if (models.length == 0) {
@@ -114,9 +119,17 @@ define(['marionette',
                     models[0].set(data); // Update data
                 }
             },
-            // content:focus
+            //
+            // content:focus - triggered by data provider (tree or content cache)
+            // - it means that 
+            //
+            //
             focusContent: function(data) {
                var models = Framework.ContentCollection.where(data);
+               models = models.filter(function(model) {
+                   // remove embedded items
+                   return (model.get("isEmbedded") == undefined);
+               });
 
                // Unexpected us-case
                if (models.length > 1) {
