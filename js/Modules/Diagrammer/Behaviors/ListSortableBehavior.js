@@ -1,6 +1,14 @@
 define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Backbone, Marionette, ui, Framework) {
 
     var ListSortableBehavior = Marionette.Behavior.extend({
+		onModeChange: function(mode) {
+                if (mode) {
+                  this.$el.sortable().enableSelection();
+                }
+                else {
+                  this.$el.sortable().disableSelection();
+                }
+	    },
         onRender: function () {
             var model = this.view.model;
             //var operationManager = model.getOperationManager();

@@ -1,6 +1,20 @@
 define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, ui) {
 
     var WrapDraggableResizable = Marionette.Behavior.extend({
+        onModeChange: function(mode) {
+          var view = this.view;
+          if (this.view.options.mode == mode) return;
+          this.view.options.mode = mode;
+
+          if (mode) {
+            // Enable Everything
+            this.$el.draggable("enable").resizable("option", "disabled", false);
+          }
+          else {
+            this.$el.draggable("disable").resizable("option", "disabled", true);
+            // Disable everything
+          }
+        },
         onRender: function () {
             var model = this.view.model;
             //var operationManager = model.getOperationManager();

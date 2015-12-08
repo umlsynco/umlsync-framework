@@ -949,6 +949,12 @@ if(diag.options.isEmbedded) return;
                 this.connectorsView.ctx = this.ctx;
                 this.connectorsView.triggerCustomEvent("redraw", this.ctx);
             },
+            setMode: function(mode) {
+               var isEditable = mode == "edit";
+               this.elementsView.children.each(function(element) {
+                  element.triggerMethod("ModeChange", isEditable);
+               });
+            },
 
             //
             // @description - remove element logic

@@ -65,10 +65,12 @@ define(
                 }
                 if (text == 'Edit') {
                     this.model.set("mode", "edit");
-//                    this.UD.setMode("edit");
+                    this.UD.setMode("edit");
+                    this.ui.editButton.text("View");
                     return;
                 }
-//                this.UD.setMode("view");
+                this.ui.editButton.text("Edit");
+                this.UD.setMode("view");
                 this.model.set("mode", "view");
             },
             onGetLink: function() {
