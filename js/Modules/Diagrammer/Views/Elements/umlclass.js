@@ -79,6 +79,16 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
               selector: '.us-class-attributes',
               handlers: 's-l'
             },
+            //
+            // Passthrough on mode change behavior
+            // for methods and field
+            //
+            onModeChange: function(mode) {
+              if (this.attributesView)
+                this.attributesView.triggerMethod("ModeChange", mode);
+              if (this.operationsView)
+                this.operationsView.triggerMethod("ModeChange", mode);
+            },
             onRender: function() {
                 //
                 // Extend element with a new fields on render

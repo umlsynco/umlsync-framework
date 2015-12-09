@@ -9,10 +9,18 @@ define(['backbone', 'marionette', 'jquery-ui'], function (Backbone, Marionette, 
           if (mode) {
             // Enable Everything
             this.$el.draggable("enable").resizable("option", "disabled", false);
+            if (view.customResize) {
+              var data = this.$el.find(view.customResize.selector);
+              data.resizable("option", "disabled", false);
+            }
           }
           else {
             this.$el.draggable("disable").resizable("option", "disabled", true);
             // Disable everything
+            if (view.customResize) {
+              var data = this.$el.find(view.customResize.selector);
+              data.resizable("option", "disabled", true);
+            }
           }
         },
         onRender: function () {
@@ -38,6 +46,9 @@ if (!isemb) {
             this.$el
 //                .css(applyOptions)
                 .bind('contextmenu', function (e) {
+                    // Do nothing for VIEW mode
+                    if (!view.options.mode) return;
+
                     e.preventDefault();
                     // Load and show the context menu for the diagram
                     // [TODO]: Do we need to split "edit/view" states ?

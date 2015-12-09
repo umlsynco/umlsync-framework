@@ -167,6 +167,8 @@ if (!isemb) {
                     }
                 })
                .bind('contextmenu', function(e) {
+                     // do nothing for VIEW mode
+                     if (!view.options.mode) return;
                      var p = $(this).offset(),
                      x = e.pageX - p.left,
                      y = e.pageY - p.top;
@@ -240,6 +242,17 @@ if (!isemb) {
             },
             collectionEvents: {
                 'redraw':'redraw'
+            },
+            //
+            // On mode change handling
+            // for each label
+            // 
+            onModeChange: function(mode) {
+               this.options.mode = mode;
+               this.children.each(function(label) {
+                  label.options.mode = mode;
+                  label.$el.draggable(mode ? "enable":"disable");
+               });
             },
             onRedraw: function(ctx) {
               this.ctx = this.ctx || ctx;
@@ -843,7 +856,9 @@ if(diag.options.isEmbedded) return;
 //                          }
 
                           if (e.which != 3) {
-                            diag.startConnectorTransform(x,y);
+                            if (diag.options.mode) {
+                                diag.startConnectorTransform(x,y);
+                            }
                           }
 
                           if ((diag.selectedconntector)
@@ -853,6 +868,8 @@ if(diag.options.isEmbedded) return;
                           }
                         })
                         .bind('contextmenu', function(e) {
+                          // Do not show menu for VIEW mode
+                          if (!diag.options.mode) return;
                           var p = $(this).offset(),
                           x = e.pageX - p.left,
                           y = e.pageY - p.top;
@@ -949,10 +966,18 @@ if(diag.options.isEmbedded) return;
                 this.connectorsView.ctx = this.ctx;
                 this.connectorsView.triggerCustomEvent("redraw", this.ctx);
             },
+            //
+            // @param mode - mode of the diagram (edit, view, snippets, embedded)
+            // Note: supported edit/view change only
+            //
             setMode: function(mode) {
                var isEditable = mode == "edit";
                this.elementsView.children.each(function(element) {
                   element.triggerMethod("ModeChange", isEditable);
+               });
+               this.connectorsView.options.mode = isEditable;
+               this.connectorsView.children.each(function(connector) {
+                  connector.triggerMethod("ModeChange", isEditable);
                });
             },
 
