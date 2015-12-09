@@ -50,7 +50,8 @@ define(['marionette',
             // 4. Redraw connectors
             //
             onActivate: function(options) {
-              this.show();
+              // ON REQUEST SOME TYPE OF DIAGRAM VIEW !!! ONLY
+              // this.show();
               if (!this.dctx) {
                   this.dctx = new DiagramCtxMenu({registry:options.contextMenuRegistry});
               }

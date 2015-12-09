@@ -10,6 +10,9 @@ define(
      'Controllers/DiagramMenuController'
     ],
     function (Backbone, Framework, ContentModel, Diagram, OperationManager, ElementDropController, SequenceElementDropController, UmlDiagram, DiagramMenuController) {
+
+        var controller = new DiagramMenuController(); 
+
         //
         // This class is responsible for the tab which contain diagram
         // It should handle concreate instance of the diagram
@@ -67,11 +70,13 @@ define(
                     this.model.set("mode", "edit");
                     this.UD.setMode("edit");
                     this.ui.editButton.text("View");
+                    controller.show();
                     return;
                 }
                 this.ui.editButton.text("Edit");
                 this.UD.setMode("view");
                 this.model.set("mode", "view");
+                controller.hide();
             },
             onGetLink: function() {
                this.ui.getLinkContent.toggle();
@@ -79,6 +84,20 @@ define(
                // TODO: move to render
                this.ui.getLinkContent.find('input').val('http://umlsync.org/github?path=' + this.model.get("absPath"));
              
+            },
+            onFocusChange: function(isFocused) {
+              if (isFocused) {
+                if (this.model.get("mode") == "edit"
+                   && !this.model.get("isEmbedded")) {
+                   controller.show();
+                }
+                else {
+                   controller.hide();
+                }
+              }
+              else {
+                controller.hide();
+              }
             },
             //
             // Loading -> Render or Error 
@@ -298,8 +317,10 @@ define(
         });
 
         
-        var controller = new DiagramMenuController();
-
+        //
+        // Global content handlers registry
+        //
+        //
         Framework.registerContentTypeView({
             type: 'diagram',
             classPrototype:diagramView,

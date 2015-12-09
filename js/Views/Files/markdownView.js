@@ -147,7 +147,7 @@ define(
                     embeddedParentCid: this.model.cid,
                     absPath:absPath,
                     contentType:'diagram',
-                    isActive: true,
+                    isActive: false,
                     isEditable:false,
                     isModified:false,
                     isEmbedded: true,

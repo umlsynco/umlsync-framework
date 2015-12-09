@@ -35,7 +35,7 @@ define(
               
               // trigger with content information
               if (models.length == 1) {
-				models[0].trigger("syncup", "later");
+                models[0].trigger("syncup", "later");
 
                 Framework.vent.trigger("content:before:close", {model:models[0], action: "close"});
               }
@@ -143,9 +143,15 @@ define(
                 this.$el.tabs('select', model.get("parentSelector"));
                 if (this.kids[model.cid]) {
                   this.activeView = this.kids[model.cid];
+                  this.kids[model.cid].triggerMethod("FocusChange", true);
                 }
                 else {
                   this.activeView = null;
+                }
+              }
+              else {
+                if (this.kids[model.cid]) {
+                  this.kids[model.cid].triggerMethod("FocusChange", false);
                 }
               }
             },

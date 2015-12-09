@@ -241,6 +241,7 @@ define(['marionette',
 
             // Close content            
             onContentClose: function(model) {
+              model.set({isActive:false});
               Framework.ContentCollection.remove(model);
               // TODO: trigger to the content cache to resume reference count
             },
