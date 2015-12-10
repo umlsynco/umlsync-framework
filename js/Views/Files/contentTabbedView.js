@@ -117,7 +117,8 @@ define(
 
                 this.children.each(function(child) {
                    if (child.resize instanceof Function) {
-                       child.resize(data);
+                       if (!child.model.get("isEmbedded"))
+                         child.resize(data);
                    }
                 });
             },

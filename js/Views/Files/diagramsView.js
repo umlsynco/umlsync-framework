@@ -158,6 +158,12 @@ define(
                     this.UD.render();
                     this.$el.append(this.UD.$el);
 
+                    if (isemb) {
+                      var sizes = this.modelDiagram.getSize();
+                      this.$el.css(sizes);
+                      this.UD.$el.css(sizes);
+                      this.US.$el.find(".us-canvas").css(sizes);
+                    }
                     // draw all connectors
                     this.UD.drawConnectors();
 

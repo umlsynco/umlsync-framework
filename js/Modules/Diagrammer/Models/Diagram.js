@@ -154,6 +154,18 @@ define(['backbone', 'underscore'], function (Backbone, _) {
     });
 
     var Diagram = Backbone.DiagramModel.extend({
+        getSize: function() {
+           var result = {height:0, width:0};
+           this.umlelements.each(function(model) {
+              var height = model.get("top") + model.get("height"),
+              width = model.get("left") + model.get("width");
+              if (result.height < height) result.height = height;
+              if (result.width < width) result.width = width;
+           });
+           result.height += 50;
+           result.width += 50;
+           return result;
+        },
         removeElement: function() {
         },
         addElement: function() {

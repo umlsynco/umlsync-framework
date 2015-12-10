@@ -234,6 +234,7 @@ $.log = function(message) {
         });
 
         $("#content-left-right-resize").draggable({
+             axis: 'x',
              drag: function(e, ui) {
                 that.vent.trigger('app:resize', e, ui);
              },
