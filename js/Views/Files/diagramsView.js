@@ -50,7 +50,8 @@ define(
             ui: {
                 'editButton' : "#us-diagram-edit",
                 'getLink': 'span#us-getlink',
-                'getLinkContent' : 'div#us-getlink-content'
+                'getLinkContent' : 'div#us-getlink-content',
+                'readme': "div.us-diagram"
 
             },
             events: {
@@ -115,6 +116,13 @@ define(
                 return "#umlsync-diagram-view-template";
             },
             //
+            // Handle application resize behavior
+            // it could be horizontal splitter or window resize
+            //
+            resize: function(options) {
+               this.$el.find("div.us-diagram").css(options);
+            },
+            //
             // Render an internal items
             //
             render: function() {
@@ -167,6 +175,8 @@ define(
 
                     // An embedded diagram behavior
                     if (isemb) this.ui.editButton.text("Open");
+
+                    this.trigger("render");
                 }
                 else {
                    // Use the default method

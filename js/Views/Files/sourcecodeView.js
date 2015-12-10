@@ -6,7 +6,8 @@ define(
     function (Backbone, Framework, ContentModel) {
         var sourcecodeView = Backbone.Marionette.ItemView.extend({
             ui: {
-              "lline" : "ol.linenums>li"
+              "lline" : "ol.linenums>li",
+              readme: "div.us-sourcecode"
             },
             events: {
               "click @ui.lline": "onLineNumber"
@@ -14,6 +15,9 @@ define(
             initialize: function () {
                 this.model.on('change:status', this.render);
                 this.model.on('change:mode', this.onSnippets);
+            },
+            resize: function(options) {
+                this.ui.readme.css(options);
             },
             getTemplate: function () {
                 var status = this.model.get("status");

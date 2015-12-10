@@ -10,6 +10,7 @@ define(
 
         var view = Backbone.Marionette.ItemView.extend({
             ui:  {
+              readme: "#readme",
               'editButton' : "#us-diagram-edit",
               'textarea' : 'textarea#markdown',
               'markdownIcon': 'span.us-toolbox-header ul li.us-toolbox-button a'
@@ -25,7 +26,10 @@ define(
             initialize: function () {
                 this.model.on('change:status', this.render);
             },
-            
+            resize: function(options) {
+              $.log("DO RESIZE");
+              this.ui.readme.css(options);
+            },
             changedContent: function() {
               var text = this.ui.textarea.val();
 

@@ -233,6 +233,15 @@ $.log = function(message) {
             that.vent.trigger('app:resize', e);
         });
 
+        $("#content-left-right-resize").draggable({
+             drag: function(e, ui) {
+                that.vent.trigger('app:resize', e, ui);
+             },
+             stop: function(e, ui) {
+                that.vent.trigger('app:resize', e, ui);
+             }
+        });
+
         // [TODO]: Path for each diagram ?
         if (Backbone.history){ Backbone.history.start(); }
 

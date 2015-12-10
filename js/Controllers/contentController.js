@@ -62,7 +62,7 @@ define(['marionette',
                 });
             },
 
-            handleWidowResize: function(e, u) {
+            handleWidowResize: function(e, ui) {
                 var height = $(window).height();
                 var width = $(window).width();
                 //$("#body").width(width).height(height);
@@ -77,7 +77,11 @@ define(['marionette',
                 // Update left and right regions
                 height = height - head.height - bottom.height;
                 Framework.LeftRegion.$el.height(height);
-                var widthLeft = Framework.LeftRegion.$el.width();
+
+                var widthLeft = (ui ? ui.position.left :  Framework.LeftRegion.$el.width());
+                if (ui) {
+                   Framework.LeftRegion.$el.width(widthLeft);
+                }
 
                 Framework.LeftRegion.resize(e, widthLeft, height);
 
@@ -85,6 +89,7 @@ define(['marionette',
 
                 // Content controller resize element
                 $("#content-left-right-resize").height(height);
+                Framework.RightRegion.$el.css({left: widthLeft + $("#content-left-right-resize").width()});
                 Framework.RightRegion.$el.height(height).width(width);
                 Framework.RightRegion.resize(e, width, height);
             },

@@ -25,6 +25,9 @@ define(
             filter: function(childer) {
               return children.get("contentType") != "snippets";
             },
+            childEvents: {
+               render: 'onChildRender'
+            },
             //
             // map ui element to the model keys
             //
@@ -72,6 +75,13 @@ define(
                  // Copy-Cut-Past operations !!!
                  Framework.vent.on("content:past", _.bind(this.onPastCall, this));
             },
+            //
+            // Fix content size
+            //
+            onChildRender: function(childView) {
+              if (!childView.model.get('isEmbedded'))
+                  Framework.vent.trigger("app:resize", true);
+            },
             onPastCall: function(data) {
                 if (this.activeView && this.activeView.handlePast) {
                     this.activeView.handlePast(data);
@@ -100,6 +110,16 @@ define(
             },
             resize: function(event, width, height) {
                 this.$el.parent().width(width).height(height);
+                var data = {
+                     width: width - 40,
+                     height: height - $("#tabs>ul.ui-tabs-nav").height() - 40
+                };
+
+                this.children.each(function(child) {
+                   if (child.resize instanceof Function) {
+                       child.resize(data);
+                   }
+                });
             },
             /////////////////// Collection events ////////////////
             //
