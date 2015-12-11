@@ -22,8 +22,9 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
             childView : opiv,
             tagName: 'ul',
             behaviors: {
-                ListSortableBehavior: {
-                }
+               'ListSortableBehavior' : function(view) {
+                     alert("ASDASDAS");
+               }
             }
         });
 
@@ -40,7 +41,14 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                 EditableBehavior: {
                     // Make item editable
                 }
-            }
+            },
+            childViewOptions: function() {
+                return {
+                  parent: this,
+                  diagram: this.options.parent
+                };
+            },
+
         });
 
         //
@@ -52,6 +60,12 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
             behaviors: {
                 ListSortableBehavior: {
                 }
+            },
+            childViewOptions: function() {
+                return {
+                  parent: this,
+                  diagram: this.options.parent
+                };
             }
         });
 
@@ -96,7 +110,13 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                 // Attributes/Fields
                 //
                 if (this.model.getUmlAttributes) {
-                    this.attributesView = new attributesView({collection:this.model.getUmlAttributes()});
+                    this.attributesView = new attributesView({
+                        collection:this.model.getUmlAttributes(),
+                        childViewOptions: {
+                            parent: this
+                        },
+                        isEmbedded: this.options.parent.model.get("isEmbedded")
+                    });
                     this.attributesView.render();
                     this.$el.find("DIV#" + this.model.cid + " div.us-class-attributes").append(this.attributesView.$el);
                 }
@@ -104,7 +124,13 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                 // Operations/methods
                 //
                 if (this.model.getUmlOperations) {
-                   this.operationsView = new operationsView({collection:this.model.getUmlOperations()});
+                   this.operationsView = new operationsView({
+                       collection:this.model.getUmlOperations(),
+                       childViewOptions: {
+                           parent: this
+                       },
+                       isEmbedded: this.options.parent.model.get("isEmbedded")
+                   });
                    this.operationsView.render();
                    this.$el.find("DIV#" + this.model.cid + " div.us-class-operations").append(this.operationsView.$el);
                }

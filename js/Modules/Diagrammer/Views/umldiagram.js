@@ -155,6 +155,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
             onRender: function() {
                 var view = this,
                 isemb = view.options.diagram.model.get("isEmbedded");
+                view.options.mode = view.options.diagram.options.mode || false;
 if (!isemb) {
                 this.$el.draggable({
 					start: function() {
@@ -972,6 +973,7 @@ if(diag.options.isEmbedded) return;
             //
             setMode: function(mode) {
                var isEditable = mode == "edit";
+               this.options.mode = isEditable;
                this.elementsView.children.each(function(element) {
                   element.triggerMethod("ModeChange", isEditable);
                });

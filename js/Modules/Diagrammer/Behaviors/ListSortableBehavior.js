@@ -15,6 +15,8 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
             var view = this.view;
             var startIndex = -1;
 
+            if (view.options.isEmbedded) return;
+
             // [TODO]: drop it !!!
             if (view.wasInitialized) {
 				alert("DOUBLE CALL OF THE BEHAVIOR HANDLER !!!");

@@ -865,6 +865,7 @@ DIV.us-selected > DIV.ui-resizable-handle {
 li.us-label {
   list-style: none;
   width: 256px;
+  position:absolute;
 }
 
 li.us-label>a {
