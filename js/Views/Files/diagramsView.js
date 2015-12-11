@@ -164,6 +164,9 @@ define(
                       this.UD.$el.css(sizes);
                       // this.US.$el.find(".us-canvas").css(sizes);
                     }
+                    else {
+                      this.UD.setMode("edit");
+                    }
                     // draw all connectors
                     this.UD.drawConnectors();
 

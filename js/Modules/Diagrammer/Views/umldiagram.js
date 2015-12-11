@@ -12,6 +12,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 if (this._init) {
                     this._init.call(this, arguments);
                 }
+                this.options.mode = this.options.parent.options.mode;
             },
             templateHelpers: function() {
                 return {
