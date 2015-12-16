@@ -2,7 +2,7 @@
 [
   {"id":"us-class-menu",
    "items": [
-			{"element":{"type": "class", "width":150, "height":66, "name":"Class"},
+			{"element":{"type": "class", "width":150, "height":66, "name":"Class", "operations":[],"attributes":[]},
 			 "connectors":[
 					{"type":"association",
 					 "icon":"assets/icons/us/cs/class/class/association.png"
@@ -40,7 +40,7 @@
   },
   {"id":"us-class-note-menu",
    "items": [
-			{"element":{"type":"class", "width":150, "height":66, "name":"Class"},
+			{"element":{"type":"class", "width":150, "height":66, "name":"Class","operations":[],"attributes":[]},
 			 "connectors":[
 					{"type":"anchor",
 					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
