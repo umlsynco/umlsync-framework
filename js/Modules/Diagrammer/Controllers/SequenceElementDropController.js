@@ -24,13 +24,18 @@ define(['marionette',
             onElementAdd: function(element) {
                 // Do nothing for the temporary elements (DND)
                 if (element.model.get("temporary")) return;
+
+$.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
+
                 // avoid iteration for the not droppable elements
                 if ((!element.droppable) && (element.acceptDrop.length == 0)) return;
 
-                if (element.droppedElements.length >0)
+                if (element.droppedElements.length >0) {
+				  $.log("ADD element: REFRESH");
                   //TODO: Work-around. There is no way to get dropped elements before new element creation
                   //      but somhow it is not empty. Most likely it is an issue of backbone or marionette
                   element.droppedElements = new Array();
+                }
 
                 this.elements.children.each(function(child) {
                   if (child != element) {
@@ -39,9 +44,12 @@ define(['marionette',
                 });
 
                 if (element.droppedElements.length >0) {
-                      $.log("NAME: " + element.model.get("type"));
+                      $.log("HAS DROPPED ELEMENTS: " + element.model.get("type"));
                   }
                   else if (element.model.get("type") == "llport") {
+					//
+					// Create parent for the llport element
+					//
                     if (element.dropParent == null) {
                         element.model.collection.add(new Backbone.DiagramModel({name:"Class2",type:"objinstance", left: (element.model.get("left") - 100), "width":150, "height": element.model.get("top") + 150}));
                     }
@@ -91,16 +99,79 @@ define(['marionette',
 // 3. if llport:
 // 3.1 If dropped out of port => 2.1 & 2.2
 
+                // HANDLE FROM ID ELEMENT
+                var parentFid;
                 if (fid.model && (fid.model.get("type") == "objinstance")) {
-                    var y = connector.toModel.get("top");
-                    var fromModel = new Backbone.DiagramModel({type:"llport", width:15, height:25, left: fid.model.get("left") + fid.model.get("width")/2, top: y});
-                    this.elements.collection.add(fromModel);
-                    connector.fromModel = fromModel;
-                    connector.model.set({fromId: fromModel.get("id")});
+					parentFid = fid;
                 }
+                else if (fid.model && (fid.model.get("type") == "llport")) {
+					parentFid = fid.dropParent
+				}
+				
+				if (parentFid) {
+					var y = connector.model.umlepoints.models[0].get("y");
+					var cfid;
+					// 1. Check that connector was dropped in scope of llport
+					if (parentFid.droppedElements) {
+						_.each(parentFid.droppedElements, function(llport) {
+							var top = llport.model.get("top");
+							// Connector was dropped over this llport element
+							if (y > top && y < top + llport.model.get("height")) {
+								cfid = llport;
+							}
+						});
+					}
+					
+					// IF NOT Found fromID element for connector, than create a llport element
+					var cfid_model;
+					if (!cfid) {
+					  // 2. create a new one llport 
+                      cfid_model = new Backbone.DiagramModel({type:"llport", width:15, height:25, left: parentFid.model.get("left") + parentFid.model.get("width")/2 -5, top: y});
+                      this.elements.collection.add(cfid_model);
+					}
+					else {
+						cfid_model = cfid.model;
+					}
+  
+                    connector.fromModel = cfid_model;
+                    connector.model.set({fromId: cfid_model.get("id")});
+				}
+
+
+                // HANDLE TO ID element
+                if (tid.model && (tid.model.get("type") == "objinstance")) {
+					// umlepoints is Backbone collection
+                    var y = connector.model.umlepoints.models[0].get("y");
+					var ctid;
+					// 1. Check that connector was dropped in scope of llport
+					if (tid.droppedElements) {
+						_.each(tid.droppedElements, function(llport) {
+							var top = llport.model.get("top");
+							// Connector was dropped over this llport element
+							if (y > top && y < top + llport.model.get("height")) {
+								ctid = llport;
+							}
+						});
+					}
+					
+					// IF NOT Found fromID element for connector, than create a llport element
+					var ctid_model;
+					if (!ctid) {
+					  // 2. create a new one llport 
+                      ctid_model = new Backbone.DiagramModel({type:"llport", width:15, height:25, left: tid.model.get("left") + tid.model.get("width")/2 -5, top: y});
+                      this.elements.collection.add(ctid_model);
+					}
+					else {
+						ctid_model = ctid.model;
+					}
+  
+                    connector.toModel = ctid_model;
+                    connector.model.set({toId: ctid_model.get("id")});
+                }
+
                 
                 // 1. If connector from objinstance then create from port or attach to existing one
-                // 2. if connector dropped on objinstance then crea llport and drop it on
+                // 2. if connector dropped on objinstance then creat llport and drop it on
             },
             onConnectorDragStart: function(conView, ui) {
                 this.dragAlsoElements = new Array();
@@ -136,10 +207,15 @@ define(['marionette',
                 // Refresh droppable relations
                 var that = this;
                 this.elements.children.each(function(itemView2) {
-                    if (!(itemView2 in that.dragAlsoElements)) {
+					//
+					// There is one to one relation between llport and objinstance
+					//
+					if (itemView2.model.get("type") != "llport" && itemView2.model.get("type") != "objinstance") {
+                      if (!(itemView2 in that.dragAlsoElements)) {
                         _.each(that.dragAlsoElements, function (droppedElemement) {
                             itemView2.dropDone(droppedElemement);
                         });
+                      }
                     }
                 });
 
@@ -290,7 +366,10 @@ define(['marionette',
                 this.elements.children.each(function(itemView2) {
                     if (!(itemView2 in that.dragAlsoElements)) {
                         _.each(that.dragAlsoElements, function (droppedElemement) {
-                            itemView2.dropDone(droppedElemement);
+							// Prevent self drop checking
+							if (droppedElemement != itemView2) {
+                              itemView2.dropDone(droppedElemement);
+                            }
                         });
                     }
                 });

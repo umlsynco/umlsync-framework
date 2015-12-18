@@ -1,8 +1,9 @@
 define(['marionette'],
     function(Marionette) {
         var View = Backbone.Marionette.ElementItemView.extend({
-            template: _.template('<div id="<%=cid%>" class="us-element-resizable-area" style="width:100%;">\
+            template: _.template('<div id="<%=cid%>" class="grElement" style="width:100%;">\
         <div class="us-instance-line"></div>\
+        <div class="us-instance-line2"></div>\
         <div id="<%=cid%>_NEXT" class="us-instance grElement" style="height:40px;">\
         <div>:<a id="name" class="editablefield Name"><%=name%></a></div></div></div>'),
             axis: "x",
@@ -51,17 +52,28 @@ define(['marionette'],
                 // Check if this element could be dropped on dev
                 // or dev could be dropped on this
                 //
+                $.log("dropDone: " + this.model.get("type") + ": "+ this.model.cid);
                 if (!dev.dropParent)
-                  this._checkRelation(dev, this);
+                  if (this._checkRelation(dev, this))
+                      dev.dropParent = this;
 
                 if (dev.dropParent == this) {
 					  $.log("zIndex");
 					  var index_current = parseInt(this.$el.css("zIndex"), 10);
 					  $.log("zIndex: " + index_current);
 					  dev.$el.css("zIndex", index_current+10);
+					  this._updateDroppedPositions();
 				}
-
             },
+            _updateDroppedPositions: function() {
+				var that = this,
+				pos = this.$el.position(),
+				left = pos.left + this.$el.width()/2 - 5;
+				_.each(this.droppedElements, function(delem) {
+					delem.$el.css({left: left});
+					delem.model.set({left: left});
+			    });
+			}
             //template: _.template('<div id="<%=cid%>" class="us-port us-element-resizable-area grElement"></div>')
         });
         return View;

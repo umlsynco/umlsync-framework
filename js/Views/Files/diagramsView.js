@@ -302,7 +302,12 @@ define(
                            if (!mmm.get("id")) {
                                alert("Unexpected error: uml element didn't get 'id' before connector creation !");
                            }
-                           connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id"), epoints: [], labels: []}));
+                           var epp = [];
+                           // llsequence; llreturn etc...
+                           if (data.context.connectorType[0] == "l" && data.context.connectorType[1] == "l") {
+                               epp.push({x:  data.context.left, y: data.context.top});
+                           }
+                           connectors.add(new Backbone.DiagramModel({type:data.context.connectorType, fromId:fromId, toId:mmm.get("id"), epoints: epp, labels: []}));
 
                            // TODO: Drop debug output one day
                            /*alert("elements: " + elements.length + "   connectors: " + connectors.length);

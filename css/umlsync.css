@@ -251,6 +251,16 @@ a.reference {
   border-right: 1px dashed black;
 }
 
+.us-instance-line2 {
+  position:absolute;
+  top:0px;
+  width:50%;
+  left:50%;
+  height:100%;
+  border: 0px;
+}
+
+
 .us-port {
   position: relative;
   width: 100%;

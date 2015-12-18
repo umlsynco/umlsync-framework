@@ -15,9 +15,10 @@ define(['marionette'],
             dropDone: function(element) {
                // It is not possible to change dropped parent after selection
                // Or drop element on multiple targets
+               $.log("dropDone: " + this.model.get("type") + ": "+ this.model.cid);
                if (!this.dropParent) {
 				   $.log("Drop it !!!" );
-                 if (this._checkRelation(this, element)) {
+                 if (element._checkRelation(this, element)) {
                      this.dropParent = element;
                      $.log("Drop it 2!!!" );
                  }
