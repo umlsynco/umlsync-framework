@@ -284,6 +284,11 @@ if (!isemb) {
                     return;
                 }
                 this.points = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.epoints);
+                
+                if (!this.points) {
+					$.log("SOMETHING DEEPLY WRONG !!!");
+					return;
+				}
                 this.gip = [];
                 for (var i=0;i<this.points.length-1;++i) {
                     var dy = this.points[i].y - this.points[i+1].y,
