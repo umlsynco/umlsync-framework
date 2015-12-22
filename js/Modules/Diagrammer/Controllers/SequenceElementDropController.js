@@ -514,6 +514,8 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
                     connector.onDragStop(ui);
                 });
 
+
+
                 //
                 // Check the droppable relation for the dragged element
                 // and which was not drag
@@ -529,6 +531,16 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
                             }
                         });
                     }
+                });
+
+                // Merge and align elements
+                _.each(that.dragAlsoElements, function(view, index) {
+					if (view.model.get("type") == "llport" && view.dropParent) {
+                      that._merge_and_align(view.dropParent);
+				    }
+				    else if (view.model.get("type")	== "objinstance") {
+						that._merge_and_align(view);
+					}
                 });
 
                 if (this.dragAlsoElements.length > 0) {
