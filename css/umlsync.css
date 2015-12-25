@@ -45,7 +45,7 @@ a.reference {
   border: 0px solid grey;
   background-color: none;
   position: absolute;
-  z-index: 999;
+  z-index: 11111111;
   pointer-events: none;
   left:0px;
   top:0px;

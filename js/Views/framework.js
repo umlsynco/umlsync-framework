@@ -8,6 +8,10 @@ define(['marionette',
 $.log = function(message) {
     if (window.console) console.log(message);
 };
+
+    window.global = {
+      enable_element_dnd: true
+    };
         
     var Framework = new Marionette.Application({
         //

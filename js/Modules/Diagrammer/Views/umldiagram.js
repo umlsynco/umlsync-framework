@@ -773,9 +773,6 @@ if (!isemb) {
                     highlighted: null,
                     selectedConnector: null,
                     isPointOnLine: function(x, y) {
-						if ($.ipp) {
-							$.log("IPOL:");
-						}
                         var diag = this;
                         var shouldRedraw = false;
                         // Check of transformat has been started
@@ -828,16 +825,18 @@ if (!isemb) {
                     //
                     onRender: function() {
                        var diag = this;
-                       this.$el
-                       .mousemove(function(e) {  // DEBUG FUNCTIONALITY.
+
+                       var $par = this.$el.parent();
+                       $par.mousemove(function(e) {
                           var p = $(this).offset(),
                           x = e.pageX - p.left,
                           y = e.pageY - p.top;
-                          var status = diag.isPointOnLine(x,y);
-                          if (status) {
+// $.log("Move connector {x:" + x + ", y: " + y+ "};");
+                              var status = diag.isPointOnLine(x,y);
 //                            dm.at.mouse = dm.at.mouse || {};
 //                            dm.at.mouse.x = x;
 //                            dm.at.mouse.y = y;
+                          if (status || diag.skipMouseEvents) {
                             e.stopPropagation();
                           }
                         })
@@ -845,15 +844,22 @@ if (!isemb) {
                           var p = $(this).offset(),
                           x = e.pageX - p.left,
                           y = e.pageY - p.top;
-                          diag.stopConnectorTransform(x,y);
+                          if (diag.skipMouseEvents && diag.highlighted) {
+                              diag.stopConnectorTransform(x,y);
+                              e.stopPropagation();
+                          }
+                          diag.skipMouseEvents = false;
                         })
                         .mousedown(function(e) {
-
-if(diag.options.isEmbedded) return;
+                          if (diag.options.isEmbedded) return;
 
                           var p = $(this).offset(),
                           x = e.pageX - p.left,
                           y = e.pageY - p.top;
+
+                          if (!diag.highlighted) {
+                            return;
+                          }
 
 // [TODO:Testing] Selenium test suite helper
                           // Selenium can't clickAndHold at concreate position
@@ -865,6 +871,10 @@ if(diag.options.isEmbedded) return;
                           if (e.which != 3) {
                             if (diag.options.mode) {
                                 diag.startConnectorTransform(x,y);
+                                e.stopPropagation();
+                                e.stopImmediatePropagation();
+                                diag.skipMouseEvents = true;
+                                window.global.enable_element_dnd = false;
                             }
                           }
 
@@ -895,7 +905,12 @@ if(diag.options.isEmbedded) return;
 
         var DiagramView = Backbone.Marionette.ItemView.extend({
             className: "us-diagram",
-            template: _.template('<canvas id="<%=cid%>_Canvas" class="us-canvas" width="1500px" height="800px"></canvas>'),
+            getTemplate: function() {
+               if (this.model.get('isEmbedded')) {
+                 return _.template('<canvas id="<%=cid%>_Canvas" class="us-canvas" width="1500px" height="800px"></canvas>');
+               }
+               return _.template('');
+            },
             templateHelpers: function() {
                 return {
                     cid: this.model.cid
@@ -947,14 +962,16 @@ if(diag.options.isEmbedded) return;
 
                 this.connectorsView.render();
                 this.$el.append(this.connectorsView.$el);
+                this.connectorsView.onRender();
                 
                 this.connectorsView.on("connector:changed", redrawer);
 
                 //
                 // INITIALIZE CANVAS
                 //
-                this.canvasEuid = this.model.cid+'_Canvas';
-                this.canvas = (this.el.childNodes[0]);// .childNodes[0];
+                var isEmb = this.model.get("isEmbedded");
+                this.canvasEuid = (isEmb ? this.model.cid+'_Canvas' : 'SingleCanvas');
+                this.canvas = (isEmb ? this.el.childNodes[0] : window.document.getElementById(this.canvasEuid));
             },
 
             //

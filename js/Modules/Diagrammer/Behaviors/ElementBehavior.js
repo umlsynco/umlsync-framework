@@ -83,11 +83,32 @@ if (!isemb) {
                     }
 
                 })
+                .mousedown(function(e) {
+                    //
+                    // Connector is over the element:
+                    // 1. element:mousedown
+                    // 2. connector:mousedown
+                    // 3. element:draggable:start => take a design to start or not
+                    //
+                    window.global.enable_element_dnd = true;
+                })
                 .draggable({
 //                    'grid': [2, 2],
 //                    'scroll': true,
+        'containment': "#diag-" + model.cid,// to prevent jumping of element on resize start
+        'grid': [2,2],
+        obstacle: "DIV.us-diagram",
+        preventCollision: true,
                     axis: view.axis,
                     'start': function (event, ui) {
+                        //
+                        // Prevent element DND on connector DND
+                        // if connector is over the element
+                        if (!window.global.enable_element_dnd) {
+                            // trigger "mouseup" to prevent draggable pending on next DND
+                            $(this).trigger("mouseup", ui);
+                            return false;
+                        }
 			// prevent wrong behavior for the multiple selection
                         if (!view.selected) {
 			    view.trigger("select", event);
@@ -97,9 +118,11 @@ if (!isemb) {
                         view.trigger("drag:start", ui);
                     },
                     'drag': function (event, ui) {
+                        $.log("Element DND drag");
                         view.trigger("drag:do", {left: (view.axis == "y") ? 0 : ui.position.left - view.operation_start.left, top: (view.axis == "x") ? 0 : ui.position.top - view.operation_start.top});
                     },
                     'stop': function (event, ui) {
+                        $.log("Element DND stop");
                         var pos = view.$el.position();
                         //operationManager.startReport();
                         model.set({left:pos.left, top:pos.top});
@@ -108,6 +131,9 @@ if (!isemb) {
                         view.trigger("drag:stop", {left: (view.axis == "y") ? 0 : ui.position.left - view.operation_start.left, top: (view.axis == "x") ? 0 : ui.position.top - view.operation_start.top});
                         //operationManager.stopReport();
                     }
+                })
+                .click(function(e) {
+                    e.stopPropagation();
                 });
 } // is embedded
                this.$el.append("<img id='" + model.cid + "_REF' title='REFERENCE' src='images/reference.png' class='us-element-ref' style='z-index:99999;visibility:hidden;'></img>");
