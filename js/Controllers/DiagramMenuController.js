@@ -70,6 +70,7 @@ define(['marionette',
             },
             hide: function() {
                 $(this.dialog.$el).hide();
+                $("#SingleCanvas").hide();
             }
         });
 

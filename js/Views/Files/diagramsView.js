@@ -95,6 +95,7 @@ define(
                 else {
                    controller.hide();
                 }
+                if (!this.model.get("isEmbedded")) { $("#SingleCanvas").show();  }
               }
               else {
                 controller.hide();
@@ -134,6 +135,8 @@ define(
                     Backbone.Marionette.ItemView.prototype.render.apply(this, arguments);
 
                     var isemb = this.model.get("isEmbedded");
+                    // Switch on canvas
+                    if (!isemb) { $("#SingleCanvas").show(); }
 
                     var simpleContent  = this.model.get("content");
                     simpleContent = (simpleContent instanceof  String) ? $.parseJSON(simpleContent) : simpleContent;

@@ -894,3 +894,7 @@ border: 2px dashed #97F7A1;
 div#readme {
   height: 900px;
 }
+
+div.ui-dialog {
+  z-index: 90000000;
+}

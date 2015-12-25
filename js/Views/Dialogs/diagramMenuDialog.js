@@ -62,6 +62,7 @@ define([
 				});
 			},
             onShow: function() {
+  $("#SingleCanvas").show();
 				this.$el.draggable({cancel:"#us-diagram-menu-accordion"});
 				this.getRegion('accordion').show(this.accordion);
 				var that = this;

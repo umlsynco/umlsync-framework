@@ -28,7 +28,7 @@ a {
     border: 1px solid #868686;
     margin: 0;
     padding: 0;
-    z-index: 29999998;
+    z-index: 80000000;
     overflow: hidden;
     padding: 1px 1px 1px 1px;
     margin: 1px;
@@ -101,7 +101,7 @@ a {
     margin: 0;
     padding: 0;
     position: absolute;
-    z-index: 1003;
+    z-index: 90000000;
     width:150px;
 }
 
@@ -136,7 +136,6 @@ a {
 }
 
 .diagram-menu {
-    z-index: 1000;
     position: absolute;
     left: 20px;
     top: 48px;
@@ -149,7 +148,6 @@ a {
 }
 
 .accordion-diagram-menu {
-    z-index: 1000;
     position: absolute;
     left: 0px;
     top: 0px;
@@ -528,7 +526,7 @@ span.cfolder span.dynatree-icon {
     margin: 0;
     padding: 0;
     position: absolute;
-    z-index: 1003;
+    z-index: 90000000;
 }
 
 .context-menu-3 LI {
@@ -615,7 +613,7 @@ div#snippets {
 }
 
 div#us-snippets-toolbox {
-    z-index: 10011;
+    z-index: 90000000;
     background-color: greenyellow;
     width: 100%;
 }
