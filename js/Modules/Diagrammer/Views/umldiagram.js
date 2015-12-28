@@ -159,12 +159,12 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                 view.options.mode = view.options.diagram.options.mode || false;
 if (!isemb) {
                 this.$el.draggable({
-					start: function() {
-						// prevent mouse enter/exit on DND
-						view.dnd = true;
-					},
+                    start: function() {
+                        // prevent mouse enter/exit on DND
+                        view.dnd = true;
+                    },
                     stop: function(event, ui) {
-						view.dnd = false;
+                        view.dnd = false;
                         view.model.set({x:ui.position.left, y:ui.position.top});
                     }
                 })
@@ -191,15 +191,15 @@ if (!isemb) {
                   event.stopPropagation();
               })
               .mousemove(view, function(event) {
-				  // Prevent connector state checking
-				  event.stopPropagation();
-			  })
+                  // Prevent connector state checking
+                  event.stopPropagation();
+              })
               .mouseleave(view, function (event){
                   if (view.dnd) 
                     return;
-				  view.options.parent.isMouseOverLabel = false;
-				  view.options.diagram.drawConnectors();
-				  event.stopPropagation();
+                  view.options.parent.isMouseOverLabel = false;
+                  view.options.diagram.drawConnectors();
+                  event.stopPropagation();
               });
               this.$el.css({top: this.model.get("y"), left: this.model.get("x")});
             },
@@ -286,9 +286,9 @@ if (!isemb) {
                 this.points = this._getConnectionPoints(this.fromModel.cid, this.toModel.cid, this.epoints);
                 
                 if (!this.points) {
-					$.log("SOMETHING DEEPLY WRONG !!!");
-					return;
-				}
+                    $.log("SOMETHING DEEPLY WRONG !!!");
+                    return;
+                }
                 this.gip = [];
                 for (var i=0;i<this.points.length-1;++i) {
                     var dy = this.points[i].y - this.points[i+1].y,

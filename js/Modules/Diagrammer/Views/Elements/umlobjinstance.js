@@ -36,9 +36,9 @@ define(['marionette'],
                             e2.droppedElements.push(e1);
                         }
                         if (outer.top < inner.top && inner.top + inner.height > outer.top + outer.height) {
-							this.$el.css("height", inner.top + inner.height);
-					    }
-                        
+                            this.$el.css("height", inner.top + inner.height);
+                            this.model.set({height: inner.top + inner.height});
+		        }
                         return true;
                     }
                     else {
@@ -60,8 +60,13 @@ define(['marionette'],
                 if (dev.dropParent == this) {
 					  $.log("zIndex");
 					  var index_current = parseInt(this.$el.css("zIndex"), 10);
+					  this.model.set("zIndex", index_current);
+
 					  $.log("zIndex: " + index_current);
+
 					  dev.$el.css("zIndex", index_current+10);
+					  dev.model.set("zIndex", index_current+10);
+
 					  this._updateDroppedPositions();
 				}
             },

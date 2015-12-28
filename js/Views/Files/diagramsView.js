@@ -168,11 +168,9 @@ define(
                       // this.US.$el.find(".us-canvas").css(sizes);
                     }
                     else {
+                      this.UD.setMode("view");
                       this.UD.setMode("edit");
                     }
-                    // draw all connectors
-                    this.UD.drawConnectors();
-
                     //
                     // Sequence diagram has complex behavior which is out of scope of diagram types
                     //
@@ -184,6 +182,9 @@ define(
                           this.dropController = new ElementDropController({view:this.UD, model: this.modelDiagram});
                       }
                     }
+
+                    // draw all connectors
+                    this.UD.drawConnectors();
 
                     // An embedded diagram behavior
                     if (isemb) this.ui.editButton.text("Open");
@@ -200,7 +201,7 @@ define(
             // Ctrl-Z
             //
             handleUndoOperation: function() {
-                    if (this.operationManager)
+              if (this.operationManager)
                   this.operationManager.undo();
             },
 
@@ -208,7 +209,7 @@ define(
             // Ctrl-Y
             //
             handleRedoOperation: function() {
-                if (this.operationManager)
+              if (this.operationManager)
                   this.operationManager.redo();
             },
 
@@ -337,7 +338,7 @@ define(
             syncUpBeforeClose: function() {
         if (this.model.get("isModified")) {
                     var text = this.modelDiagram.getDescription("");
-        //        alert(text);
+                alert(text);
             this.model.set("modifiedContent", text);
         }
             }

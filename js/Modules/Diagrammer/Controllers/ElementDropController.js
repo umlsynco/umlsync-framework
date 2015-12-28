@@ -15,24 +15,24 @@ define(['marionette',
             },
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {
-				// Skip selection DND completion
-				if (this.skipOneSelect) {
-					this.skipOneSelect = false;
-					return;
-				}
+                // Skip selection DND completion
+                if (this.skipOneSelect) {
+                    this.skipOneSelect = false;
+                    return;
+                }
 
-				if (event && event.ctrlKey) {
-					itemView.onSelect(!itemView.selected);
-					return;
-				}
-				var that = this;
+                if (event && event.ctrlKey) {
+                    itemView.onSelect(!itemView.selected);
+                    return;
+                }
+                var that = this;
                 _.each(this.elements.children._views, function(item) {
                    if (item != itemView) {
                        item.onSelect(false);
                    }
                 });
                 itemView.onSelect(true);
-			},
+            },
             // Droppable
             dragAlsoElements: [],
             draggableConnectors: [],
@@ -42,12 +42,12 @@ define(['marionette',
                         element.onDragDo(ui);
                 });
                 _.each(this.draggableConnectors, function(connector, idx) {
-					connector.onDragDo(ui);
-				});
+                    connector.onDragDo(ui);
+                });
             },
             onDragStart: function(itemView, ui) {
-				// Skip one select on DND completion
-				this.skipOneSelect = true;
+                // Skip one select on DND completion
+                this.skipOneSelect = true;
 
                 //this.dragAlsoElements = itemView.$el.parent().find('.dropped-' + itemView.cid);
                 this.dragAlsoElements = new Array();
@@ -87,13 +87,13 @@ define(['marionette',
 
                 // Trigger drag start
                 _.each(this.connectors.children._views, function(connector, idx) {
-					if (queued.indexOf(connector.fromModel.cid) >= 0
-					  && queued.indexOf(connector.toModel.cid) >= 0) {
-				      // Connector drag start
+                    if (queued.indexOf(connector.fromModel.cid) >= 0
+                      && queued.indexOf(connector.toModel.cid) >= 0) {
+                      // Connector drag start
                       connector.onDragStart(ui);
                       // Push connectors
                       that.draggableConnectors.push(connector);
-			        }
+                    }
                 });
 
             },
@@ -105,8 +105,8 @@ define(['marionette',
                 });
                 // Sync up epoints on drag stop
                 _.each(this.draggableConnectors, function(connector, idx) {
-					connector.onDragStop(ui);
-				});
+                    connector.onDragStop(ui);
+                });
 
                 //
                 // Check the droppable relation for the dragged element

@@ -20,12 +20,21 @@ define(['marionette',
                 this.connectors.on("connector:drag:do", _.bind(this.onDragDo, this));
                 this.connectors.on("connector:drag:stop", _.bind(this.onConnectorDragStop, this));
 
+                var that = this;
+                this.elements.children.each(function(elem) {
+                    if (elem.model.get("type") == "llport")
+                      that.onElementAdd(elem);
+                });
+
+                this.connectors.children.each(function(con) {
+                    that.onNewConnector(con);
+                });
             },
             onElementAdd: function(element) {
                 // Do nothing for the temporary elements (DND)
                 if (element.model.get("temporary")) return;
 
-$.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
+                $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
 
                 // avoid iteration for the not droppable elements
                 if ((!element.droppable) && (element.acceptDrop.length == 0)) return;
@@ -44,9 +53,9 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
                 });
 
                 if (element.droppedElements.length >0) {
-                      $.log("HAS DROPPED ELEMENTS: " + element.model.get("type"));
-                  }
-                  else if (element.model.get("type") == "llport") {
+                  $.log("HAS DROPPED ELEMENTS: " + element.model.get("type"));
+                }
+                else if (element.model.get("type") == "llport") {
                     //
                     // Create parent for the llport element
                     //
@@ -233,7 +242,7 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
                 }
                 
                 if (!item) {
-					$.log("CREATE NEW LL PORT ON CONNECTOR DND");
+                    $.log("CREATE NEW LL PORT ON CONNECTOR DND");
                     item = new Backbone.DiagramModel({type:"llport", width:15, height:25, left: dropParent.model.get("left") + dropParent.model.get("width")/2 -5, top: y-2});
                     this.elements.collection.add(item);
                 }
@@ -254,23 +263,23 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
                 // Keep e1 only, change connectors from e2->e1
                 //                
                 this.connectors.children.each(function(connector) {
-					if (connector.fromModel == e2.model) {
-						$.log("CONNECTOR: " + connector.model.cid  + "CHANGE FROM : " + e2.model.cid + " -> " + e1.model.cid);
-						 connector.fromModel = e1.model;
-						 connector.model.set({fromId: e1.model.get("id")});
-					 }
-					if (connector.toModel == e2.model) {
-						$.log("CONNECTOR: " + connector.model.cid +"CHANGE TO : " + e2.model.cid + " -> " + e1.model.cid);
-						 connector.toModel = e1.model;
-						 connector.model.set({toId: e1.model.get("id")});
-					 }
-				});
-				
-				if (h2 > h1) h1 = h2;
-				if (p1 > p2) p1 = p2;
-				
-				e1.$el.css({top: p1, height: h1-p1});
-				e1.model.set({top: p1, height: h1-p1});
+                    if (connector.fromModel == e2.model) {
+                        $.log("CONNECTOR: " + connector.model.cid  + "CHANGE FROM : " + e2.model.cid + " -> " + e1.model.cid);
+                         connector.fromModel = e1.model;
+                         connector.model.set({fromId: e1.model.get("id")});
+                     }
+                    if (connector.toModel == e2.model) {
+                        $.log("CONNECTOR: " + connector.model.cid +"CHANGE TO : " + e2.model.cid + " -> " + e1.model.cid);
+                         connector.toModel = e1.model;
+                         connector.model.set({toId: e1.model.get("id")});
+                     }
+                });
+                
+                if (h2 > h1) h1 = h2;
+                if (p1 > p2) p1 = p2;
+                
+                e1.$el.css({top: p1, height: h1-p1});
+                e1.model.set({top: p1, height: h1-p1});
 
                 return true;
                 
@@ -285,14 +294,14 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
 
                 var that = this, dropList = new Array(), checkList = new Array();
                 _.each(view.droppedElements, function(e1) {
-					$.log("DROP 1 : " + e1.model.cid);
+                    $.log("DROP 1 : " + e1.model.cid);
                   // Fix the position of the llport element
                   if (!_.contains(dropList, e1)) {
                     e1.$el.css({left:left});
                     _.each(view.droppedElements, function(e2) {
-						$.log("DROP 2 : " + e2.model.cid);
+                        $.log("DROP 2 : " + e2.model.cid);
                         if (e1 != e2 && !_.contains(dropList, e2) && !_.contains(checkList, e2) && that._merge(e1, e2)) {
-							$.log("DROP LIST : " + e2.model.cid);
+                            $.log("DROP LIST : " + e2.model.cid);
                             dropList.push(e2);
                         }
                     });
@@ -305,9 +314,9 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
                 var that = this;
                 // Destroy ui views
                 _.each(dropList, function(element) {
-					$.log("REMOVE: " + element.model.cid);
-					that.elements.collection.remove(element.model);
-				});
+                    $.log("REMOVE: " + element.model.cid);
+                    that.elements.collection.remove(element.model);
+                });
             },
             onConnectorDragStop: function(conView, ui) {
                 
@@ -535,12 +544,12 @@ $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
 
                 // Merge and align elements
                 _.each(that.dragAlsoElements, function(view, index) {
-					if (view.model.get("type") == "llport" && view.dropParent) {
+                    if (view.model.get("type") == "llport" && view.dropParent) {
                       that._merge_and_align(view.dropParent);
-				    }
-				    else if (view.model.get("type")	== "objinstance") {
-						that._merge_and_align(view);
-					}
+                    }
+                    else if (view.model.get("type") == "objinstance") {
+                        that._merge_and_align(view);
+                    }
                 });
 
                 if (this.dragAlsoElements.length > 0) {

@@ -97,8 +97,6 @@ if (!isemb) {
 //                    'scroll': true,
         'containment': "#diag-" + model.cid,// to prevent jumping of element on resize start
         'grid': [2,2],
-        obstacle: "DIV.us-diagram",
-        preventCollision: true,
                     axis: view.axis,
                     'start': function (event, ui) {
                         //
