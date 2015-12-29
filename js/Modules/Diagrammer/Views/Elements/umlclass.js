@@ -5,9 +5,9 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
         //
         var opiv = Backbone.Marionette.ItemView.extend({
             tagName: 'li',
-            template: _.template("<a class='editablefield operation'><%= name %></a>"),
+            template: _.template("<a class='operation'><%= name %></a>"),
             ui : {
-                "editablefield" : ".editablefield"
+                "editablefield" : "A.operation"
             },
             behaviors: {
                 EditableBehavior: {
@@ -25,7 +25,14 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                'ListSortableBehavior' : function(view) {
                      alert("ASDASDAS");
                }
-            }
+            },
+            childViewOptions: function() {
+                return {
+                  parent: this, // collection view
+                  element: this.options.parent, // element view
+                  diagram: this.options.parent.options.parent // diagram view
+                };
+            },
         });
 
         //
@@ -33,9 +40,9 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
         //
         var ativ = Backbone.Marionette.ItemView.extend({
             tagName: 'li',
-            template: _.template("<a class='editablefield attribute'><%= name %></a>"),
+            template: _.template("<a class='attribute'><%= name %></a>"),
             ui : {
-                "editablefield" : ".editablefield"
+                "editablefield" : "A.attribute"
             },
             behaviors: {
                 EditableBehavior: {
@@ -45,10 +52,13 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
             childViewOptions: function() {
                 return {
                   parent: this,
-                  diagram: this.options.parent
+                  element: this.options.parent,
+                  diagram: this.options.parent.options.parent
                 };
             },
-
+            onModeChange: function() {
+                  alert("ITEM MODE CHANGE");
+            }
         });
 
         //
@@ -63,9 +73,13 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
             },
             childViewOptions: function() {
                 return {
-                  parent: this,
-                  diagram: this.options.parent
+                  parent: this, // collection view
+                  element: this.options.parent, // element view
+                  diagram: this.options.parent.options.parent // diagram view
                 };
+            },
+            onModeChange: function() {
+               alert("Collection mode change!");
             }
         });
 
@@ -98,10 +112,8 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
             // for methods and field
             //
             onModeChange: function(mode) {
-              if (this.attributesView)
-                this.attributesView.triggerMethod("ModeChange", mode);
-              if (this.operationsView)
-                this.operationsView.triggerMethod("ModeChange", mode);
+              this.attributesView.options.isEmbedded = mode;
+              this.operationsView.options.isEmbedded = mode;
             },
             onRender: function() {
                 //
@@ -112,9 +124,7 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                 if (this.model.getUmlAttributes) {
                     this.attributesView = new attributesView({
                         collection:this.model.getUmlAttributes(),
-                        childViewOptions: {
-                            parent: this
-                        },
+                        parent: this,
                         isEmbedded: this.options.parent.model.get("isEmbedded")
                     });
                     this.attributesView.render();
@@ -126,9 +136,7 @@ define(['marionette', './../umldiagram', 'Modules/Diagrammer/Behaviors/ListSorta
                 if (this.model.getUmlOperations) {
                    this.operationsView = new operationsView({
                        collection:this.model.getUmlOperations(),
-                       childViewOptions: {
-                           parent: this
-                       },
+                       parent: this,
                        isEmbedded: this.options.parent.model.get("isEmbedded")
                    });
                    this.operationsView.render();

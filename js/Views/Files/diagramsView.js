@@ -169,7 +169,6 @@ define(
                     }
                     else {
                       this.UD.setMode("view");
-                      this.UD.setMode("edit");
                     }
                     //
                     // Sequence diagram has complex behavior which is out of scope of diagram types

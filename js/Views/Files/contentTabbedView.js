@@ -152,7 +152,9 @@ define(
                     // trigger remove tabs for scrollable tabs
                     // to re-calculate scroll options
                     that.$el.trigger('tabsremove');
-                    
+                    // Remove tab for the view manually.
+                    // No idea why the jquery.tabs doesn't remove it
+                    $('#tabs ' + parent).remove();
                 });
               }
             },

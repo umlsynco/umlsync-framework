@@ -11,9 +11,9 @@ define(['backbone', 'marionette', 'jquery-ui', 'Views/framework'], function (Bac
         editField: function (event) {
             var model = this.view.model,
             tparent = this.view.options.diagram || this.view.options.parent,
-            isemb = tparent.model.get("isEmbedded") || !this.view.options.mode;
+            disable = tparent.model.get("isEmbedded") || !tparent.options.mode;
             // Do nothing for embedded diagrams or view mode
-            if (isemb) return;
+            if (disable) return;
             //var operationManager = model.getOperationManager();
             var view = this.view;
 

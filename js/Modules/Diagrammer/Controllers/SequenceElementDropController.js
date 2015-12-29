@@ -20,15 +20,21 @@ define(['marionette',
                 this.connectors.on("connector:drag:do", _.bind(this.onDragDo, this));
                 this.connectors.on("connector:drag:stop", _.bind(this.onConnectorDragStop, this));
 
-                var that = this;
-                this.elements.children.each(function(elem) {
-                    if (elem.model.get("type") == "llport")
-                      that.onElementAdd(elem);
-                });
 
-                this.connectors.children.each(function(con) {
+                var that = this;
+                // There is no real coordinates on this method call
+                // TODO: add method instead of timeout
+                setTimeout(function() {
+                  that.elements.children.each(function(elem) {
+                    if (elem.model.get("type") == "objinstance")
+                      that.onElementAdd(elem);
+                  });
+
+                  that.connectors.children.each(function(con) {
                     that.onNewConnector(con);
-                });
+                  });
+                }, 200);
+
             },
             onElementAdd: function(element) {
                 // Do nothing for the temporary elements (DND)
@@ -125,7 +131,7 @@ define(['marionette',
                         _.each(parentFid.droppedElements, function(llport) {
                             var top = llport.model.get("top");
                             // Connector was dropped over this llport element
-                            if (y > top && y < top + llport.model.get("height")) {
+                            if (y > top-5 && y < top + llport.model.get("height") + 5) {
                                 cfid = llport;
                             }
                         });
