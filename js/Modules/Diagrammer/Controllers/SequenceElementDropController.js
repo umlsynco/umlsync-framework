@@ -36,186 +36,6 @@ define(['marionette',
                 }, 200);
 
             },
-            onElementAdd: function(element) {
-                // Do nothing for the temporary elements (DND)
-                if (element.model.get("temporary")) return;
-
-                $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
-
-                // avoid iteration for the not droppable elements
-                if ((!element.droppable) && (element.acceptDrop.length == 0)) return;
-
-                if (element.droppedElements.length >0) {
-                  $.log("ADD element: REFRESH");
-                  //TODO: Work-around. There is no way to get dropped elements before new element creation
-                  //      but somhow it is not empty. Most likely it is an issue of backbone or marionette
-                  element.droppedElements = new Array();
-                }
-
-                this.elements.children.each(function(child) {
-                  if (child != element) {
-                      element.dropDone(child);
-                  }
-                });
-
-                if (element.droppedElements.length >0) {
-                  $.log("HAS DROPPED ELEMENTS: " + element.model.get("type"));
-                }
-                else if (element.model.get("type") == "llport") {
-                    //
-                    // Create parent for the llport element
-                    //
-                    if (element.dropParent == null) {
-                        element.model.collection.add(new Backbone.DiagramModel({name:"Class2",type:"objinstance", left: (element.model.get("left") - 100), "width":150, "height": element.model.get("top") + 150}));
-                    }
-                }
-            },
-            skipOneSelect: false,
-            onElementSelect: function(itemView, event) {
-                // Skip selection DND completion
-                if (this.skipOneSelect) {
-                    this.skipOneSelect = false;
-                    return;
-                }
-
-                if (event && event.ctrlKey) {
-                    itemView.onSelect(!itemView.selected);
-                    return;
-                }
-                var that = this;
-                _.each(this.elements.children._views, function(item) {
-                   if (item != itemView) {
-                       item.onSelect(false);
-                   }
-                });
-                itemView.onSelect(true);
-            },
-            onNewConnector: function(connector) {
-                if (connector.model.get("temporary")) return;
-
-                var fid = connector.model.get("fromId");
-                var tid = connector.model.get("toId");
-                $.log("LF: " + tid + " ; " + fid);
-                this.elements.children.each(function(item) {
-                    $.log("CHILD: " + item.model.cid);
-                    if (item.model.get("id") == fid) {
-                        fid = item;
-                    }
-                    else if (item.model.get("id") == tid) {
-                        tid = item;
-                    }
-                });
-
-// tOdO:
-// 1. always create epoint for the sequence connectors
-// 2. if objinstance => 
-// 2.1 Check if llport exists and rop on it
-// 2.2 Check if there is no llport => create a new one
-// 3. if llport:
-// 3.1 If dropped out of port => 2.1 & 2.2
-
-                // HANDLE FROM ID ELEMENT
-                var parentFid;
-                if (fid.model && (fid.model.get("type") == "objinstance")) {
-                    parentFid = fid;
-                }
-                else if (fid.model && (fid.model.get("type") == "llport")) {
-                    parentFid = fid.dropParent
-                }
-                
-                if (parentFid) {
-                    var y = connector.model.umlepoints.models[0].get("y");
-                    var cfid;
-                    // 1. Check that connector was dropped in scope of llport
-                    if (parentFid.droppedElements) {
-                        _.each(parentFid.droppedElements, function(llport) {
-                            var top = llport.model.get("top");
-                            // Connector was dropped over this llport element
-                            if (y > top-5 && y < top + llport.model.get("height") + 5) {
-                                cfid = llport;
-                            }
-                        });
-                    }
-                    
-                    // IF NOT Found fromID element for connector, than create a llport element
-                    var cfid_model;
-                    if (!cfid) {
-                      // 2. create a new one llport 
-                      cfid_model = new Backbone.DiagramModel({type:"llport", width:15, height:25, left: parentFid.model.get("left") + parentFid.model.get("width")/2 -5, top: y});
-                      this.elements.collection.add(cfid_model);
-                    }
-                    else {
-                        cfid_model = cfid.model;
-                    }
-  
-                    connector.fromModel = cfid_model;
-                    connector.model.set({fromId: cfid_model.get("id")});
-                }
-
-
-                // HANDLE TO ID element
-                if (tid.model && (tid.model.get("type") == "objinstance")) {
-                    // umlepoints is Backbone collection
-                    var y = connector.model.umlepoints.models[0].get("y");
-                    var ctid;
-                    // 1. Check that connector was dropped in scope of llport
-                    if (tid.droppedElements) {
-                        _.each(tid.droppedElements, function(llport) {
-                            var top = llport.model.get("top");
-                            // Connector was dropped over this llport element
-                            if (y > top && y < top + llport.model.get("height")) {
-                                ctid = llport;
-                            }
-                        });
-                    }
-                    
-                    // IF NOT Found fromID element for connector, than create a llport element
-                    var ctid_model;
-                    if (!ctid) {
-                      // 2. create a new one llport 
-                      ctid_model = new Backbone.DiagramModel({type:"llport", width:15, height:25, left: tid.model.get("left") + tid.model.get("width")/2 -5, top: y});
-                      this.elements.collection.add(ctid_model);
-                    }
-                    else {
-                        ctid_model = ctid.model;
-                    }
-  
-                    connector.toModel = ctid_model;
-                    connector.model.set({toId: ctid_model.get("id")});
-                }
-
-                
-                // 1. If connector from objinstance then create from port or attach to existing one
-                // 2. if connector dropped on objinstance then creat llport and drop it on
-            },
-            onConnectorDragStart: function(conView, ui) {
-                this.dragAlsoElements = new Array();
-                this.draggableConnectors = new Array();
-
-                var that = this, hasSingleConnector;
-                this.elements.children.each(function(item) {
-                   if (conView.fromModel == item.model || item.model == conView.toModel) {
-                       hasSingleConnector = true;
-                       that.connectors.children.each(function(connector) {
-                           if (connector != conView && (connector.fromModel == item.model || connector.toModel == item.model)) {
-                               hasSingleConnector = false;
-                           }
-                       });
-
-                       if (hasSingleConnector) {
-                         that.dragAlsoElements.push(item);
-                         item.onDragStart(ui);
-                       }
-                   }
-                });
-
-                _.each(this.dragAlsoElements, function(element, idx) {
-                   element.onDragStart(ui);
-                });
-            },
-            onConnectorDragDo: function(conView) {
-                // use common dragDo
-            },
             //
             // Helper method to get views by model
             //
@@ -323,6 +143,130 @@ define(['marionette',
                     $.log("REMOVE: " + element.model.cid);
                     that.elements.collection.remove(element.model);
                 });
+            },
+
+            onElementAdd: function(element) {
+                // Do nothing for the temporary elements (DND)
+                if (element.model.get("temporary")) return;
+
+                $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
+
+                // avoid iteration for the not droppable elements
+                if ((!element.droppable) && (element.acceptDrop.length == 0)) return;
+
+                if (element.droppedElements.length >0) {
+                  $.log("ADD element: REFRESH");
+                  //TODO: Work-around. There is no way to get dropped elements before new element creation
+                  //      but somhow it is not empty. Most likely it is an issue of backbone or marionette
+                  element.droppedElements = new Array();
+                }
+
+                this.elements.children.each(function(child) {
+                  if (child != element) {
+                      element.dropDone(child);
+                  }
+                });
+
+                if (element.droppedElements.length >0) {
+                  $.log("HAS DROPPED ELEMENTS: " + element.model.get("type"));
+                }
+                else if (element.model.get("type") == "llport") {
+                    //
+                    // Create parent for the llport element
+                    //
+                    if (element.dropParent == null) {
+                        element.model.collection.add(new Backbone.DiagramModel({name:"Class2",type:"objinstance", left: (element.model.get("left") - 100), "width":150, "height": element.model.get("top") + 150, "top":5}));
+                    }
+                }
+            },
+            skipOneSelect: false,
+            onElementSelect: function(itemView, event) {
+                // Skip selection DND completion
+                if (this.skipOneSelect) {
+                    this.skipOneSelect = false;
+                    return;
+                }
+
+                if (event && event.ctrlKey) {
+                    itemView.onSelect(!itemView.selected);
+                    return;
+                }
+                var that = this;
+                _.each(this.elements.children._views, function(item) {
+                   if (item != itemView) {
+                       item.onSelect(false);
+                   }
+                });
+                itemView.onSelect(true);
+            },
+            onNewConnector: function(connector) {
+                if (connector.model.get("temporary")) return;
+
+                var ftv = this._get_connector_views(connector), r;
+
+                // HANDLE FROM ID ELEMENT
+                var fid = ftv.from, parentFid;
+                if (fid.model && (fid.model.get("type") == "objinstance")) {
+                    parentFid = fid;
+                }
+                else if (fid.model && (fid.model.get("type") == "llport")) {
+                    parentFid = fid.dropParent
+                }
+                
+                if (parentFid) {
+                    r = this._drop_or_create_port(parentFid, connector);
+                    if (r) {
+                        connector.fromModel = r;
+                        connector.model.set({fromId: r.get("id")});
+                    }
+                }
+
+                var tid = ftv.to, parentTid;
+                if (tid.model && (tid.model.get("type") == "objinstance")) {
+                    parentTid = tid;
+                }
+                else if (tid.model && (tid.model.get("type") == "llport")) {
+                    parentTid = tid.dropParent
+                }
+
+                if (parentTid) {
+                    r = this._drop_or_create_port(parentTid, connector);
+                    if (r) {
+                        connector.toModel = r;
+                        connector.model.set({toId: r.get("id")});
+                    }
+                }
+
+                // 1. If connector from objinstance then create from port or attach to existing one
+                // 2. if connector dropped on objinstance then creat llport and drop it on
+            },
+            onConnectorDragStart: function(conView, ui) {
+                this.dragAlsoElements = new Array();
+                this.draggableConnectors = new Array();
+
+                var that = this, hasSingleConnector;
+                this.elements.children.each(function(item) {
+                   if (conView.fromModel == item.model || item.model == conView.toModel) {
+                       hasSingleConnector = true;
+                       that.connectors.children.each(function(connector) {
+                           if (connector != conView && (connector.fromModel == item.model || connector.toModel == item.model)) {
+                               hasSingleConnector = false;
+                           }
+                       });
+
+                       if (hasSingleConnector) {
+                         that.dragAlsoElements.push(item);
+                         item.onDragStart(ui);
+                       }
+                   }
+                });
+
+                _.each(this.dragAlsoElements, function(element, idx) {
+                   element.onDragStart(ui);
+                });
+            },
+            onConnectorDragDo: function(conView) {
+                // use common dragDo
             },
             onConnectorDragStop: function(conView, ui) {
                 

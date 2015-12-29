@@ -42,6 +42,9 @@ define(
 
                 Framework.vent.trigger("content:before:close", {model:models[0], action: "close"});
               }
+              else {
+                $.log("ERROR: TRYING TO CLOSE WRING TAB!");
+              }
             },
             //
             // check if content type handler was registered

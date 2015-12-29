@@ -155,7 +155,7 @@
   },
   {"id":"us-objinstance-menu",
    "items": [
-			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object"},
+			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object", "top":5 },
 			 "connectors":[
 					{"type":"llsequence",
 					 "icon":"assets/icons/us/cs/createobject.png"
@@ -191,7 +191,7 @@
   },
   {"id":"us-llport-menu",
    "items": [
-			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object"},
+			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object", "top":5},
 			 "connectors":[
 					{"type":"llsequence",
 					 "icon":"assets/icons/us/cs/createobject.png"
@@ -227,7 +227,7 @@
   },
   {"id":"us-port-menu",
    "items": [
-			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object"},
+			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object", "top":5},
 			 "connectors":[
 					{"type":"llsequence",
 					 "icon":"assets/icons/us/cs/createobject.png"
