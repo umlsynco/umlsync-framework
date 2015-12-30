@@ -5,7 +5,7 @@ define(['marionette', './../umldiagram'],
               maxHeight: 50,
               aspectRatio: true
             },
-            template: _.template('<div id="<%=cid%>" style="width:100%; height:100%;" class="us-interface grElement us-element-resizable-area"></div>\
+            template: _.template('<div id="<%=cid%>" style="width:100%; height:100%; opacity: 0.2;" class="grElement us-element-resizable-area">&nbsp;</div>\
               <div aria-disabled="true" tabindex="1" class="ui-draggable" id="name"\
                 style="position:absolute;z-index:99999; width:256px;"><a class="editablefield" ><%=name%></a>    </div>'),
             onRender: function() {

@@ -12,8 +12,8 @@
 	{"type": "interface",
 	 "title": "Interface",
 	 "options": {
-	   "width": 47,
-	   "height": 47
+	   "width": 17,
+	   "height": 17
 	 },
 	 "icon": "./assets/icons/us/es/component/Interface.png"
 	},

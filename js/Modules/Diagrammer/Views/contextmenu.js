@@ -61,6 +61,7 @@ define([
                     success: function(data) {
                         that.contentTypeList = data;
                         that.loading = false;
+                        that._loadCommandHandler("default");
                     },
                     error: function() {
                         alert("Failed to AJAX context menu description!");
@@ -69,39 +70,67 @@ define([
                     }
                 });
             },
+            _getDiagramSubType: function(context) {
+                if (context.diagram && context.diagram.model) {
+                    return context.diagram.model.get("type");
+                }
+                return null;
+            },
+            _getElementSubType: function(context) {
+                if (context.element && context.element.model) {
+                    return context.element.model.get("type");
+                }
+                return null;
+            },
+            _loadCommandHandler: function(subtype) {
+				var that = this;
+                // load handler if it was not load
+                if (this.subtypes[subtype] == undefined) {
+                    require(['Modules/Diagrammer/Menus/' + subtype], function(handler) {
+                        that.subtypes[subtype] = new handler({Framework:require('Views/framework')});
+                        $.log("LOADED : " + subtype + " = " + that.subtypes[subtype]);
+                    },
+                    function() {
+						that.subtypes[subtype] = null;
+                        $.log("There is no special context menu handler for " + subtype);
+                    });
+                }
+            },
             getDataView: function(data) {
                 // Download the content list
                 var that = this;
                 if (this.loading || this.loadfailed) {
-                    return;
+                    return null;
                 }
 
                 // get element type from model
                 // or select subtype directly for the fieds ctx menu
-                var subtype = data.subtype;
-                // TODO: remove this stuff, sub-type should be defined on the element behavior side
-                if (!subtype && data.context && data.context.view && data.context.view.model) {
-                    subtype = data.context.view.model.get("type");
-                }
+                var subtype = data.subtype || this._getDiagramSubType(data.context),
+                etype = data.subtype || this._getElementSubType(data.context);
 
-                // can not detect the subtype of the element !!!
-                if (!subtype) return;
+                // It should never happen but who knows ?
+                if (!subtype || !etype) return null;
                 
-                // load handler if it was not load
-                if (!this.subtypes[subtype]) {
-                    require(['Modules/Diagrammer/Menus/' + subtype], function(handler) {
-                        that.subtypes[subtype] = new handler({Framework:require('Views/framework')});
-                        $.log("LOADED : " + subtype + " = " + that.subtypes[subtype]);
-                    });
-                }
+                // Load handler which could proceed commnad line
+                // diagram type specific handlers
+                this._loadCommandHandler(subtype);
 
+                // Find list of <title, command> for the element
+                // and hope that handler willbe loaded on time
                 for (var r=0; r < this.contentTypeList.length; ++r) {
-                    if (this.contentTypeList[r].type == subtype) {
+                    if (this.contentTypeList[r].type == etype) {
                         this.cachedData = data;
                         return new contextMenu({collection: new Backbone.Collection(this.contentTypeList[r].fields), controller:this});
                     }
                 }
-                return;
+                
+                for (var r=0; r < this.contentTypeList.length; ++r) {
+                    if (this.contentTypeList[r].type == "default") {
+                        this.cachedData = data;
+                        return new contextMenu({collection: new Backbone.Collection(this.contentTypeList[r].fields), controller:this});
+                    }
+                }
+                return null;
             }
         });
 

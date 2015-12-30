@@ -54,9 +54,11 @@ if (!isemb) {
                     // [TODO]: Do we need to split "edit/view" states ?
                     var diagram = view.options.parent;
                     if (diagram)
-                        diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {view:view, diagram: view.options.parent}});
+                        diagram.vent.trigger("contextmenu:show", {type:"diagram", event:e, context: {element: view, diagram: view.options.parent}});
                 })
                 .resizable({
+                    aspectRatio: view.options.aspectRatio || false,
+                    maxHeight: view.options.maxHeight,
                     //'containment': "#" + this.,// to prevent jumping of element on resize start
                     'scroll': true,
                     'handles': this.options['resize-handles'] || 'n-u,e-u,s-u,w-u,nw-u,sw-u,ne-u,se-u',

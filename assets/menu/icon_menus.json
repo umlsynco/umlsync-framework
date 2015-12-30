@@ -56,7 +56,7 @@
   },
   {"id":"us-component-note-menu",
    "items": [
-			{"element":{"type":"note"},
+			{"element":{"type":"note", "width":150, "height":66},
 			 "connectors":[
 					{"type":"anchor",
 					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
@@ -66,7 +66,7 @@
   },
   {"id":"us-component-menu",
    "items": [
-			{"element":{"type":"component"},
+			{"element":{"type":"component", "width":150, "height":66},
 			 "connectors":[
 					{"type":"association",
 					 "icon":"assets/icons/us/cs/association.png"
@@ -79,28 +79,28 @@
 					}
 				  ]
 			},
-			{"element":{"type":"interface"},
+			{"element":{"type":"interface", "width":17, "height":17},
 			 "connectors":[
 					{"type":"association",
 					 "icon":"assets/icons/us/cs/interface.png"
 					}
 				  ]
 			},
-			{"element":{"type":"empty"},
+			{"element":{"type":"empty", "width":17, "height":17, "name":"Interface"},
 			 "connectors":[
 					{"type":"arc",
 					 "icon":"assets/icons/us/cs/interface_required.png"
 					}
 				  ]
 			},
-			{"element":{"type":"port"},
+			{"element":{"type":"port", "width":17, "height":17},
 			 "connectors":[
 					{"type":"association",
 					 "icon":"assets/icons/us/cs/association.gif"
 					}
 				  ]
 			},
-			{"element":{"type":"note"},
+			{"element":{"type":"note", "width":150, "height":66},
 			 "connectors":[
 					{"type":"anchor",
 					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
@@ -110,7 +110,7 @@
   },
   {"id":"us-package-menu",
    "items": [
-			{"element":{"type":"package"},
+			{"element":{"type":"package", "width":150, "height":66},
 			 "connectors":[
 					{"type":"dependency",
 					 "icon":"assets/icons/us/cs/dependency.png"
@@ -135,7 +135,7 @@
 					}
 				  ]
 			},
-			{"element":{"type":"note"},
+			{"element":{"type":"note", "width":150, "height":66},
 			 "connectors":[
 					{"type":"anchor",
 					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
@@ -145,7 +145,7 @@
   },
   {"id":"us-package-note-menu",
    "items": [
-			{"element":{"type":"note"},
+			{"element":{"type":"note", "width":150, "height":66},
 			 "connectors":[
 					{"type":"anchor",
 					 "icon":"assets/icons/us/cs/diagram/anchor_with_note.gif"}
@@ -263,14 +263,14 @@
   },
   {"id":"us-message-menu",
    "items": [
-			{"element":{"type":"objinstance"},
+			{"element":{"type":"objinstance", "width":150, "height": 250, "name":"Object", "top":5},
 			 "connectors":[
 					{"type":"llsequence",
 					 "icon":"assets/icons/us/cs/createobject.png"
 					}
 				  ]
 			},
-			{"element":{"type":"port"},
+			{"element":{"type":"llport", "width":15, "height": 45},
 			 "connectors":[
 					{"type":"llsequence",
 					 "icon":"assets/icons/us/cs/sequence.png"

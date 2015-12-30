@@ -33,7 +33,8 @@ define(
                     'Modules/Diagrammer/Views/Elements/umlllport',
                     'Modules/Diagrammer/Views/Elements/umllldel',
                     'Modules/Diagrammer/Views/Elements/umlllalt',
-                    'Modules/Diagrammer/Views/Elements/umlactor']);
+                    'Modules/Diagrammer/Views/Elements/umlactor',
+                    'Modules/Diagrammer/Views/Elements/umlempty']);
                 // UML connectors
                 require(["Modules/Diagrammer/Views/Connectors/umlaggregation", 
                     "Modules/Diagrammer/Views/Connectors/umldependency", "Modules/Diagrammer/Views/Connectors/umlcomposition",
@@ -41,7 +42,8 @@ define(
                     "Modules/Diagrammer/Views/Connectors/umlnested", "Modules/Diagrammer/Views/Connectors/umlgeneralization",
                     "Modules/Diagrammer/Views/Connectors/umlrealization",
                     "Modules/Diagrammer/Views/Connectors/umlllsequence",
-                    "Modules/Diagrammer/Views/Connectors/umlllreturn"]);
+                    "Modules/Diagrammer/Views/Connectors/umlllreturn",
+                    "Modules/Diagrammer/Views/Connectors/umlarc"]);
                 //    
                 // Sync-up content on model save
                 //

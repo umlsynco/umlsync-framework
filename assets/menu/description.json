@@ -1,7 +1,6 @@
 [
   {
     "type":"instance",
-    "require":"instance.js",
     "fields":[
         {"title": "Remove", "command":"diagram:common:remove"},
         {"title": "Add stereotype", "command":"diagram:instance:addstereotype"},
@@ -10,71 +9,36 @@
   },
   {
     "type":"class",
-    "require": "class.js",
     "fields": [
-        {
-            "title": "Remove",
-            "command": "diagram:common:remove"
-        },
-        {
-            "title": "Add method",
-            "command": "diagram:class:addmethod"
-        },
-        {
-            "title": "Add field",
-            "command": "diagram:class:addfield"
-        }
+        {"title": "Remove", "command": "diagram:common:remove"},
+        {"title": "Add method", "command": "diagram:class:addmethod"},
+        {"title": "Add field", "command": "diagram:class:addfield"}
     ]
   },
   {
     "type":"stereotype",
-    "require": "stereotype.js",
     "fields": [
-        {
-            "title": "Remove",
-            "command": "diagram:common:remove"
-        },
-        {
-            "title": "Add tagged value",
-            "command": "diagram:stype:addtaggedvalue"
-        }
+        {"title": "Remove", "command": "diagram:common:remove"},
+        {"title": "Add tagged value", "command": "diagram:stype:addtaggedvalue"}
     ]
   },
   {
     "type":"connector",
-    "require": "connector.js",
     "fields": [
-        {
-            "title": "Remove",
-            "command": "diagram:connector:remove"
-        },
-        {
-            "title": "Add Label",
-            "command": "diagram:connector:addlabel"
-        },
-        {
-            "title": "Edit",
-            "command": "diagram:connector:edit"
-        }
+        {"title": "Remove", "command": "diagram:connector:remove"},
+        {"title": "Add Label", "command": "diagram:connector:addlabel"},
+        {"title": "Edit", "command": "diagram:connector:edit"}
     ]
   },
   {
     "type":"connector-label",
-    "require": "connector-label.js",
     "fields": [
-        {
-            "title": "Edit Label",
-            "command": "diagram:connector-label:edit"
-        },
-        {
-            "title": "Remove Label",
-            "command": "diagram:connector-label:remove"
-        }
+        {"title": "Edit Label", "command": "diagram:connector-label:edit"},
+        {"title": "Remove Label", "command": "diagram:connector-label:remove"}
     ]
   },
   {
     "type":"default",
-    "require": "default.js",
     "fields": [
         {
             "title": "Copy Ctrl-C",
