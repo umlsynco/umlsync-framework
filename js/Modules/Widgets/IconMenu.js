@@ -21,6 +21,7 @@ function(Marionette, diagram) {
             onShow: function() {
               var helperModel = new Backbone.Model({left:0, top:0, type:"helper", temporary:true, id:0});
               var that = this;
+var diff;
               $("#tabs .elmenu-us-class-menu img").draggable({
                 'appendTo': "#tabs",
                 'containment': "#tabs",
@@ -36,6 +37,9 @@ function(Marionette, diagram) {
                      var Framework = require('Views/framework');
 // TODO: if connector type is SELF-connector => return false
 //       and stop propagation => create element directly
+ var pos = ui.helper.position();
+ diff = {top: pos.top - ui.position.top, left: pos.left - ui.position.left};
+$.log("UI : " + diff.top + " : " + diff.left);
                      Framework.vent.trigger("content:past", 
                                              {source:"diagram-icon-menu",
                                               context: {
@@ -44,13 +48,20 @@ function(Marionette, diagram) {
                                               initialContext: that.dataProvider? that.dataProvider.IconMenuData : null});
                  },
                  'drag': function(event, ui) {
-$(ui.helper).css({left:ui.position.left,top:ui.position.top-50});
+
+ui.position.top += diff.top; 
+ui.position.left += diff.left;
+
 //                      $(ui.helper).css({left:event.pageX,top:event.pageY});
                      if (that.dataProvider && that.dataProvider.IconMenuData) {
                          that.dataProvider.IconMenuData.trigger("drag:do");
                      }
                  },
                  'stop': function(event, ui) {
+ui.position.top += diff.top;
+ui.position.left += diff.left;
+
+
                      var itemId = $(this).attr("itemid");
                      var menuId = $(this).attr("menuid");
                      var element = that.description[menuId].items[itemId].element;
