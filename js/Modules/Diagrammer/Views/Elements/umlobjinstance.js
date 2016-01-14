@@ -33,6 +33,7 @@ define(['marionette'],
                     if (outer.left < inner.left && outer.left + outer.width > inner.left + inner.width) {
                         e2.$el.addClass('dropped-' + e1.cid);
                         if (!_.contains(e2.droppedElements, e1)) {
+$.log("2- ELEMENT " + e2.model.cid + " PUSH dropped " + e1.model.cid);
                             e2.droppedElements.push(e1);
                         }
                         if (outer.top < inner.top && inner.top + inner.height > outer.top + outer.height) {

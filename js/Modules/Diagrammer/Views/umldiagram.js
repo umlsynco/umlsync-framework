@@ -55,6 +55,7 @@ define(['marionette', 'Modules/Diagrammer/Behaviors/ElementBehavior', 'Modules/D
                         && outer.left < inner.left && outer.left + outer.width > inner.left + inner.width) {
                         e2.$el.addClass('dropped-' + e1.cid);
                         if (!_.contains(e2.droppedElements, e1)) {
+            $.log("ELEMENT " + e2.model.cid + " PUSH dropped " + e1.model.cid);
                             e2.droppedElements.push(e1);
                         }
                         return true;

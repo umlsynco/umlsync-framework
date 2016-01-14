@@ -149,28 +149,32 @@ define(['marionette',
                 // Do nothing for the temporary elements (DND)
                 if (element.model.get("temporary")) return;
 
-                $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid);
+                $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid + "EREEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
                 // avoid iteration for the not droppable elements
-                if ((!element.droppable) && (element.acceptDrop.length == 0)) return;
+                if ((!element.droppable) && (element.acceptDrop.length == 0)) {
+					$.log("ADD element: " + element.model.get("type") + " : " + element.model.cid + " NO SUPPORTED");
+					 return;
+			    }
 
                 if (element.droppedElements.length >0) {
-                  $.log("ADD element: REFRESH");
+                  $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid + " REFRESH");
                   //TODO: Work-around. There is no way to get dropped elements before new element creation
                   //      but somhow it is not empty. Most likely it is an issue of backbone or marionette
                   element.droppedElements = new Array();
                 }
 
                 this.elements.children.each(function(child) {
-                  if (child != element) {
+                  if (child.model.cid != element.model.cid) {
                       element.dropDone(child);
                   }
                 });
 
                 if (element.droppedElements.length >0) {
-                  $.log("HAS DROPPED ELEMENTS: " + element.model.get("type"));
+                  $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid + " HAS DROPPED " + element.droppedElements[0].model.cid);
                 }
                 else if (element.model.get("type") == "llport") {
+					$.log("ADD element: " + element.model.get("type") + " : " + element.model.cid + " CREATE OBJ INSTANCES");
                     //
                     // Create parent for the llport element
                     //
@@ -178,6 +182,7 @@ define(['marionette',
                         element.model.collection.add(new Backbone.DiagramModel({name:"Class2",type:"objinstance", left: (element.model.get("left") - 100), "width":150, "height": element.model.get("top") + 150, "top":5}));
                     }
                 }
+                $.log("ADD element: " + element.model.get("type") + " : " + element.model.cid + "EEEEEEEEE DDDDDDDDDDDDDDDDDONE");
             },
             skipOneSelect: false,
             onElementSelect: function(itemView, event) {
@@ -201,6 +206,8 @@ define(['marionette',
             },
             onNewConnector: function(connector) {
                 if (connector.model.get("temporary")) return;
+
+$.log("ADD new connector AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
                 var ftv = this._get_connector_views(connector), r;
 
@@ -230,13 +237,14 @@ define(['marionette',
                 }
 
                 if (parentTid) {
+                    $.log("PARENT TID IS: " + parentTid.model.cid);
                     r = this._drop_or_create_port(parentTid, connector);
                     if (r) {
                         connector.toModel = r;
                         connector.model.set({toId: r.get("id")});
                     }
                 }
-
+$.log("ADD new connector DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDOOOOOOOOOONNNNNNNNNNNEEEEEEEEEE");
                 // 1. If connector from objinstance then create from port or attach to existing one
                 // 2. if connector dropped on objinstance then creat llport and drop it on
             },
