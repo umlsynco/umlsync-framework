@@ -10,7 +10,9 @@ define(['marionette', 'Views/Dialogs/snippetsDialog', 'Views/Files/snippetBubble
                 Framework = options.Framework;
                 Framework.vent.on("content:snippets:showBubble", _.bind(this.showBubble, this));
             },
+            status: false,
             showBubble: function(coordinates, model) {
+                if (!this.status) return;
                 //var model = new Backbone.Model(modelData);
                 this.openedSnippetCollection.add(model);
 
@@ -43,11 +45,13 @@ define(['marionette', 'Views/Dialogs/snippetsDialog', 'Views/Files/snippetBubble
                 this.snippetsRegion.show(this.dialog);
 
                 this.contentController.setSnippetsMode(true);
+                this.status = true;
 
                 var that = this;
                 this.dialog.on("on:navigate", function(dialog) {
                     that.snippetsRegion.show();
                     that.contentController.setSnippetsMode(false);
+                    that.status = false;
                 });
             }
         });
