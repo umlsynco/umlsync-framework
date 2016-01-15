@@ -64,10 +64,12 @@ define(
             toggleEditMode: function(event) {
                 var text = this.ui.editButton.text();
                 if (text == "Open") {
-                    alert("Please implement open handler");
                     // Prevent markdown onEdit handler call
+                    var newModel = $.extend({}, this.model.attributes, {isEmbedded: false, parentSelector: null, status: "loaded", embeddedParentCid: null});
+                    newModel = _.pick(newModel, "absPath", "branch", "key", "repo", "sha", "title", "view", "status", "content");
+                    Framework.vent.trigger("content:focus", newModel);
                     event.stopPropagation();
-                    return;            
+                    return;
                 }
                 if (text == 'Edit') {
                     this.model.set("mode", "edit");
@@ -86,7 +88,6 @@ define(
                $.cachedPath = this.model.get("absPath");
                // TODO: move to render
                this.ui.getLinkContent.find('input').val('http://umlsync.org/github?path=' + this.model.get("absPath"));
-             
             },
             onFocusChange: function(isFocused) {
               if (isFocused) {
