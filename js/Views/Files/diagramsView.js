@@ -125,6 +125,11 @@ define(
             //
             resize: function(options) {
                this.$el.find("div.us-diagram").css(options);
+               if (this.UD && !this.model.get("isEmbedded")) {
+                 this.UD.canvas.width = options.width;
+                 this.UD.canvas.height = options.height;
+                 // $("#SingleCanvas").css(options);
+               }
             },
             //
             // Render an internal items
